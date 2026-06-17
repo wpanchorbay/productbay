@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ProductBay – High-Performance Product Table for WooCommerce 1.3.0\n"
+"Project-Id-Version: ProductBay – High-Performance Product Table for WooCommerce 1.3.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/productbay\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-26T07:57:23+00:00\n"
+"POT-Creation-Date: 2026-06-17T21:52:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: productbay\n"
@@ -325,49 +325,52 @@ msgstr ""
 msgid "ProductBay: Previewing private table \"%s\". This URL is not accessible to public visitors."
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:206
+#: app/Frontend/TableRenderer.php:259
 #: assets/js/admin.js:23
 msgid "Filter"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:223
+#: app/Frontend/TableRenderer.php:276
 msgid "Reset all filters to default"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:223
-#: app/Frontend/TableRenderer.php:1633
+#: app/Frontend/TableRenderer.php:276
+#: app/Frontend/TableRenderer.php:1688
 #: assets/js/admin.js:20
 #: blocks/product-table/index.js:20
 #: blocks/tab-product-table/index.js:20
 msgid "Clear"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:253
-#: app/Frontend/TableRenderer.php:994
+#: app/Frontend/TableRenderer.php:306
+#: app/Frontend/TableRenderer.php:1049
 #: assets/js/admin.js:16
+#: assets/js/admin.js:19
 #: blocks/product-table/index.js:16
+#: blocks/product-table/index.js:19
 #: blocks/tab-product-table/index.js:16
+#: blocks/tab-product-table/index.js:19
 msgid "Add to Cart"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:258
+#: app/Frontend/TableRenderer.php:311
 msgid "View selected items"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:259
+#: app/Frontend/TableRenderer.php:312
 msgid "View"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:405
-#: app/Frontend/TableRenderer.php:1894
+#: app/Frontend/TableRenderer.php:458
+#: app/Frontend/TableRenderer.php:1978
 msgid "No products found."
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:424
+#: app/Frontend/TableRenderer.php:477
 msgid "Toggle Fullscreen"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:428
+#: app/Frontend/TableRenderer.php:481
 #: assets/js/admin.js:13
 #: assets/js/admin.js:16
 #: assets/js/admin.js:19
@@ -382,104 +385,130 @@ msgid "Close"
 msgstr ""
 
 #. translators: %d: number of available product options/variations
-#: app/Frontend/TableRenderer.php:628
+#: app/Frontend/TableRenderer.php:681
 #, php-format
 msgid "%d option available"
 msgid_plural "%d options available"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/Frontend/TableRenderer.php:648
+#: app/Frontend/TableRenderer.php:701
 msgid "Out of stock"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:650
+#: app/Frontend/TableRenderer.php:703
 msgid "On backorder"
 msgstr ""
 
 #. translators: %d: stock quantity
-#: app/Frontend/TableRenderer.php:654
+#: app/Frontend/TableRenderer.php:707
 #, php-format
 msgid "%d in stock"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:656
+#: app/Frontend/TableRenderer.php:709
 msgid "In stock"
 msgstr ""
 
 #. translators: %s: average star rating, e.g. "4.5"
-#: app/Frontend/TableRenderer.php:705
-#: app/Frontend/TableRenderer.php:725
+#: app/Frontend/TableRenderer.php:758
+#: app/Frontend/TableRenderer.php:778
 #, php-format
 msgid "Rated %s out of 5"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:731
+#: app/Frontend/TableRenderer.php:784
 msgid "No ratings"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:836
+#: app/Frontend/TableRenderer.php:889
 msgid "Buy product"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:865
-#: app/Frontend/TableRenderer.php:929
+#: app/Frontend/TableRenderer.php:917
+#: app/Frontend/TableRenderer.php:982
 msgid "View Options"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:873
-#: app/Frontend/TableRenderer.php:952
+#: app/Frontend/TableRenderer.php:927
+#: app/Frontend/TableRenderer.php:1007
 msgid "Out of Stock"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:968
+#: app/Frontend/TableRenderer.php:1023
 msgid "Select a product..."
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:970
+#: app/Frontend/TableRenderer.php:1025
 msgid "Select All"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:984
+#: app/Frontend/TableRenderer.php:1039
 msgid "Increase"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:985
+#: app/Frontend/TableRenderer.php:1040
 msgid "Decrease"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1065
+#: app/Frontend/TableRenderer.php:1120
 msgid "Add to cart"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1101
+#: app/Frontend/TableRenderer.php:1156
 msgid "Increase quantity"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1102
+#: app/Frontend/TableRenderer.php:1157
 msgid "Decrease quantity"
 msgstr ""
 
 #. translators: %d: number of selected categories
-#: app/Frontend/TableRenderer.php:1571
+#: app/Frontend/TableRenderer.php:1626
 #, php-format
 msgid "%s selected"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1572
+#: app/Frontend/TableRenderer.php:1627
 msgid "All Categories"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1606
+#: app/Frontend/TableRenderer.php:1661
 msgid "All Types"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1632
+#: app/Frontend/TableRenderer.php:1687
 msgid "Search products..."
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1682
+#: app/Frontend/TableRenderer.php:1737
 msgid "Load More"
+msgstr ""
+
+#: scripts/demo/productbay-demo.php:285
+msgid "Profile editing is disabled on the demo site."
+msgstr ""
+
+#: scripts/demo/productbay-demo.php:286
+msgid "Action Blocked"
+msgstr ""
+
+#: scripts/demo/productbay-demo.php:439
+msgid "License management is disabled on the demo site."
+msgstr ""
+
+#. translators: %s: display name
+#: scripts/demo/productbay-demo.php:495
+#, php-format
+msgid "Howdy, %s"
+msgstr ""
+
+#: scripts/demo/productbay-demo.php:520
+msgid "ProductBay Demo Environment"
+msgstr ""
+
+#: scripts/demo/productbay-demo.php:521
+msgid "This site resets every 4 hours."
 msgstr ""
 
 #: assets/js/admin.js:13
@@ -1600,6 +1629,30 @@ msgstr ""
 #: blocks/product-table/index.js:16
 #: blocks/tab-product-table/index.js:16
 msgid "Show a floating panel displaying all selected items with individual quantities"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Custom \"Add to Cart\" Button Text"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Override the global text for this specific table"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Custom \"Select Options\" Button Text"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Text for \"Select Options\" / \"View Products\" buttons that open popups or nested rows"
 msgstr ""
 
 #: assets/js/admin.js:16

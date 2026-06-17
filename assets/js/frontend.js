@@ -45,6 +45,9 @@
             this.$searchClear = this.$wrapper.find('.productbay-search-clear');
             this.$selectAll = this.$wrapper.find('.productbay-select-all');
             this.$bulkBtn = this.$wrapper.find('.productbay-btn-bulk');
+            if (this.$bulkBtn.length) {
+                this.originalBulkBtnHtml = this.$bulkBtn.html();
+            }
 
             // State
             this.searchTimeout = null;
@@ -53,7 +56,7 @@
             // Map: cartKey → { quantity, variationId, attributes, productId }
             this.cartQuantities = new Map();
             this.loadSelectionsFromStorage();
-            this.loadCartQuantitiesFromStorage(); // New: load previous add-to-cart actions
+            this.syncWithWCCart(); // Sync initial cart state
 
             this.init();
         }
@@ -155,6 +158,8 @@
                     const data = $cartData.data('cart');
                     if (Array.isArray(data)) {
                         this.cartQuantities.clear();
+                        data.forEach(([k, v]) => this.cartQuantities.set(k, v));
+                        this.restoreCartBadges();
                     }
                 } catch (e) {
                     console.error('ProductBay: Failed to sync with WooCommerce cart fragments.', e);
@@ -508,24 +513,7 @@
             } catch (e) { /* silent */ }
         }
 
-        loadCartQuantitiesFromStorage() {
-            try {
-                const key = 'productbay_cart_' + this.$wrapper.data('table-id');
-                const stored = sessionStorage.getItem(key);
-                if (stored) {
-                    const entries = JSON.parse(stored);
-                    entries.forEach(([k, v]) => this.cartQuantities.set(k, v));
-                }
-            } catch (e) { /* silent */ }
-        }
 
-        saveCartQuantitiesToStorage() {
-            try {
-                const key = 'productbay_cart_' + this.$wrapper.data('table-id');
-                const entries = Array.from(this.cartQuantities.entries());
-                sessionStorage.setItem(key, JSON.stringify(entries));
-            } catch (e) { /* silent */ }
-        }
 
         restoreSelections() {
             this.$tbody.find('.productbay-select-product').each((_, el) => {
@@ -570,15 +558,18 @@
                     // Simple product - restore checkmark on button
                     const cartKey = String(productId);
                     const existing = this.cartQuantities.get(cartKey);
-                    if (existing) {
-                        const $btn = $row.find('.productbay-btn-addtocart');
-                        if ($btn.length) {
-                            if (!$btn.data('original-text')) {
-                                $btn.data('original-text', $btn.text());
-                            }
-                            const originalLabel = $btn.data('original-text');
+                    const $btn = $row.find('.productbay-btn-addtocart');
+                    if ($btn.length) {
+                        if (!$btn.data('original-text')) {
+                            $btn.data('original-text', $btn.text());
+                        }
+                        const originalLabel = $btn.data('original-text');
+                        
+                        if (existing) {
                             const checkSvg = '<svg class="productbay-check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="20 6 9 17 4 12"></polyline></svg>';
                             $btn.html((originalLabel || $btn.text()) + ` <span class="productbay-added-badge">(${checkSvg} ${existing.quantity})</span>`);
+                        } else {
+                            $btn.html(originalLabel);
                         }
                     }
                 }
@@ -897,6 +888,11 @@
                 }
 
                 // Update button for the new variation — check if THIS variation was already added
+                if (!$btn.data('original-text')) {
+                    $btn.data('original-text', $btn.text());
+                }
+                const originalLabel = $btn.data('original-text');
+
                 const cartKey = this.buildCartKey($wrap.data('product-id'), match.variation_id, selected);
                 const existing = this.cartQuantities.get(cartKey);
                 if (existing) {
@@ -997,8 +993,7 @@
                                 productId: pId
                             });
                         });
-                        
-                        this.saveCartQuantitiesToStorage(); // <-- Persist
+
 
                         // Update button text with SVG checkmark and quantity
                         const checkSvg = '<svg class="productbay-check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="20 6 9 17 4 12"></polyline></svg>';
@@ -1054,7 +1049,7 @@
                     this.$wrapper.find('.productbay-btn-panel').prop('disabled', false).find('.productbay-panel-count').text(count);
                 }
             } else {
-                this.$bulkBtn.html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="display:inline-block;vertical-align:middle"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Add to Cart').prop('disabled', true);
+                this.$bulkBtn.html(this.originalBulkBtnHtml || '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="display:inline-block;vertical-align:middle"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Add to Cart').prop('disabled', true);
                 this.$wrapper.find('.productbay-btn-clear-all').remove();
                 this.$wrapper.find('.productbay-btn-panel').prop('disabled', true).find('.productbay-panel-count').text(0);
             }
@@ -1184,7 +1179,7 @@
                                 }
                             }
                         });
-                        this.saveCartQuantitiesToStorage(); // <-- Persist after bulk add
+
 
                         setTimeout(() => {
                             this.selectedProducts.clear();

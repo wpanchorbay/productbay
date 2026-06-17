@@ -20,6 +20,13 @@ Control the visibility of the ProductBay quick-access link in the WordPress admi
 
 [Learn more about admin bar](/guide/admin-bar.html)
 
+### Cart Customization <ProBadge />
+
+Control global texts for Add to Cart buttons and "Select Options" buttons.
+
+- **Add to Cart Text**: Define a global custom text (e.g., "Buy Now") that will replace the default WooCommerce "Add to Cart" text across all product tables. This can be individually overridden on a per-table basis.
+- **"Select Options" Button Text**: Define a global custom text (e.g., "Select Options") that will replace the default text for buttons that open popups or nested rows. This can be individually overridden on a per-table basis.
+
 ## Uninstall Options
 
 Determine what happens to your data when the ProductBay plugin is deleted from your WordPress site.

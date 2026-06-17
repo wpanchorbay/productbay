@@ -4,6 +4,14 @@ All notable changes to ProductBay are documented on this page.
 
 Looking for Pro version changes? See the **[Pro Changelog](./pro-changelog.md)**.
 
+## 1.3.2
+
+* **Feature:** Added core support and hooks for customizable Add to Cart button text and "Select Options" button text (available in Pro).
+
+## 1.3.1
+
+* **Compatibility:** Verified and tested with WordPress 7.0.
+
 ## 1.3.0
 
 * **Feature:** Introduced native **Permalink Pages** for product tables via `productbay_table` Custom Post Type.

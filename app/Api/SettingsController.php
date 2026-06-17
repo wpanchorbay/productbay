@@ -88,8 +88,8 @@ class SettingsController extends ApiController
 
 		$old_settings = get_option(self::OPTION_NAME, array());
 		
-		// Merge with defaults to ensure structure.
-		$settings = array_merge($this->defaults(), $settings);
+		// Merge with defaults and old settings to ensure structure and preserve custom keys.
+		$settings = array_merge($this->defaults(), $old_settings, $settings);
 
 		update_option(self::OPTION_NAME, $settings);
 

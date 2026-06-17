@@ -35,6 +35,7 @@ sftp.json
 notes
 instructions/
 .meta-worktree/
+/.meta-worktree/
 
 # WordPress & Local Plugin Dev
 .ignores
@@ -55,3 +56,4 @@ temp.md
 /project/
 /features/
 /temp_logs/
+/graphify-out/

@@ -332,6 +332,7 @@ const Settings = () => {
 				 */}
 				{activeTab === 'plugin' && (
 					<div className="space-y-6">
+						<Slot name="productbay-pro-settings-plugin" />
 						<AdminBarOptions
 							settings={settings}
 							setSettings={updateSettings}

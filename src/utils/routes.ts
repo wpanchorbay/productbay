@@ -73,8 +73,8 @@ export const WC_ADD_PRODUCT_PATH = '/wp-admin/post-new.php?post_type=product';
 export const WC_ADMIN_PRODUCTS_PATH = '/wp-admin/admin.php?page=wc-admin&task=products';
 
 export const PRODUCTBAY_VIDEO_GUIDE_URL = 'https://www.youtube.com/watch?v=VIDEO_ID';
-export const PRODUCTBAY_DOCUMENTATION_URL = 'http://docs.wpanchorbay.com/productbay';
+export const PRODUCTBAY_DOCUMENTATION_URL = 'https://docs.wpanchorbay.com/productbay/';
 export const PRODUCTBAY_PRO_SUPPORT_URL = 'https://wpanchorbay.com/support/';
 export const PRODUCTBAY_SUPPORT_URL = 'https://wordpress.org/support/plugin/productbay/';
-export const PRODUCTBAY_SUPPORT_EMAIL = 'contact@wpanchorbay.com';
+export const PRODUCTBAY_SUPPORT_EMAIL = 'support@wpanchorbay.com';
 export const PRODUCTBAY_LANDING_PAGE_URL = 'https://wpanchorbay.com/plugins/productbay/';

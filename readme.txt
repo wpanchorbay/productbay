@@ -2,9 +2,9 @@
 Contributors: wpanchorbay, forhadkhan, sankarsan, arifac
 Tags: product table for woocommerce, woocommerce product table, woocommerce product list, product table, product list
 Requires at least: 6.8
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,8 +72,6 @@ Control exactly which products appear in each table:
 * **By Sale Status** : Display currently on-sale products
 * **By Specific IDs**: Handpick individual products
 * **All Products**: Pull your entire catalog into the table
-
-**Query Modifiers:** Exclude product IDs, filter by stock status, set a minimum/maximum price range, and choose a default sort order (name, price, date, or popularity).
 
 ---
 
@@ -168,6 +166,7 @@ Get the Pro add-on that will extend ProductBay with advanced capabilities:
 * **Advanced Group Product Layouts**: Enhanced display options for grouped item selection.
 * **Price Range Filter**: Interactive slider and input-based price filtering.
 * **Pro Columns**: Advanced Custom Fields (ACF) integration and Combined Columns using template tags.
+* **Custom "Add to Cart" and "Select Options" Button Text**: Override the default button text globally or per-table.
 * **Lazy Loading**: Improved performance with **infinite scroll** or **Load More** button instead of pagination.
 * **Import / Export**: Backup, migrate, and share table configurations as JSON files.
 * **License Management**: Automated updates and professional support.
@@ -268,7 +267,7 @@ Yes. All user-facing strings use WordPress localization functions and the plugin
 
 = Where can I get support? =
 
-Use the support forum on this plugin's WordPress.org page. We aim to respond within 2 business days. You can also reach us directly at [contact@wpanchorbay.com](mailto:contact@wpanchorbay.com).
+Use the support forum on this plugin's WordPress.org page. We aim to respond within 2 business days. You can also reach us directly at [support@wpanchorbay.com](mailto:support@wpanchorbay.com).
 
 == Screenshots ==
 
@@ -286,9 +285,14 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 
 == Changelog ==
 
+= 1.3.2 =
+
+* Feature: Added core support and hooks for customizable Add to Cart button text and "Select Options" button text (available in Pro).
+* Fix: Resolved added-to-cart checkmarks and quantities persistence issues in bulk-add scenarios by syncing with live WooCommerce cart fragments.
+
 = 1.3.1 =
 
-* Dev: Bumped version to 1.3.1.
+* Compatibility: Verified and tested with WordPress 7.0.
 
 = 1.3.0 =
 

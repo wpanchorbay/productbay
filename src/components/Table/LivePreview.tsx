@@ -42,10 +42,11 @@ interface PreviewResponse {
  * - Auto-resize: posts the document height so the parent can resize the iframe.
  * - Link intercept: prevents navigation when clicking product links in the preview.
  */
-const IFRAME_SCRIPT = `
+const getIframeScript = (addToCartText: string) => `
 <script>
 (function() {
     var selectedProducts = {};
+    var addToCartText = ${JSON.stringify(addToCartText)};
 
     /**
      * Recalculate selected count/total and update the bulk button text.
@@ -63,7 +64,7 @@ const IFRAME_SCRIPT = `
             btn.textContent = 'Add ' + count + ' item' + (count > 1 ? 's' : '') + ' for $' + total.toFixed(2);
             btn.disabled = false;
         } else {
-            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="display:inline-block;vertical-align:middle"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Add to Cart';
+            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="display:inline-block;vertical-align:middle"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> ' + addToCartText;
             btn.disabled = true;
         }
     }
@@ -173,8 +174,9 @@ const IFRAME_SCRIPT = `
  *
  * @param html  - The rendered HTML from TableRenderer.php
  * @param cssUrls - Array of URLs to frontend stylesheets
+ * @param addToCartText - The localized/customized Add to Cart text
  */
-const buildSrcdoc = (html: string, cssUrls: string[]): string => `
+const buildSrcdoc = (html: string, cssUrls: string[], addToCartText: string): string => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -198,7 +200,7 @@ const buildSrcdoc = (html: string, cssUrls: string[]): string => `
 </head>
 <body>
     ${html}
-    ${IFRAME_SCRIPT}
+    ${getIframeScript(addToCartText)}
 </body>
 </html>
 `;
@@ -227,6 +229,11 @@ const DEVICE_WIDTHS = {
  */
 const LivePreview = ({ className }: LivePreviewProps) => {
 	const { tableId, tableTitle, tableStatus, source, columns, settings, style } = useTableStore();
+
+	const globalSettings = (window as any).productBaySettings || {};
+	const globalAddToCartText = globalSettings.add_to_cart_text || __('Add to Cart', 'productbay');
+	const tableAddToCartText = settings.cart?.addToCartText;
+	const activeAddToCartText = tableAddToCartText || globalAddToCartText;
 
 	const { toast } = useToast();
 
@@ -333,8 +340,8 @@ const LivePreview = ({ className }: LivePreviewProps) => {
 	// Build the srcdoc string for the iframe (memoized to avoid re-renders)
 	const srcdoc = useMemo(() => {
 		if (!html || cssUrls.length === 0) return '';
-		return buildSrcdoc(html, cssUrls);
-	}, [html, cssUrls]);
+		return buildSrcdoc(html, cssUrls, activeAddToCartText);
+	}, [html, cssUrls, activeAddToCartText]);
 
 	// Handle Scaling for the inline (non-fullscreen) preview
 	useEffect(() => {

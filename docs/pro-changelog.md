@@ -4,6 +4,10 @@ All notable changes to ProductBay Pro are documented on this page.
 
 Looking for core changes? See the [Core Changelog](./changelog.md).
 
+## 1.0.1
+
+* **Feature:** Added custom Add to Cart button text and "Select Options" button text customization per-table and globally.
+
 ## 1.0.0
 
 * Initial release of ProductBay Pro.
