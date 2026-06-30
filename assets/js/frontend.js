@@ -123,6 +123,13 @@
             // Sync with actual WooCommerce Cart on AJAX refreshes
             $(document.body).on('wc_fragments_refreshed wc_fragments_loaded', this.syncWithWCCart.bind(this));
 
+            // Live-sync the "added" badges when the cart changes OUTSIDE the table.
+            // Classic themes fire these jQuery events on add/remove; block themes
+            // (mini-cart / cart block) dispatch `wc-blocks_store_sync_required` on the
+            // window whenever the Store API cart mutates.
+            $(document.body).on('added_to_cart removed_from_cart', this.handleExternalCartChange.bind(this));
+            window.addEventListener('wc-blocks_store_sync_required', this.handleExternalCartChange.bind(this));
+
             // Selected Items Popup
             this.$wrapper.on('click', '.productbay-btn-panel', this.toggleSelectedItemsPopup.bind(this));
             this.$wrapper.on('click', '.productbay-popup-close', this.closeSelectedItemsPopup.bind(this));
@@ -216,6 +223,37 @@
             // intentionally omitted so core add-to-cart.js does not inject its own
             // "View cart" link next to our table button.
             $(document.body).trigger('added_to_cart', [fragments || {}, cartHash]);
+        }
+
+        /**
+         * Debounced reaction to cart changes that happen OUTSIDE the table — e.g. the
+         * customer removes or reduces an item in the mini-cart, the Cart block, or the
+         * classic cart widget. Coalesces bursts of events into a single refresh.
+         */
+        handleExternalCartChange() {
+            clearTimeout(this._cartSyncTimer);
+            this._cartSyncTimer = setTimeout(() => this.syncCartFromServer(), 300);
+        }
+
+        /**
+         * Fetch the authoritative cart quantity map from the server and re-render the
+         * in-table badges. Read-only — it never mutates the cart, so it cannot loop.
+         */
+        syncCartFromServer() {
+            $.ajax({
+                url: productbay_frontend.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'productbay_get_cart_data',
+                    nonce: productbay_frontend.nonce
+                },
+                success: (response) => {
+                    if (response && response.success && response.data) {
+                        this.syncCartQuantities(response.data.cart_data);
+                        this.restoreCartBadges();
+                    }
+                }
+            });
         }
 
         /**

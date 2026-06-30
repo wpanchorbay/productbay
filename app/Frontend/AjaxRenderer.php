@@ -73,6 +73,33 @@ class AjaxRenderer
 
 		\add_action('wp_ajax_productbay_bulk_add_to_cart', array($this, 'handle_bulk_add_to_cart'));
 		\add_action('wp_ajax_nopriv_productbay_bulk_add_to_cart', array($this, 'handle_bulk_add_to_cart'));
+
+		\add_action('wp_ajax_productbay_get_cart_data', array($this, 'handle_get_cart_data'));
+		\add_action('wp_ajax_nopriv_productbay_get_cart_data', array($this, 'handle_get_cart_data'));
+	}
+
+	/**
+	 * Return the current ProductBay cart quantity map.
+	 *
+	 * Used by the frontend to re-sync the in-table "added" badges when the cart
+	 * changes outside of the table (e.g. the customer removes or reduces an item
+	 * in the mini-cart, cart block, or classic cart widget).
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return void Sends JSON response and exits.
+	 */
+	public function handle_get_cart_data()
+	{
+		if (!check_ajax_referer('productbay_frontend', 'nonce', false)) {
+			\wp_send_json_error(array('message' => 'Invalid nonce'));
+		}
+
+		if (!function_exists('WC') || !WC()->cart) {
+			\wp_send_json_error(array('message' => 'Cart unavailable'));
+		}
+
+		\wp_send_json_success(array('cart_data' => TableRenderer::get_cart_data()));
 	}
 
 	/**
