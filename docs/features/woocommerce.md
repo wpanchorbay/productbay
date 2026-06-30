@@ -14,9 +14,13 @@ ProductBay is built as a WooCommerce extension, providing deep integration with 
 ## Add to Cart
 
 ### AJAX Add to Cart
-When enabled, products are added to the cart **without a page reload**. A success message appears inline, confirming the item was added.
+When enabled, products are added to the cart **without a page reload**. An inline confirmation (a checkmark with the quantity in cart) appears on the button, and your theme's **cart icon / mini-cart updates instantly** — no refresh required.
 
-This provides a seamless shopping experience, especially for tables with many products.
+This works on both classic themes (via WooCommerce cart fragments) and block themes (via the Mini-Cart block), and provides a seamless shopping experience, especially for tables with many products.
+
+::: tip Live cart sync <Badge type="tip" text="Since v1.3.3" />
+The button's "added" indicator stays in sync with the live cart. If a customer **removes or reduces** an item elsewhere — the mini-cart, the Cart block, or the classic cart widget — the matching table button updates automatically.
+:::
 
 ### Quantity Selector
 Enable per-row quantity inputs so customers can specify how many units to add. The input respects WooCommerce's min/max and step settings for each product.

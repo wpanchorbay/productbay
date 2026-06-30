@@ -4,6 +4,11 @@ All notable changes to ProductBay are documented on this page.
 
 Looking for Pro version changes? See the **[Pro Changelog](./pro-changelog.md)**.
 
+## 1.3.3
+
+* **Fix:** The cart icon (header count / mini-cart) and the add-to-cart button confirmation now update instantly when adding to cart, without a page refresh, on both classic themes (cart fragments) and block themes (the Mini-Cart block).
+* **Improvement:** The in-table "added" badge now stays in sync when items are removed or reduced from the cart outside the table (mini-cart, Cart block, or classic cart widget).
+
 ## 1.3.2
 
 * **Feature:** Added core support and hooks for customizable Add to Cart button text and "Select Options" button text (available in Pro).
