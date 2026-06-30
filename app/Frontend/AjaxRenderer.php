@@ -311,6 +311,20 @@ class AjaxRenderer
 			if (!empty($errors)) {
 				$response['warnings'] = $errors;
 			}
+
+			// Mirror WooCommerce core's AJAX add-to-cart payload so the frontend can
+			// refresh the cart UI (header count / mini-cart) without a page reload.
+			// Computing the fragments here — in the same request that added the item —
+			// guarantees they reflect the just-updated cart, on both classic (cart
+			// fragments) and block (Mini-Cart block) themes.
+			if (function_exists('WC') && WC()->cart) {
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Standard WooCommerce hook.
+				$response['fragments'] = \apply_filters('woocommerce_add_to_cart_fragments', array());
+				$response['cart_hash'] = WC()->cart->get_cart_hash();
+				// Authoritative ProductBay quantity map used to re-render in-table badges.
+				$response['cart_data']  = TableRenderer::get_cart_data();
+			}
+
 			\wp_send_json_success($response);
 		}
 		else {

@@ -195,7 +195,11 @@ class Shortcode
 		\wp_enqueue_script(
 			'productbay-frontend',
 			PRODUCTBAY_URL . 'assets/js/frontend.js',
-			array('jquery'),
+			// 'wc-cart-fragments' powers the live cart refresh (header/mini-cart) when
+			// we trigger 'wc_fragment_refresh' after an AJAX add-to-cart. WooCommerce
+			// registers it but only enqueues it via the Cart widget, so depend on it
+			// here to guarantee it loads on any theme.
+			array('jquery', 'wc-cart-fragments'),
 			(string)time(),
 			true
 		);
