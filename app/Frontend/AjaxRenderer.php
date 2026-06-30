@@ -85,7 +85,7 @@ class AjaxRenderer
 	 * changes outside of the table (e.g. the customer removes or reduces an item
 	 * in the mini-cart, cart block, or classic cart widget).
 	 *
-	 * @since 1.2.0
+	 * @since 1.3.3
 	 *
 	 * @return void Sends JSON response and exits.
 	 */
