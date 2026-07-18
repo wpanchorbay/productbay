@@ -12,8 +12,8 @@
  * Plugin URI:        https://wpanchorbay.com/products/productbay
  * Source URI:        https://github.com/wpanchorbay/productbay
  * Description:       WooCommerce product tables with search, filters, and pagination for high-converting, responsive product listings and easy browsing.
- * Version:           1.3.3
- * Stable tag:        1.3.3
+ * Version:           1.3.4
+ * Stable tag:        1.3.4
  * Requires at least: 6.8
  * Tested up to:      7.0
  * Requires PHP:      7.4
@@ -42,7 +42,7 @@ if (!defined('ABSPATH')) {
  * Global Constants
  * Prefixed with PRODUCTBAY_
  */
-define('PRODUCTBAY_VERSION', '1.3.3');
+define('PRODUCTBAY_VERSION', '1.3.4');
 define('PRODUCTBAY_PLUGIN_NAME', 'productbay');
 define('PRODUCTBAY_TEXT_DOMAIN', 'productbay');
 define('PRODUCTBAY_OPTION_NAME', 'productbay');

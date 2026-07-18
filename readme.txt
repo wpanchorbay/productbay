@@ -4,7 +4,7 @@ Tags: product table for woocommerce, woocommerce product table, woocommerce prod
 Requires at least: 6.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -284,6 +284,12 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 
 
 == Changelog ==
+
+= 1.3.4 =
+
+* Feature: Product tables are now mobile-responsive. On phones each row can reflow into a labeled card (default), a tap-to-expand accordion, or keep the classic horizontal-scroll table — chosen per table under Display → Mobile Layout.
+* Improvement: Stacked cards are the new default and apply to existing tables automatically, so no table is left with cramped or cut-off columns on small screens.
+* Improvement: Wide tables now get a sensible minimum width plus an edge scroll hint, so many-column tables scroll comfortably instead of squishing.
 
 = 1.3.3 =
 
