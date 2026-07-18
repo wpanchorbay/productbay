@@ -57,6 +57,7 @@ export interface DisplayPanelProps {
 	setLayoutStyle: (layout: Partial<TableStyle['layout']>) => void;
 	setTypographyStyle: (typography: Partial<TableStyle['typography']>) => void;
 	setHoverStyle: (hover: Partial<TableStyle['hover']>) => void;
+	setResponsiveStyle: (responsive: Partial<TableStyle['responsive']>) => void;
 
 	className?: string;
 }
@@ -69,6 +70,7 @@ export const DisplayPanel = ({
 	setLayoutStyle,
 	setTypographyStyle,
 	setHoverStyle,
+	setResponsiveStyle,
 
 	className,
 }: DisplayPanelProps) => {
@@ -417,6 +419,59 @@ export const DisplayPanel = ({
 								{
 									label: __('Normal', 'productbay'),
 									value: 'normal-case',
+								},
+							]}
+						/>
+					</div>
+				</SettingsOption>
+			</section>
+
+			{/* ================================================================
+			 * Section 4: Mobile Layout (Responsive)
+			 * ================================================================ */}
+			<section className="space-y-6">
+				<SectionHeading
+					title={__('Mobile Layout', 'productbay')}
+					description={__(
+						'How the table adapts on phones and narrow screens',
+						'productbay'
+					)}
+				/>
+
+				{/* Responsive Mode */}
+				<SettingsOption
+					title={__('Layout on phones', 'productbay')}
+					description={__(
+						'Stacked cards turn each row into a labeled card, accordion collapses rows behind a tap-to-expand summary, and horizontal scroll keeps the full table.',
+						'productbay'
+					)}
+				>
+					<div className="w-44">
+						<Select
+							size="sm"
+							value={
+								style.responsive?.mode === 'accordion' ||
+								style.responsive?.mode === 'scroll'
+									? style.responsive.mode
+									: 'stack'
+							}
+							onChange={(val) =>
+								setResponsiveStyle({
+									mode: val as TableStyle['responsive']['mode'],
+								})
+							}
+							options={[
+								{
+									label: __('Stacked cards', 'productbay'),
+									value: 'stack',
+								},
+								{
+									label: __('Accordion', 'productbay'),
+									value: 'accordion',
+								},
+								{
+									label: __('Horizontal scroll', 'productbay'),
+									value: 'scroll',
 								},
 							]}
 						/>

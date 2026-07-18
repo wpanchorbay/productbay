@@ -260,7 +260,7 @@ class SettingsController extends ApiController
 						'rowHoverBgColor' => '#f5f5f5',
 					),
 					'responsive' => array(
-						'mode' => 'standard',
+						'mode' => 'stack',
 					),
 				),
 				'settings' => array(
