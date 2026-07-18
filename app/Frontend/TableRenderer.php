@@ -119,6 +119,16 @@ class TableRenderer
 		$settings = $table['settings'] ?? array();
 		$style = $table['style'] ?? array();
 
+		// Resolve the responsive (mobile) layout mode. A blank or legacy
+		// 'standard' value is normalized to 'stack' so existing tables become
+		// mobile-friendly automatically without a data migration. Only an
+		// explicit 'scroll' keeps the horizontal-scroll table on phones;
+		// 'accordion' collapses each row behind a summary line.
+		$responsive_mode = $style['responsive']['mode'] ?? 'stack';
+		if (!in_array($responsive_mode, array('stack', 'accordion', 'scroll'), true)) {
+			$responsive_mode = 'stack';
+		}
+
 		/**
 		 * Filters the columns array before rendering.
 		 *
@@ -235,7 +245,7 @@ class TableRenderer
 			)
 		);
 
-		echo '<div class="productbay-wrapper" id="' . esc_attr($unique_id) . '" data-table-id="' . esc_attr((string) $table_id) . '" data-select-position="' . esc_attr($bulk_position) . '" data-features="' . esc_attr($features_config) . '">';
+		echo '<div class="productbay-wrapper" id="' . esc_attr($unique_id) . '" data-table-id="' . esc_attr((string) $table_id) . '" data-select-position="' . esc_attr($bulk_position) . '" data-responsive="' . esc_attr($responsive_mode) . '" data-features="' . esc_attr($features_config) . '">';
 
 		// Seed initial WooCommerce cart data for variations tracking
 		$cart_data = self::get_cart_data();
@@ -413,11 +423,7 @@ class TableRenderer
 						continue;
 					}
 
-					$td_classes = $this->get_column_classes($col);
-
-					echo '<td class="' . esc_attr(implode(' ', $td_classes)) . '">';
-					$this->render_cell($col, $product);
-					echo '</td>';
+					$this->render_body_cell($col, $product);
 				}
 
 				// Bulk Select - Last Position.
@@ -1486,6 +1492,25 @@ class TableRenderer
 			}
 		}
 
+		// Minimum table width for comfortable horizontal scrolling. With an
+		// arbitrary number of columns a full-width table squishes cells on
+		// narrow viewports; a per-column floor forces the .productbay-table-container
+		// (overflow-x:auto) to scroll instead. The stacked & accordion mobile
+		// layouts reset this to 0 in frontend.css.
+		$visible_columns = 0;
+		foreach ($columns as $col) {
+			if (!$this->should_hide_column($col)) {
+				++$visible_columns;
+			}
+		}
+		if (!empty($settings['features']['bulkSelect']['enabled'])) {
+			++$visible_columns;
+		}
+		if ($visible_columns > 0) {
+			$min_width = $visible_columns * 140;
+			$css .= "{$selector} .productbay-table { min-width: {$min_width}px; }";
+		}
+
 		// Bulk Select Width.
 		$bulk_select = $settings['features']['bulkSelect'] ?? array(
 			'enabled' => true,
@@ -1575,6 +1600,33 @@ class TableRenderer
 	private function get_column_styles($col)
 	{
 		return '';
+	}
+
+	/**
+	 * Render a single product body cell (<td>).
+	 *
+	 * Shared by both the initial render() loop and the AJAX row-refresh loop so
+	 * the markup stays identical across a full render and an AJAX tbody swap.
+	 * The data-label attribute carries the column heading (even when the header
+	 * is hidden) and is used by the mobile stacked/accordion layouts in
+	 * frontend.css to label each value via `::before { content: attr(data-label) }`.
+	 *
+	 * @param array       $col     Column configuration.
+	 * @param \WC_Product $product The current product.
+	 * @return void
+	 * @since 1.3.4
+	 */
+	private function render_body_cell($col, $product)
+	{
+		$td_classes = $this->get_column_classes($col);
+
+		// Image columns never show a stacked label (the thumbnail is
+		// self-explanatory); an empty label keeps the ::before from rendering.
+		$label = ('image' === ($col['type'] ?? '')) ? '' : (isset($col['heading']) ? (string) $col['heading'] : '');
+
+		echo '<td class="' . esc_attr(implode(' ', $td_classes)) . '" data-label="' . esc_attr($label) . '">';
+		$this->render_cell($col, $product);
+		echo '</td>';
 	}
 
 
@@ -1934,10 +1986,7 @@ class TableRenderer
 					if ($this->should_hide_column($col)) {
 						continue;
 					}
-					$td_classes = $this->get_column_classes($col);
-					echo '<td class="' . esc_attr(implode(' ', $td_classes)) . '">';
-					$this->render_cell($col, $product);
-					echo '</td>';
+					$this->render_body_cell($col, $product);
 				}
 
 				// Bulk Select - Last.
