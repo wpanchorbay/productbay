@@ -4,6 +4,12 @@ All notable changes to ProductBay are documented on this page.
 
 Looking for Pro version changes? See the **[Pro Changelog](./pro-changelog.md)**.
 
+## 1.3.4
+
+* **Feature:** Product tables are now mobile-responsive. On phones each row can reflow into a labeled **stacked card** (default), a tap-to-expand **accordion**, or keep the classic **horizontal-scroll** table — selectable per table under **Display → Mobile Layout**.
+* **Improvement:** Stacked cards are the new default and apply to existing tables automatically — no table is left with cramped or cut-off columns on small screens.
+* **Improvement:** Wide, many-column tables now get an automatic minimum width and an edge scroll hint so they scroll comfortably instead of squishing.
+
 ## 1.3.3
 
 * **Fix:** The cart icon (header count / mini-cart) and the add-to-cart button confirmation now update instantly when adding to cart, without a page refresh, on both classic themes (cart fragments) and block themes (the Mini-Cart block).
