@@ -985,10 +985,13 @@
      accordion → collapsed cards, tap the summary row to expand
      scroll    → keep the table and scroll horizontally (no rules needed)
    The per-column show/hide utility classes (section 17) still apply inside
-   cards. !important is used only for width/min-width, which must beat the
-   per-table scoped `#id .productbay-table{min-width}` / `.productbay-col-x
-   {width}` rules; it is deliberately NOT used on `display`, so a
-   "hide on mobile" column stays hidden inside a card.
+   cards. !important is used only where a rule must beat a per-table scoped
+   `#id …` style: width/min-width (vs `#id .productbay-table{min-width}` /
+   `.productbay-col-x{width}`) and the container border/border-radius reset
+   below (vs `#id .productbay-table-container{border}` from generate_styles) —
+   each card supplies its own border, so the outer frame would be redundant.
+   It is deliberately NOT used on `display`, so a "hide on mobile" column
+   stays hidden inside a card.
    ======================================================================== */
 
 @media (max-width: 767px) {
@@ -997,10 +1000,10 @@
     .productbay-wrapper[data-responsive="stack"] .productbay-table-container,
     .productbay-wrapper[data-responsive="accordion"] .productbay-table-container {
         overflow-x: visible;
-        border: 0;
+        border: 0 !important;
         box-shadow: none;
         background: transparent;
-        border-radius: 0;
+        border-radius: 0 !important;
     }
 
     .productbay-wrapper[data-responsive="stack"] .productbay-table,
