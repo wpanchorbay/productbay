@@ -1031,7 +1031,7 @@
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody tr,
     .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody tr {
         margin: 0 0 12px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #cbd5e1;
         border-radius: 8px;
         background: #fff;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
@@ -1118,6 +1118,59 @@
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select::before,
     .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td.productbay-col-select::before {
         content: none;
+    }
+
+    /* ---- Stack: name + checkbox as a top header band ----
+       The card becomes a flex column so the product-name cell can be lifted
+       (order:-1) to a header row above the image and the labeled value rows,
+       with the bulk-select checkbox pinned to the card's top-right corner.
+       Reserved right padding on the title keeps a long name from colliding
+       with the checkbox. Stack-only: accordion keeps its own summary line and
+       chevron (a pinned checkbox would clash with it), and Pro variation rows
+       (which also carry .productbay-product-title) are left untouched there. */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody tr {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    /* Name cell → card title, lifted to the top, left-aligned, no label */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(.productbay-product-title) {
+        order: -1;
+        display: block;
+        text-align: left;
+        padding-right: 48px;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(.productbay-product-title)::before {
+        content: none !important;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(.productbay-product-title) .productbay-product-title {
+        display: block;
+        font-size: 15px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+
+    /* Grouped/variable sub-heading (e.g. "3 options available") stacks under
+       the name as muted secondary text instead of running inline with it. */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-product-subtitle {
+        display: block;
+        margin-top: 2px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #64748b;
+    }
+
+    /* Checkbox pinned to the card's top-right, aligned with the title row.
+       width:auto beats the per-table scoped `#id .productbay-col-select{width}`. */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: auto !important;
+        padding: 12px 14px;
+        border-bottom: 0;
+        z-index: 1;
     }
 
     /* Let the value side shrink to the card width so long content (buttons,
