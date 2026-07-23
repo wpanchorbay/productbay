@@ -66,7 +66,7 @@ app/
 
 ### Data Storage
 - **Tables** are stored as a custom post type (`productbay_table`)
-- **Table configurations** are stored in post meta (`_productbay_config`)
+- **Table configurations** are stored across four post meta keys (`_productbay_source`, `_productbay_columns`, `_productbay_settings`, `_productbay_style`); the legacy single key `_productbay_config` is retired and blanked on every save
 - **Plugin settings** are stored in `wp_options` (`productbay_settings`)
 
 ## Frontend (React/TypeScript)

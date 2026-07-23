@@ -32,7 +32,7 @@ When "Delete data on uninstall" is enabled, deleting the plugin will **permanent
 When the plugin is uninstalled with data deletion enabled, the following is removed:
 
 - **All ProductBay table posts** (custom post type: `productbay_table`)
-- **Table configuration metadata** (`_productbay_config` post meta)
+- **Table configuration metadata** (the `_productbay_source`, `_productbay_columns`, `_productbay_settings`, and `_productbay_style` post meta keys, plus the retired legacy `_productbay_config` key)
 - **Plugin settings** (`productbay_settings` option)
 - **Onboarding state** (`productbay_onboarding_completed` option)
 

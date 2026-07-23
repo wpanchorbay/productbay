@@ -9,7 +9,7 @@ Welcome, AI Agent! This document is a technical quick-start guide to help you na
 ProductBay is a high-performance WooCommerce product table plugin. It is built as a hybrid application:
 - **Backend (PHP 7.4+)**: Integrates with WordPress core, registers Custom Post Types, and provides a REST API namespace (`productbay/v1`).
 - **Frontend (React 18 + TypeScript)**: Powered by a Single Page Application (SPA) in the WordPress admin dashboard. Styled with **Tailwind CSS v4** scoped to `#productbay-root`, and state-managed by **Zustand**.
-- **Data Persistence**: Tables are stored as a Custom Post Type (`productbay_table`), with configurations serialized under the post meta key `_productbay_config`. Settings are stored as a global option (`productbay_settings`).
+- **Data Persistence**: Tables are stored as a Custom Post Type (`productbay_table`), with configuration split across four post meta keys — `_productbay_source`, `_productbay_columns`, `_productbay_settings`, and `_productbay_style` (the legacy single key `_productbay_config` is retired and blanked on every save). Settings are stored as a global option (`productbay_settings`).
 - **Extensibility**: Hook-based structure allowing independent add-ons (such as **ProductBay Pro**) to inject features via actions/filters and SlotFills in React without modifying the free core.
 
 ---
@@ -94,8 +94,8 @@ bun run i18n:make-json
 ### 1. Repository Pattern (PHP Backend)
 Do not write raw SQL queries or direct `$wpdb` calls for table operations. Always use [TableRepository.php](file:///var/www/html/wp-content/plugins/productbay/app/Data/TableRepository.php):
 ```php
-$repository = new \ProductBay\Data\TableRepository();
-$table = $repository->find($table_id);
+$repository = new \WpabProductBay\Data\TableRepository();
+$table = $repository->get_table($table_id);
 ```
 
 ### 2. Extensibility Layer & Hooks
@@ -104,7 +104,7 @@ The backend is highly extensible. If implementing a feature that might be overri
 - `productbay_cell_output`: Customize how table cell data is rendered.
 - `productbay_table_columns`: Alter table columns before frontend generation.
 
-Refer to [.meta-worktree/notes/PRO_ARCHITECTURE.md](file:///var/www/html/wp-content/plugins/productbay/.meta-worktree/notes/PRO_ARCHITECTURE.md) for a complete list of 30+ extension hooks.
+Refer to [docs/developer/hooks.md](file:///var/www/html/wp-content/plugins/productbay/docs/developer/hooks.md) for a complete list of the ~37 extension hooks.
 
 ### 3. Global UI Component Sharing (SlotFill & Proxy)
 To keep the bundle sizes small, the free plugin shares its React component library globally via the `window` object:
