@@ -1272,6 +1272,81 @@
         max-width: 100%;
     }
 
+    /* ---- Action controls fill the card ----
+       The add-to-cart controls are laid out for a desktop table cell:
+       right-aligned against the cell's right edge and capped (selects at
+       200px / 180px) so they never dominate a narrow column. Inside a card
+       the cell IS the card, so those caps leave a dead gutter down the left
+       and strand each control on its own row. Below, each product type is
+       re-flowed to the card width.
+
+       Note the DOM differs per type, which is what decides the pairing:
+       - variable: the selects live in .productbay-variation-selects, a
+         SIBLING ABOVE .productbay-btn-cell, so they cannot share a row with
+         the quantity input without restructuring the markup. There can also
+         be several of them (one per attribute). They go full width instead,
+         and quantity pairs with the button it modifies.
+       - grouped: select, price, quantity and button are ALL siblings in
+         .productbay-grouped-inline-wrap, and there is exactly one select --
+         so there the select and quantity do share a row. */
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-variable-wrap {
+        max-width: none;
+        width: 100%;
+        align-items: stretch;
+        margin-left: 0;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-variation-selects {
+        align-items: stretch;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-variation-select {
+        max-width: none;
+    }
+
+    /* Quantity + Add to Cart share one row (simple and variable products). */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-btn-cell {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        /* Stretch so the button matches the stepper's height on the row. */
+        align-items: stretch;
+        width: 100%;
+    }
+
+    /* Beats the `td .productbay-button { width: 100% }` tap-target rule above
+       via the extra class, so the button flexes beside the stepper. */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-btn-cell .productbay-button {
+        flex: 1 1 auto;
+        width: auto;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-wrap {
+        flex: 0 0 auto;
+        height: 40px;
+    }
+
+    /* ---- Grouped: [ select ][ qty ] then a full-width button ---- */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-grouped-inline-wrap {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        /* Back to center: this wrap has a price span on the row that should
+           not be stretched to the stepper's height. */
+        align-items: center;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-grouped-child-select {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: none;
+        width: auto;
+    }
+
+    /* flex-basis:100% pushes the button onto its own row below the pair. */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-grouped-inline-wrap .productbay-grouped-add-btn {
+        flex: 1 0 100%;
+    }
+
     /* Empty state stays a normal centered block */
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-empty {
         display: block;
