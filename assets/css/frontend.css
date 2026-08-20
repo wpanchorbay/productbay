@@ -977,18 +977,17 @@
 }
 
 /* ========================================================================
-   18. RESPONSIVE LAYOUTS (STACK / ACCORDION)
-   On phones (≤767px) a table can reflow so an arbitrary number of columns
+   18. RESPONSIVE LAYOUTS (STACKED CARDS)
+   On phones (<=767px) a table can reflow so an arbitrary number of columns
    never overflows. The mode is set on .productbay-wrapper[data-responsive]
    by the renderer:
-     stack     → each row becomes a labeled card (default)
-     accordion → collapsed cards, tap the summary row to expand
-     scroll    → keep the table and scroll horizontally (no rules needed)
+     stack  -> each row becomes a labeled card (default)
+     scroll -> keep the table and scroll horizontally (no rules needed)
    The per-column show/hide utility classes (section 17) still apply inside
    cards. !important is used only where a rule must beat a per-table scoped
-   `#id …` style: width/min-width (vs `#id .productbay-table{min-width}` /
+   `#id ...` style: width/min-width (vs `#id .productbay-table{min-width}` /
    `.productbay-col-x{width}`) and the container border/border-radius reset
-   below (vs `#id .productbay-table-container{border}` from generate_styles) —
+   below (vs `#id .productbay-table-container{border}` from generate_styles) --
    each card supplies its own border, so the outer frame would be redundant.
    It is deliberately NOT used on `display`, so a "hide on mobile" column
    stays hidden inside a card.
@@ -996,9 +995,8 @@
 
 @media (max-width: 767px) {
 
-    /* ---- Shared card layout (stack + accordion) ---- */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table-container,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table-container {
+    /* ---- Card layout ---- */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table-container {
         overflow-x: visible;
         border: 0 !important;
         box-shadow: none;
@@ -1006,30 +1004,24 @@
         border-radius: 0 !important;
     }
 
-    .productbay-wrapper[data-responsive="stack"] .productbay-table,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table {
         min-width: 0 !important;
         width: 100% !important;
     }
 
-    .productbay-wrapper[data-responsive="stack"] .productbay-table thead,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table thead {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table thead {
         display: none;
     }
 
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody,
     .productbay-wrapper[data-responsive="stack"] .productbay-table tr,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tr,
-    .productbay-wrapper[data-responsive="stack"] .productbay-table td,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table td {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table td {
         display: block;
         width: 100% !important;
     }
 
     /* Card container */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody tr,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody tr {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody tr {
         margin: 0 0 12px;
         border: 1px solid #cbd5e1;
         border-radius: 8px;
@@ -1039,8 +1031,7 @@
     }
 
     /* Label / value row */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -1051,17 +1042,15 @@
         padding: 10px 14px;
     }
 
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody tr td:last-child,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody tr td:last-child {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody tr td:last-child {
         border-bottom: 0;
     }
 
     /* Row label from the column heading (data-label). Only cells carrying a
        NON-EMPTY data-label get a label column; label-less cells (bulk-select,
-       image columns, and Pro variation / nested rows) just fill the width —
+       image columns, and Pro variation / nested rows) just fill the width --
        this prevents a blank 40% spacer on any cell without a heading. */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td[data-label]:not([data-label=""])::before,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td[data-label]:not([data-label=""])::before {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td[data-label]:not([data-label=""])::before {
         content: attr(data-label);
         flex: 0 0 40%;
         text-align: left;
@@ -1073,39 +1062,33 @@
     }
 
     /* Cells with an explicitly empty label center their single value */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td[data-label=""],
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td[data-label=""] {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td[data-label=""] {
         justify-content: center;
         text-align: center;
     }
 
     /* Image cell: center the thumbnail, never show a label (covers image
        columns and any custom-field cell that renders an <img>). */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(img),
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td:has(img) {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(img) {
         justify-content: center;
         text-align: center;
     }
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(img)::before,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td:has(img)::before {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(img)::before {
         content: none !important;
     }
 
     /* Pro nested-variation container: a full-width structural row, not a card. */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody tr.productbay-pro-nested-row-container,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody tr.productbay-pro-nested-row-container {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody tr.productbay-pro-nested-row-container {
         margin: 0;
         border: 0;
         border-radius: 0;
         box-shadow: none;
     }
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-pro-nested-row-content,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td.productbay-pro-nested-row-content {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-pro-nested-row-content {
         display: block;
         padding: 0;
     }
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-pro-nested-row-content::before,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td.productbay-pro-nested-row-content::before {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-pro-nested-row-content::before {
         content: none !important;
     }
 
@@ -1176,17 +1159,14 @@
     /* Let the value side shrink to the card width so long content (buttons,
        titles) wraps instead of overflowing. Flex items default to
        min-width:auto, which would otherwise force horizontal overflow. */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td > *,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td > * {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td > * {
         min-width: 0;
         max-width: 100%;
     }
 
     /* Make interactive controls comfortable to tap */
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-button,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td .productbay-button,
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td select,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td select {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td select {
         width: 100%;
         justify-content: center;
         white-space: normal;
@@ -1202,61 +1182,12 @@
     }
 
     /* Empty state stays a normal centered block */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-empty,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td.productbay-empty {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-empty {
         display: block;
         text-align: center;
     }
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-empty::before,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td.productbay-empty::before {
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-empty::before {
         content: none;
-    }
-
-    /* ---- Accordion: collapse all but a summary line ---- */
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody tr {
-        position: relative;
-        cursor: pointer;
-    }
-
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td {
-        display: none;
-    }
-
-    /* Summary line = the bulk-select cell (wherever it sits) + the first data
-       cell + the product-title cell, so a collapsed row is identifiable by name.
-       Robust to bulk-select being first, last, or disabled. */
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td.productbay-col-select,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td:first-child:not(.productbay-col-select),
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td.productbay-col-select + td,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td:has(.productbay-product-title) {
-        display: flex;
-    }
-
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td:first-child {
-        padding-right: 40px;
-    }
-
-    /* Chevron affordance */
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody tr::after {
-        content: "";
-        position: absolute;
-        top: 18px;
-        right: 16px;
-        width: 8px;
-        height: 8px;
-        border-right: 2px solid #94a3b8;
-        border-bottom: 2px solid #94a3b8;
-        transform: rotate(45deg);
-        transition: transform 0.2s ease;
-        pointer-events: none;
-    }
-
-    /* Expanded: reveal every cell and flip the chevron */
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody tr.productbay-row-open td {
-        display: flex;
-    }
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody tr.productbay-row-open::after {
-        transform: rotate(-135deg);
     }
 }
 

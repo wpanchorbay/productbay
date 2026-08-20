@@ -120,9 +120,6 @@
             // Pagination (delegated, since pagination HTML gets replaced)
             this.$wrapper.on('click', '.productbay-pagination a', this.handlePagination.bind(this));
 
-            // Accordion rows (mobile) — delegated so it survives AJAX row swaps.
-            this.$wrapper.on('click', '[data-responsive="accordion"] tbody tr', this.handleAccordionToggle.bind(this));
-
             // Sync with actual WooCommerce Cart on AJAX refreshes
             $(document.body).on('wc_fragments_refreshed wc_fragments_loaded', this.syncWithWCCart.bind(this));
 
@@ -159,25 +156,6 @@
 
             // Pro Plugin Modal Persistence
             $(document.body).on('productbay_pro_modal_loaded', this.restoreModalSelections.bind(this));
-        }
-
-        /**
-         * Toggle an accordion row open/closed (mobile accordion layout).
-         *
-         * Delegated from the wrapper and scoped to [data-responsive="accordion"],
-         * so it also applies to rows injected by AJAX search / sort / pagination.
-         * Clicks on interactive controls (add-to-cart, checkbox, quantity,
-         * variation select, links) are ignored so they keep working directly
-         * from the collapsed summary line. On desktop the toggled class has no
-         * styling attached, so this is a harmless no-op above 767px.
-         */
-        handleAccordionToggle(e) {
-            if ($(e.target).closest('button, a, input, select, textarea, label, .productbay-button, .productbay-qty, .productbay-variation-select').length) {
-                return;
-            }
-            const $row = $(e.currentTarget);
-            const isOpen = $row.toggleClass('productbay-row-open').hasClass('productbay-row-open');
-            $row.attr('aria-expanded', isOpen ? 'true' : 'false');
         }
 
         /**

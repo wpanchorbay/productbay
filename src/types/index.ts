@@ -372,11 +372,11 @@ export interface TableStyle {
 		/**
 		 * Mobile layout mode.
 		 * - `stack`     — each row becomes a labeled card (default)
-		 * - `accordion` — collapsed rows, tap a summary line to expand
 		 * - `scroll`    — keep the table, scroll horizontally
 		 * - `standard`  — legacy alias, treated as `stack` by the renderer
+		 * - `accordion` — retired; existing tables fall back to `stack`
 		 */
-		mode: 'standard' | 'stack' | 'accordion' | 'scroll';
+		mode: 'standard' | 'stack' | 'scroll' | 'accordion';
 	};
 }
 

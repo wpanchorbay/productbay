@@ -119,13 +119,13 @@ class TableRenderer
 		$settings = $table['settings'] ?? array();
 		$style = $table['style'] ?? array();
 
-		// Resolve the responsive (mobile) layout mode. A blank or legacy
-		// 'standard' value is normalized to 'stack' so existing tables become
-		// mobile-friendly automatically without a data migration. Only an
-		// explicit 'scroll' keeps the horizontal-scroll table on phones;
-		// 'accordion' collapses each row behind a summary line.
+		// Resolve the responsive (mobile) layout mode. A blank or legacy value
+		// ('standard', or the retired 'accordion') is normalized to 'stack' so
+		// existing tables become mobile-friendly automatically without a data
+		// migration. Only an explicit 'scroll' keeps the horizontal-scroll table
+		// on phones.
 		$responsive_mode = $style['responsive']['mode'] ?? 'stack';
-		if (!in_array($responsive_mode, array('stack', 'accordion', 'scroll'), true)) {
+		if (!in_array($responsive_mode, array('stack', 'scroll'), true)) {
 			$responsive_mode = 'stack';
 		}
 
@@ -1495,8 +1495,8 @@ class TableRenderer
 		// Minimum table width for comfortable horizontal scrolling. With an
 		// arbitrary number of columns a full-width table squishes cells on
 		// narrow viewports; a per-column floor forces the .productbay-table-container
-		// (overflow-x:auto) to scroll instead. The stacked & accordion mobile
-		// layouts reset this to 0 in frontend.css.
+		// (overflow-x:auto) to scroll instead. The stacked-card mobile layout
+		// resets this to 0 in frontend.css.
 		$visible_columns = 0;
 		foreach ($columns as $col) {
 			if (!$this->should_hide_column($col)) {
@@ -1608,7 +1608,7 @@ class TableRenderer
 	 * Shared by both the initial render() loop and the AJAX row-refresh loop so
 	 * the markup stays identical across a full render and an AJAX tbody swap.
 	 * The data-label attribute carries the column heading (even when the header
-	 * is hidden) and is used by the mobile stacked/accordion layouts in
+	 * is hidden) and is used by the mobile stacked-card layout in
 	 * frontend.css to label each value via `::before { content: attr(data-label) }`.
 	 *
 	 * @param array       $col     Column configuration.

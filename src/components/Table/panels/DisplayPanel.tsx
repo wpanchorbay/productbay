@@ -442,7 +442,7 @@ export const DisplayPanel = ({
 				<SettingsOption
 					title={__('Layout on phones', 'productbay')}
 					description={__(
-						'Stacked cards turn each row into a labeled card, accordion collapses rows behind a tap-to-expand summary, and horizontal scroll keeps the full table.',
+						'Stacked cards turn each row into a labeled card, and horizontal scroll keeps the full table.',
 						'productbay'
 					)}
 				>
@@ -450,9 +450,8 @@ export const DisplayPanel = ({
 						<Select
 							size="sm"
 							value={
-								style.responsive?.mode === 'accordion' ||
 								style.responsive?.mode === 'scroll'
-									? style.responsive.mode
+									? 'scroll'
 									: 'stack'
 							}
 							onChange={(val) =>
@@ -464,10 +463,6 @@ export const DisplayPanel = ({
 								{
 									label: __('Stacked cards', 'productbay'),
 									value: 'stack',
-								},
-								{
-									label: __('Accordion', 'productbay'),
-									value: 'accordion',
 								},
 								{
 									label: __('Horizontal scroll', 'productbay'),
