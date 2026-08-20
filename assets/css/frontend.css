@@ -1268,14 +1268,24 @@
     .productbay-wrapper .productbay-taxonomy-filters {
         flex-wrap: wrap;
     }
+
+    /* The filters bar sits outside the card cells, so it needs the touch
+       minimum applied directly. */
+    .productbay-wrapper .productbay-filters-clear {
+        min-height: 44px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
     .productbay-wrapper .productbay-filter-select {
         max-width: 100%;
     }
 
     /* One height for every control that can sit on a card's action row, so a
-       select, the quantity stepper and the button line up when they share it. */
+       select, the quantity stepper and the button line up when they share it.
+       44px is the WCAG 2.5.5 / iOS minimum touch target, and applying it here
+       raises every card control to it at once. */
     .productbay-wrapper[data-responsive="stack"] {
-        --pb-card-control-h: 40px;
+        --pb-card-control-h: 44px;
     }
 
     /* ---- Action controls fill the card ----
@@ -1325,6 +1335,10 @@
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-btn-cell .productbay-button {
         flex: 1 1 auto;
         width: auto;
+        /* align-items:stretch sizes this against the quantity stepper, but a
+           product with quantity disabled has no tall sibling to stretch
+           against and would fall back to its natural 36px. */
+        min-height: var(--pb-card-control-h);
     }
 
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-wrap {
@@ -1342,6 +1356,65 @@
            vertical axis and silently beats `height`. */
         flex: 0 0 auto;
         height: var(--pb-card-control-h);
+    }
+
+    /* ---- Quantity stepper: [-] [field] [+] ----
+       On desktop the stepper stacks a 22x20px up/down pair beside the field.
+       That is far under the 44px touch minimum and cannot be fixed by
+       enlarging in place: two buttons stacked inside one control can never
+       each be 44px tall unless the control is 88px. Laying them out either
+       side of the field gives two full-height targets instead.
+
+       display:contents on the button container is what makes this possible in
+       CSS alone -- it dissolves the wrapper so the two buttons become flex
+       items of .productbay-qty-wrap and can be ordered around the field, which
+       sits between them in source order. */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-btns {
+        display: contents;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-minus {
+        order: 1;
+        border-right: 1px solid #94a3b8;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty {
+        order: 2;
+        flex: 0 0 auto;
+        width: 44px;
+        height: auto;
+        line-height: normal;
+        font-size: 15px;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-plus {
+        order: 3;
+        border-left: 1px solid #94a3b8;
+        /* Reset the divider it carries in the stacked desktop layout. */
+        border-bottom: 0;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-btn {
+        flex: 0 0 auto;
+        width: var(--pb-card-control-h);
+        /* The 7px triangles are replaced with real -/+ glyphs; the button's
+           own text is zeroed out rather than removed, so the markup and its
+           aria-labels are untouched. */
+        font-size: 0;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-btn::before {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 1;
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-minus::before {
+        content: "\2212";
+    }
+
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-plus::before {
+        content: "+";
     }
 
     /* ---- Grouped: [ select ][ qty ] then a full-width button ---- */
