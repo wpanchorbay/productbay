@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-20T08:42:31+00:00\n"
+"POT-Creation-Date: 2026-08-20T15:44:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: productbay\n"
@@ -335,7 +335,7 @@ msgid "Reset all filters to default"
 msgstr ""
 
 #: app/Frontend/TableRenderer.php:313
-#: app/Frontend/TableRenderer.php:1814
+#: app/Frontend/TableRenderer.php:1951
 #: assets/js/admin.js:20
 #: blocks/product-table/index.js:20
 #: blocks/tab-product-table/index.js:20
@@ -362,7 +362,7 @@ msgid "View"
 msgstr ""
 
 #: app/Frontend/TableRenderer.php:485
-#: app/Frontend/TableRenderer.php:2099
+#: app/Frontend/TableRenderer.php:2236
 msgid "No products found."
 msgstr ""
 
@@ -472,24 +472,24 @@ msgid "Added"
 msgstr ""
 
 #. translators: %d: number of selected categories
-#: app/Frontend/TableRenderer.php:1752
+#: app/Frontend/TableRenderer.php:1890
 #, php-format
 msgid "%s selected"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1753
+#: app/Frontend/TableRenderer.php:1891
 msgid "All Categories"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1787
+#: app/Frontend/TableRenderer.php:1924
 msgid "All Types"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1813
+#: app/Frontend/TableRenderer.php:1950
 msgid "Search products..."
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1863
+#: app/Frontend/TableRenderer.php:2000
 msgid "Load More"
 msgstr ""
 
@@ -2603,29 +2603,40 @@ msgid "Failed to copy to clipboard. Please copy manually."
 msgstr ""
 
 #: assets/js/admin.js:19
-#: blocks/product-table/index.js:19
-#: blocks/tab-product-table/index.js:19
-msgid "Custom"
-msgstr ""
-
-#: assets/js/admin.js:19
-#: assets/js/admin.js:20
 #: assets/js/admin.js:23
 #: blocks/product-table/index.js:19
-#: blocks/product-table/index.js:20
 #: blocks/tab-product-table/index.js:19
-#: blocks/tab-product-table/index.js:20
 msgid "Published"
 msgstr ""
 
 #: assets/js/admin.js:19
-#: assets/js/admin.js:20
-#: assets/js/admin.js:23
 #: blocks/product-table/index.js:19
-#: blocks/product-table/index.js:20
 #: blocks/tab-product-table/index.js:19
-#: blocks/tab-product-table/index.js:20
 msgid "Private"
+msgstr ""
+
+#: assets/js/admin.js:19
+#: blocks/product-table/index.js:19
+#: blocks/tab-product-table/index.js:19
+msgid "Draft"
+msgstr ""
+
+#: assets/js/admin.js:19
+#: blocks/product-table/index.js:19
+#: blocks/tab-product-table/index.js:19
+msgid "Pending Review"
+msgstr ""
+
+#: assets/js/admin.js:19
+#: blocks/product-table/index.js:19
+#: blocks/tab-product-table/index.js:19
+msgid "Unknown"
+msgstr ""
+
+#: assets/js/admin.js:19
+#: blocks/product-table/index.js:19
+#: blocks/tab-product-table/index.js:19
+msgid "Custom"
 msgstr ""
 
 #: assets/js/admin.js:19
