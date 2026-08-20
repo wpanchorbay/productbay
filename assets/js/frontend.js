@@ -1126,6 +1126,10 @@
                 this.$wrapper.find('.productbay-btn-panel').prop('disabled', true).find('.productbay-panel-count').text(0);
             }
 
+            // Drives the mobile sticky action bar (see frontend.css section 21):
+            // the bar is only rendered while a selection exists.
+            this.$wrapper.toggleClass('productbay-has-selection', count > 0);
+
             this.renderSelectedItemsPopup();
             this.updateParentRowBadges(parentCounts);
         }

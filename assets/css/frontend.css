@@ -1765,3 +1765,79 @@ dialog.productbay-lightbox::backdrop {
 .productbay-lightbox-trigger:hover {
     transform: scale(1.02);
 }
+
+/* ========================================================================
+   21. MOBILE STICKY ACTION BAR
+   On phones (<=767px) the bulk actions leave the toolbar entirely and
+   become a bar fixed to the bottom of the viewport, shown only while at
+   least one product is selected (JS toggles .productbay-has-selection on
+   the wrapper). Rationale:
+     - bottom = thumb reach; a top-sticky bar lands in the hardest-to-reach
+       zone and collides with theme/admin fixed headers,
+     - the bulk button is disabled at zero selections, so an always-visible
+       bar would spend scarce vertical space on a dead control.
+   The bar is deliberately outside the toolbar's flow on mobile (rather than
+   toggling between static and fixed), so promoting it never reflows the
+   search field.
+   ======================================================================== */
+
+@media (max-width: 767px) {
+
+    /* Hidden until something is selected. */
+    .productbay-wrapper .productbay-bulk-actions {
+        display: none;
+    }
+
+    .productbay-wrapper.productbay-has-selection .productbay-bulk-actions {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 999;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 12px;
+        /* Clear the iOS home indicator. */
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        background: #fff;
+        border-top: 1px solid #e2e8f0;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    /* The bar overlays the page, so reserve room below the table for the
+       last card / pagination to stay reachable. */
+    .productbay-wrapper.productbay-has-selection {
+        padding-bottom: 72px;
+    }
+
+    /* Let the group fill the bar so the primary action is a wide target. */
+    .productbay-wrapper.productbay-has-selection .productbay-btn-group {
+        width: 100%;
+    }
+
+    .productbay-wrapper.productbay-has-selection .productbay-btn-bulk {
+        flex: 1;
+        justify-content: center;
+        padding: 12px 16px;
+    }
+
+    .productbay-wrapper.productbay-has-selection .productbay-btn-panel,
+    .productbay-wrapper.productbay-has-selection .productbay-btn-clear-all {
+        flex: 0 0 auto;
+        padding: 12px;
+    }
+
+    /* --- Bulk list popup as a bottom sheet --- */
+
+    /* Anchored to the bar's top edge, so no hard-coded bar height. */
+    .productbay-wrapper .productbay-selected-popup {
+        position: absolute;
+        top: auto;
+        bottom: calc(100% + 8px);
+        left: 8px;
+        right: 8px;
+        width: auto;
+        max-height: 60vh;
+    }
+}
