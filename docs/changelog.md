@@ -6,9 +6,12 @@ Looking for Pro version changes? See the **[Pro Changelog](./pro-changelog.md)**
 
 ## 1.3.4
 
-* **Feature:** Product tables are now mobile-responsive. On phones each row can reflow into a labeled **stacked card** (default), a tap-to-expand **accordion**, or keep the classic **horizontal-scroll** table — selectable per table under **Display → Mobile Layout**.
+* **Feature:** Product tables are now mobile-responsive. On phones each row reflows into a labeled **stacked card** (default), or you can keep the classic **horizontal-scroll** table — selectable per table under **Display → Layout on phones**.
 * **Improvement:** Stacked cards are the new default and apply to existing tables automatically — no table is left with cramped or cut-off columns on small screens.
+* **Improvement:** Mobile cards now lead with the product name, followed by the add-to-cart controls and a full-width **Add to bulk list** button in place of the small checkbox, so every control is comfortable to tap.
+* **Improvement:** Bulk selection is now called the **bulk list** across the storefront and the table builder — the toggle, the **View** button, and the floating panel share the same wording, and the per-table option is now **Bulk List Panel**.
 * **Improvement:** Wide, many-column tables now get an automatic minimum width and an edge scroll hint so they scroll comfortably instead of squishing.
+* **Dev:** Added the `productbay_bulk_list_text` and `productbay_bulk_list_added_text` filters so the bulk-list toggle labels can be customized (available in Pro).
 
 ## 1.3.3
 

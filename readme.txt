@@ -287,9 +287,12 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 
 = 1.3.4 =
 
-* Feature: Product tables are now mobile-responsive. On phones each row can reflow into a labeled card (default), a tap-to-expand accordion, or keep the classic horizontal-scroll table — chosen per table under Display → Mobile Layout.
+* Feature: Product tables are now mobile-responsive. On phones each row reflows into a labeled card (default), or you can keep the classic horizontal-scroll table — chosen per table under Display → Layout on phones.
 * Improvement: Stacked cards are the new default and apply to existing tables automatically, so no table is left with cramped or cut-off columns on small screens.
+* Improvement: Mobile cards lead with the product name, then the add-to-cart controls, with bulk selection as a full-width "Add to bulk list" button instead of a small checkbox — far easier to tap on a phone.
+* Improvement: Bulk selection is now called the "bulk list" throughout the storefront and the table builder, so the checkbox, the "View" button, and the floating panel all use the same wording.
 * Improvement: Wide tables now get a sensible minimum width plus an edge scroll hint, so many-column tables scroll comfortably instead of squishing.
+* Dev: Added `productbay_bulk_list_text` and `productbay_bulk_list_added_text` filters so the bulk-list toggle labels can be customized (available in Pro).
 
 = 1.3.3 =
 
