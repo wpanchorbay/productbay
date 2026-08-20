@@ -213,8 +213,8 @@ class TableRenderer
 		 *
 		 * @since 1.3.4
 		 */
-		$this->bulk_list_text       = $this->resolve_custom_text('productbay_bulk_list_text', 'bulk_list_text');
-		$this->bulk_list_added_text = $this->resolve_custom_text('productbay_bulk_list_added_text', 'bulk_list_added_text');
+		$this->bulk_list_text       = $this->resolve_custom_text('bulk_list_text', 'bulk_list_text');
+		$this->bulk_list_added_text = $this->resolve_custom_text('bulk_list_added_text', 'bulk_list_added_text');
 
 		// 1. Prepare Query Arguments.
 		$args = $this->build_query_args($source, $settings, $runtime_args);
@@ -1686,14 +1686,15 @@ class TableRenderer
 	 * option, else '' so the caller can apply its own translatable default.
 	 * Mirrors the add-to-cart / select-options text resolution.
 	 *
-	 * @param string $filter     Filter hook name (the Pro extension seam).
-	 * @param string $option_key Key inside the global productbay_settings option.
+	 * @param string $hook_suffix Filter hook name without the productbay_ prefix
+	 *                            (the Pro extension seam).
+	 * @param string $option_key  Key inside the global productbay_settings option.
 	 * @return string
 	 * @since 1.3.4
 	 */
-	private function resolve_custom_text($filter, $option_key)
+	private function resolve_custom_text($hook_suffix, $option_key)
 	{
-		$text = \apply_filters($filter, '', $this->cart_settings);
+		$text = \apply_filters("productbay_{$hook_suffix}", '', $this->cart_settings);
 		if (empty($text)) {
 			$global = \get_option('productbay_settings', array());
 			if (!empty($global[$option_key])) {
@@ -2130,8 +2131,8 @@ class TableRenderer
 		$this->select_options_text = $select_options_text;
 
 		// Resolve bulk-list toggle labels for AJAX renders (mirrors render()).
-		$this->bulk_list_text       = $this->resolve_custom_text('productbay_bulk_list_text', 'bulk_list_text');
-		$this->bulk_list_added_text = $this->resolve_custom_text('productbay_bulk_list_added_text', 'bulk_list_added_text');
+		$this->bulk_list_text       = $this->resolve_custom_text('bulk_list_text', 'bulk_list_text');
+		$this->bulk_list_added_text = $this->resolve_custom_text('bulk_list_added_text', 'bulk_list_added_text');
 
 		/**
 		 * Fires before the AJAX table render, allowing Pro modules to capture table config.
