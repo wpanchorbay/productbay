@@ -2,7 +2,7 @@
 Contributors: wpanchorbay, forhadkhan, sankarsan, arifac
 Tags: product table for woocommerce, woocommerce product table, woocommerce product list, product table, product list
 Requires at least: 6.8
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.3.4
 License: GPLv2 or later
