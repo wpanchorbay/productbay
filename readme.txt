@@ -292,7 +292,10 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 * Improvement: Mobile cards lead with the product name, then the add-to-cart controls, with bulk selection as a full-width "Add to bulk list" button instead of a small checkbox — far easier to tap on a phone.
 * Improvement: Bulk selection is now called the "bulk list" throughout the storefront and the table builder, so the checkbox, the "View" button, and the floating panel all use the same wording.
 * Improvement: Wide tables now get a sensible minimum width plus an edge scroll hint, so many-column tables scroll comfortably instead of squishing.
+* Fix: The category and product type filters above a table now only offer values that exist in that table. Previously they listed every category and type on the store, so a table scoped to one category still offered the whole catalog and picking any of those choices returned an empty table.
+* Fix: Tables with a draft or pending status are no longer labelled "Private" in the dashboard and the table builder. Private means published but restricted; draft means not published at all.
 * Dev: Added `productbay_bulk_list_text` and `productbay_bulk_list_added_text` filters so the bulk-list toggle labels can be customized (available in Pro).
+* Dev: Added `productbay_filter_options` and `productbay_filter_options_cache_ttl` filters to adjust or re-cache the resolved filter choices.
 
 = 1.3.3 =
 

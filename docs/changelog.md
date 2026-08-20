@@ -11,7 +11,10 @@ Looking for Pro version changes? See the **[Pro Changelog](./pro-changelog.md)**
 * **Improvement:** Mobile cards now lead with the product name, followed by the add-to-cart controls and a full-width **Add to bulk list** button in place of the small checkbox, so every control is comfortable to tap.
 * **Improvement:** Bulk selection is now called the **bulk list** across the storefront and the table builder — the toggle, the **View** button, and the floating panel share the same wording, and the per-table option is now **Bulk List Panel**.
 * **Improvement:** Wide, many-column tables now get an automatic minimum width and an edge scroll hint so they scroll comfortably instead of squishing.
+* **Fix:** The **category** and **product type** filters above a table now only offer values present in that table. They were previously built from every category and product type on the store, so a table scoped to one category still offered the whole catalog — and selecting any of those choices rendered an empty table.
+* **Fix:** Tables with a `draft` or `pending` status are no longer labelled **Private** in the dashboard and the table builder. Private means published but restricted to capable logged-in users; draft means not published at all.
 * **Dev:** Added the `productbay_bulk_list_text` and `productbay_bulk_list_added_text` filters so the bulk-list toggle labels can be customized (available in Pro).
+* **Dev:** Added the `productbay_filter_options` and `productbay_filter_options_cache_ttl` filters to adjust or re-cache the resolved filter choices.
 
 ## 1.3.3
 
