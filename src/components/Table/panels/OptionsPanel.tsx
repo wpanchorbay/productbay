@@ -272,6 +272,12 @@ export const OptionsPanel = ({
 						>
 							<ProBadge />
 						</SettingsOption>
+						<SettingsOption
+							title={__('Custom \"Add to bulk list\" Text', 'productbay')}
+							description={__('Rename the bulk-select toggle shown on mobile cards', 'productbay')}
+						>
+							<ProBadge />
+						</SettingsOption>
 					</>
 				) : (
 					<Slot name="productbay-pro-custom-add-to-cart-text-option" />

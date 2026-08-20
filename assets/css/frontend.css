@@ -358,6 +358,37 @@
     accent-color: #3b82f6;
 }
 
+/* Bulk-select toggle. The checkbox is the source of truth; the wrapping
+   <label> + text is transparent on desktop (just the checkbox shows) and is
+   restyled into a "Select" button on mobile stacked cards (section 18). The
+   text is kept in the accessibility tree here (visually hidden, not display:none)
+   so the checkbox has an accessible name that reflects its state. */
+.productbay-wrapper .productbay-select-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.productbay-wrapper .productbay-select-toggle-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+.productbay-wrapper .productbay-select-text-on {
+    display: none;
+}
+.productbay-wrapper .productbay-select-toggle:has(:checked) .productbay-select-text-add {
+    display: none;
+}
+.productbay-wrapper .productbay-select-toggle:has(:checked) .productbay-select-text-on {
+    display: inline;
+}
+
 /* ========================================================================
    5. PRODUCT CELLS
    ======================================================================== */
@@ -1092,37 +1123,26 @@
         content: none !important;
     }
 
-    /* Bulk-select cell: no reserved label spacer, checkbox on the left */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td.productbay-col-select {
-        justify-content: flex-start;
-        gap: 8px;
-    }
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select::before,
-    .productbay-wrapper[data-responsive="accordion"] .productbay-table tbody td.productbay-col-select::before {
-        content: none;
-    }
-
-    /* ---- Stack: name + checkbox as a top header band ----
-       The card becomes a flex column so the product-name cell can be lifted
-       (order:-1) to a header row above the image and the labeled value rows,
-       with the bulk-select checkbox pinned to the card's top-right corner.
-       Reserved right padding on the title keeps a long name from colliding
-       with the checkbox. Stack-only: accordion keeps its own summary line and
-       chevron (a pinned checkbox would clash with it), and Pro variation rows
-       (which also carry .productbay-product-title) are left untouched there. */
+    /* ---- Name header on top, actions stacked full-width at the bottom ----
+       The card is a flex column. Value rows and both action cells span the full
+       width; the product name is lifted to a top header (order:-1); the
+       add-to-cart cell (dropdown + quantity + button) drops below the info, and
+       the bulk-select toggle ("Add to bulk list") sits full-width beneath it.
+       Full-width (not side-by-side) so variable/grouped cards -- whose action
+       cell is a tall dropdown+qty+button stack -- stay consistent with simple
+       ones. Hooks are content-based (:has) because columns carry only dynamic
+       per-column ids. Desktop keeps the checkbox column. */
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody tr {
         display: flex;
         flex-direction: column;
         position: relative;
     }
 
-    /* Name cell → card title, lifted to the top, left-aligned, no label */
+    /* Name cell -> card title, lifted to the top, left-aligned, no label */
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(.productbay-product-title) {
         order: -1;
         display: block;
         text-align: left;
-        padding-right: 48px;
     }
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(.productbay-product-title)::before {
         content: none !important;
@@ -1144,16 +1164,87 @@
         color: #64748b;
     }
 
-    /* Checkbox pinned to the card's top-right, aligned with the title row.
-       width:auto beats the per-table scoped `#id .productbay-col-select{width}`. */
-    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: auto !important;
-        padding: 12px 14px;
+    /* Bottom actions, stacked full-width: the add-to-cart cell (dropdown + qty
+       + button) then the bulk-select toggle beneath it. The Pro nested-variation
+       content cell is excluded so it keeps its own layout. */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(.productbay-button):not(.productbay-pro-nested-row-content) {
+        order: 5;
+        display: block;
+        text-align: left;
+        padding: 12px 14px 8px;
         border-bottom: 0;
-        z-index: 1;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td:has(.productbay-button):not(.productbay-pro-nested-row-content)::before {
+        content: none !important;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select {
+        order: 6;
+        display: block;
+        width: auto !important;
+        padding: 0 14px 14px;
+        border-bottom: 0;
+    }
+
+    /* Select checkbox -> "Add to bulk list" / "Added" toggle button. The
+       checkbox is clip-hidden (kept focusable + announced), the <label> becomes
+       the button, and :has(:checked) drives the pressed look and the +/checkmark
+       glyph. */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select input.productbay-select-product {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select .productbay-select-toggle {
+        width: 100%;
+        gap: 6px;
+        padding: 10px 14px;
+        border: 1px solid #93b4f6;
+        border-radius: 6px;
+        background: #fff;
+        color: #2563eb;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.5;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background-color .15s, border-color .15s, color .15s;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select .productbay-select-toggle::before {
+        content: "+";
+        font-size: 16px;
+        line-height: 1;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select .productbay-select-toggle-text {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0;
+        overflow: visible;
+        clip: auto;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select .productbay-select-toggle:has(:checked) {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-color: #3b82f6;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select .productbay-select-toggle:has(:checked)::before {
+        content: "\2713";
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select .productbay-select-toggle:has(:disabled) {
+        opacity: .45;
+        cursor: not-allowed;
+    }
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td.productbay-col-select .productbay-select-toggle:focus-within {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
     }
 
     /* Let the value side shrink to the card width so long content (buttons,

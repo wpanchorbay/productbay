@@ -75,6 +75,22 @@ class TableRenderer
 	protected $select_options_text = '';
 
 	/**
+	 * Custom "Add to bulk list" toggle text (unselected state).
+	 *
+	 * @var string
+	 * @since 1.3.4
+	 */
+	protected $bulk_list_text = '';
+
+	/**
+	 * Custom "Added" toggle text (in-bulk-list / selected state).
+	 *
+	 * @var string
+	 * @since 1.3.4
+	 */
+	protected $bulk_list_added_text = '';
+
+	/**
 	 * Initialize the renderer.
 	 *
 	 * @param TableRepository $repository Table repository instance.
@@ -188,6 +204,17 @@ class TableRenderer
 			}
 		}
 		$this->select_options_text = $select_options_text;
+
+		/**
+		 * Resolve the bulk-list toggle labels ("Add to bulk list" / "Added").
+		 * Pro fills `productbay_bulk_list_text` / `productbay_bulk_list_added_text`
+		 * from per-table then global settings; otherwise render_select_cell()
+		 * applies the translatable default.
+		 *
+		 * @since 1.3.4
+		 */
+		$this->bulk_list_text       = $this->resolve_custom_text('productbay_bulk_list_text', 'bulk_list_text');
+		$this->bulk_list_added_text = $this->resolve_custom_text('productbay_bulk_list_added_text', 'bulk_list_added_text');
 
 		// 1. Prepare Query Arguments.
 		$args = $this->build_query_args($source, $settings, $runtime_args);
@@ -412,10 +439,7 @@ class TableRenderer
 
 				// Bulk Select - First Position.
 				if ($bulk_select['enabled'] && ($bulk_select['position'] ?? 'last') === 'first') {
-					$can_select = $product->is_in_stock() && !$product->is_type('external') && !$product->is_type('grouped') && !$product->is_type('variable') && $product->is_purchasable();
-					echo '<td class="productbay-col-select">';
-					echo '<input type="checkbox" class="productbay-select-product" value="' . esc_attr((string) $product->get_id()) . '" data-price="' . esc_attr((string) $product->get_price()) . '"' . ($can_select ? '' : ' disabled') . ' />';
-					echo '</td>';
+					$this->render_select_cell($product);
 				}
 
 				foreach ($columns as $col) {
@@ -428,10 +452,7 @@ class TableRenderer
 
 				// Bulk Select - Last Position.
 				if ($bulk_select['enabled'] && ($bulk_select['position'] ?? 'last') === 'last') {
-					$can_select = $product->is_in_stock() && !$product->is_type('external') && !$product->is_type('grouped') && !$product->is_type('variable') && $product->is_purchasable();
-					echo '<td class="productbay-col-select">';
-					echo '<input type="checkbox" class="productbay-select-product" value="' . esc_attr((string) $product->get_id()) . '" data-price="' . esc_attr((string) $product->get_price()) . '"' . ($can_select ? '' : ' disabled') . ' />';
-					echo '</td>';
+					$this->render_select_cell($product);
 				}
 
 				echo '</tr>';
@@ -1629,6 +1650,59 @@ class TableRenderer
 		echo '</td>';
 	}
 
+	/**
+	 * Render the bulk-select cell (<td>) for a product row.
+	 *
+	 * The checkbox stays the source of truth for selection: the desktop table
+	 * shows the checkbox column, while the mobile stacked card restyles the
+	 * wrapping <label> into an "Add to bulk list" / "Added" toggle button (frontend.css
+	 * section 18). The label text also gives the checkbox an accessible name and
+	 * reflects its state. Shared by the initial render() and the AJAX row
+	 * refresh so the markup is identical across a tbody swap.
+	 *
+	 * @param \WC_Product $product The current product.
+	 * @return void
+	 * @since 1.3.4
+	 */
+	private function render_select_cell($product)
+	{
+		$can_select = $product->is_in_stock() && !$product->is_type('external') && !$product->is_type('grouped') && !$product->is_type('variable') && $product->is_purchasable();
+
+		// Custom labels (Pro / global settings) with translatable defaults.
+		$add_label   = '' !== $this->bulk_list_text ? $this->bulk_list_text : __('Add to bulk list', 'productbay');
+		$added_label = '' !== $this->bulk_list_added_text ? $this->bulk_list_added_text : __('Added', 'productbay');
+
+		echo '<td class="productbay-col-select">';
+		echo '<label class="productbay-select-toggle">';
+		echo '<input type="checkbox" class="productbay-select-product" value="' . esc_attr((string) $product->get_id()) . '" data-price="' . esc_attr((string) $product->get_price()) . '"' . ($can_select ? '' : ' disabled') . ' />';
+		echo '<span class="productbay-select-toggle-text"><span class="productbay-select-text-add">' . esc_html($add_label) . '</span><span class="productbay-select-text-on">' . esc_html($added_label) . '</span></span>';
+		echo '</label>';
+		echo '</td>';
+	}
+
+	/**
+	 * Resolve a customizable label: a filter first (Pro fills it from per-table
+	 * cart settings), then the matching key in the global productbay_settings
+	 * option, else '' so the caller can apply its own translatable default.
+	 * Mirrors the add-to-cart / select-options text resolution.
+	 *
+	 * @param string $filter     Filter hook name (the Pro extension seam).
+	 * @param string $option_key Key inside the global productbay_settings option.
+	 * @return string
+	 * @since 1.3.4
+	 */
+	private function resolve_custom_text($filter, $option_key)
+	{
+		$text = \apply_filters($filter, '', $this->cart_settings);
+		if (empty($text)) {
+			$global = \get_option('productbay_settings', array());
+			if (!empty($global[$option_key])) {
+				$text = $global[$option_key];
+			}
+		}
+		return (string) $text;
+	}
+
 
 
 	/**
@@ -1918,6 +1992,10 @@ class TableRenderer
 		}
 		$this->select_options_text = $select_options_text;
 
+		// Resolve bulk-list toggle labels for AJAX renders (mirrors render()).
+		$this->bulk_list_text       = $this->resolve_custom_text('productbay_bulk_list_text', 'bulk_list_text');
+		$this->bulk_list_added_text = $this->resolve_custom_text('productbay_bulk_list_added_text', 'bulk_list_added_text');
+
 		/**
 		 * Fires before the AJAX table render, allowing Pro modules to capture table config.
 		 * This is critical for persistence — without this hook, the Pro module's
@@ -1976,10 +2054,7 @@ class TableRenderer
 					'position' => 'last',
 				);
 				if ($bulk_select['enabled'] && ($bulk_select['position'] ?? 'last') === 'first') {
-					$can_select = $product->is_in_stock() && !$product->is_type('external') && !$product->is_type('grouped') && !$product->is_type('variable') && $product->is_purchasable();
-					echo '<td class="productbay-col-select">';
-					echo '<input type="checkbox" class="productbay-select-product" value="' . esc_attr((string) $product->get_id()) . '" data-price="' . esc_attr((string) $product->get_price()) . '"' . ($can_select ? '' : ' disabled') . ' />';
-					echo '</td>';
+					$this->render_select_cell($product);
 				}
 
 				foreach ($columns as $col) {
@@ -1991,10 +2066,7 @@ class TableRenderer
 
 				// Bulk Select - Last.
 				if ($bulk_select['enabled'] && ($bulk_select['position'] ?? 'last') === 'last') {
-					$can_select = $product->is_in_stock() && !$product->is_type('external') && !$product->is_type('grouped') && !$product->is_type('variable') && $product->is_purchasable();
-					echo '<td class="productbay-col-select">';
-					echo '<input type="checkbox" class="productbay-select-product" value="' . esc_attr((string) $product->get_id()) . '" data-price="' . esc_attr((string) $product->get_price()) . '"' . ($can_select ? '' : ' disabled') . ' />';
-					echo '</td>';
+					$this->render_select_cell($product);
 				}
 				echo '</tr>';
 
