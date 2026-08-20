@@ -273,6 +273,36 @@ add_filter( 'productbay_bulk_list_added_text', function( $text, $cart_settings )
 The bulk-list labels are always rendered — they give the select checkbox its accessible name on desktop, and become the visible toggle button on [stacked mobile cards](/features/display-customization#layout-on-phones).
 :::
 
+### `productbay_filter_options`
+
+Filters the choices offered by the category and product type dropdowns above a table.
+
+Options are resolved from the table's own base product set — the source scope, ignoring the visitor's current selection — so the dropdowns never offer a value that would render an empty table. Use this filter to add a choice back (for example a category the table does not contain yet but soon will) or to drop one.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$options` *(array)*, `$source` *(array)*, `$settings` *(array)*, `$table_id` *(int)* |
+| **Returns** | `array` — `product_cat` as a list of `['slug' => …, 'name' => …]`, `product_type` as a map of slug => label |
+
+```php
+add_filter( 'productbay_filter_options', function( $options, $source, $settings, $table_id ) {
+    // Always offer the Clearance category, even while it is empty.
+    $options['product_cat'][] = array( 'slug' => 'clearance', 'name' => __( 'Clearance', 'my-textdomain' ) );
+    return $options;
+}, 10, 4 );
+```
+
+### `productbay_filter_options_cache_ttl`
+
+Filters how long resolved filter choices stay cached, in seconds. Resolving them costs one ID-only product query plus two term queries, so the result is cached per table; the cache key carries a hash of the resolved query args, so editing a table's source takes effect immediately, while catalog changes are picked up when the transient expires.
+
+Return `0` to disable caching — useful on a store whose product categories change constantly.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$ttl` *(int)* — default `12 * HOUR_IN_SECONDS`, `$table_id` *(int)* |
+| **Returns** | `int` — Lifetime in seconds, or `0` to skip caching |
+
 ### `productbay_before_table` / `productbay_after_table`
 
 Actions fired before and after the table wrapper `<div>`.
