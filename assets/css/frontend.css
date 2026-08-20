@@ -1267,6 +1267,11 @@
        (applies to every responsive mode, including horizontal scroll). */
     .productbay-wrapper .productbay-taxonomy-filters {
         flex-wrap: wrap;
+        /* This group is itself a flex item of .productbay-filters-bar, and
+           min-width:auto stopped it shrinking below its widest select -- so
+           letting the select shrink was not enough on its own, the container
+           had to be allowed to shrink first. */
+        min-width: 0;
     }
 
     /* The filters bar sits outside the card cells, so it needs the touch
@@ -1277,6 +1282,13 @@
         padding-right: 16px;
     }
     .productbay-wrapper .productbay-filter-select {
+        /* max-width:100% is measured against the whole bar, but the inline
+           "Filter" label shares the line, so the select still overran the
+           viewport on very narrow phones. As a flex item it defaults to
+           min-width:auto and refuses to shrink below its longest option;
+           min-width:0 lets it take just the space the label leaves. */
+        flex: 1 1 auto;
+        min-width: 0;
         max-width: 100%;
     }
 
@@ -1427,8 +1439,19 @@
     }
 
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-grouped-child-select {
-        flex: 1 1 auto;
-        min-width: 0;
+        /* flex-basis 0, not auto. With `auto` the select's base size is its
+           content width (~260px for "Select a product..."), and flexbox
+           decides wrapping from base sizes BEFORE it shrinks anything -- so
+           the quantity stepper was pushed to a second row even though both
+           would have fit once the select shrank. A zero basis lets the select
+           take only the leftover space, keeping the pair on one line.
+
+           min-width is the floor that decides what "too small to share a row"
+           means: below it the stepper wraps, which is the right outcome once
+           the select would be too narrow to read. 110px + the 10px gap + the
+           134px stepper fits a 320px phone with room to spare. */
+        flex: 1 1 0;
+        min-width: 110px;
         max-width: none;
         width: auto;
     }
