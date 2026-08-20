@@ -20,6 +20,7 @@ import ProductBayIcon from '@/components/ui/ProductBayIcon';
 import { useParams, useNavigate } from 'react-router-dom';
 import LivePreview from '@/components/Table/LivePreview';
 import { PATHS, NEW_TABLE_PATH } from '@/utils/routes';
+import { getTableStatusBadge } from '@/utils/tableStatus';
 import TabOptions from '@/components/Table/TabOptions';
 import TabDisplay from '@/components/Table/TabDisplay';
 import { Tabs, TabOption } from '@/components/ui/Tabs';
@@ -490,12 +491,10 @@ const Table = () => {
 								<span
 									className={cn(
 										'text-sm font-medium min-w-[52px]',
-										isActive ? 'text-green-600' : 'text-gray-500'
+										getTableStatusBadge(tableStatus).textClassName
 									)}
 								>
-									{isActive
-										? __('Published', 'productbay')
-										: __('Private', 'productbay')}
+									{getTableStatusBadge(tableStatus).label}
 								</span>
 							</div>
 							{/* Toggle switch - only way to toggle */}
