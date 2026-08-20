@@ -1272,6 +1272,12 @@
         max-width: 100%;
     }
 
+    /* One height for every control that can sit on a card's action row, so a
+       select, the quantity stepper and the button line up when they share it. */
+    .productbay-wrapper[data-responsive="stack"] {
+        --pb-card-control-h: 40px;
+    }
+
     /* ---- Action controls fill the card ----
        The add-to-cart controls are laid out for a desktop table cell:
        right-aligned against the cell's right edge and capped (selects at
@@ -1323,7 +1329,19 @@
 
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-qty-wrap {
         flex: 0 0 auto;
-        height: 40px;
+        height: var(--pb-card-control-h);
+    }
+
+    /* Selects ship at their desktop height (30px variation / 32px grouped),
+       which reads as misaligned beside the stepper -- most visibly in a
+       grouped row, where the select sits directly next to it. */
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-variation-select,
+    .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-grouped-child-select {
+        /* flex:0 0 auto is load-bearing: .productbay-variation-selects is a
+           COLUMN flex container, so the select's `flex: 1` sizes it on the
+           vertical axis and silently beats `height`. */
+        flex: 0 0 auto;
+        height: var(--pb-card-control-h);
     }
 
     /* ---- Grouped: [ select ][ qty ] then a full-width button ---- */
@@ -1342,9 +1360,12 @@
         width: auto;
     }
 
-    /* flex-basis:100% pushes the button onto its own row below the pair. */
+    /* flex-basis:100% pushes the button onto its own row below the pair. The
+       row centres rather than stretches (the price span must not be pulled
+       tall), so the button needs the height set explicitly. */
     .productbay-wrapper[data-responsive="stack"] .productbay-table tbody td .productbay-grouped-inline-wrap .productbay-grouped-add-btn {
         flex: 1 0 100%;
+        min-height: var(--pb-card-control-h);
     }
 
     /* Empty state stays a normal centered block */
