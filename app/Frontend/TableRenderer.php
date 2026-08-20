@@ -297,7 +297,7 @@ class TableRenderer
 		}
 
 		// Taxonomy Filters (from free plugin).
-		$this->render_taxonomy_filters($settings, $runtime_args);
+		$this->render_taxonomy_filters($settings, $runtime_args, $source, $table_id);
 
 		/**
 		 * Action to render additional filters (e.g. from Pro extensions).
@@ -1714,7 +1714,147 @@ class TableRenderer
 	 * @param array $runtime_args Runtime arguments.
 	 * @return void
 	 */
-	private function render_taxonomy_filters($settings, $runtime_args)
+	/**
+	 * Resolve the filter choices that can actually return rows for this table.
+	 *
+	 * The dropdowns used to be populated from every product category and every
+	 * product type registered on the site, so a table scoped to (say) one
+	 * category still offered the whole catalogue's taxonomy — and picking any of
+	 * those choices rendered an empty table. Options are now derived from the
+	 * table's own base product set.
+	 *
+	 * The base set deliberately ignores the visitor's current selection: if the
+	 * options were derived from the filtered result, choosing one category would
+	 * erase every other choice and strand the visitor.
+	 *
+	 * This costs one ID-only query plus two term queries, so the result is
+	 * cached per table. The key carries a hash of the resolved query args, so
+	 * editing a table's source invalidates it immediately; catalogue changes (a
+	 * product gaining a category) are picked up when the transient expires.
+	 *
+	 * @param array $source   The table's source configuration.
+	 * @param array $settings The table settings.
+	 * @param int   $table_id The table post ID (0 for an unsaved preview).
+	 * @return array {
+	 *     @type array $product_cat  List of array{slug: string, name: string}.
+	 *     @type array $product_type Map of product type slug => label.
+	 * }
+	 * @since 1.3.4
+	 */
+	private function get_available_filter_options($source, $settings, $table_id)
+	{
+		$args = $this->build_query_args($source, $settings, array());
+		$args = \apply_filters('productbay_query_args', $args, $settings, array());
+
+		// Every match matters here, not just the first page, and only IDs are needed.
+		$args['fields'] = 'ids';
+		$args['posts_per_page'] = -1;
+		$args['paged'] = 1;
+		$args['no_found_rows'] = true;
+		$args['ignore_sticky_posts'] = true;
+		unset($args['s']);
+
+		$cache_key = 'productbay_filter_opts_' . md5((string) wp_json_encode(array($table_id, $args)));
+		$cached = \get_transient($cache_key);
+		if (is_array($cached)) {
+			return $cached;
+		}
+
+		$options = array(
+			'product_cat' => array(),
+			'product_type' => array(),
+		);
+
+		$query = new \WP_Query($args);
+		$ids = $query->posts;
+
+		if (!empty($ids)) {
+			// Terms are stored as plain arrays so the transient stays small and
+			// cannot hand back a stale WP_Term shape.
+			$terms = \get_terms(
+				array(
+					'taxonomy' => 'product_cat',
+					'object_ids' => $ids,
+					'hide_empty' => false,
+					'orderby' => 'name',
+				)
+			);
+			if (!is_wp_error($terms)) {
+				foreach ($terms as $term) {
+					$options['product_cat'][] = array(
+						'slug' => $term->slug,
+						'name' => $term->name,
+					);
+				}
+			}
+
+			// Product type is a taxonomy in WooCommerce, so the present types can
+			// be read the same way; labels still come from WooCommerce so they
+			// stay translated and consistently ordered.
+			$type_terms = \get_terms(
+				array(
+					'taxonomy' => 'product_type',
+					'object_ids' => $ids,
+					'hide_empty' => false,
+					'fields' => 'id=>slug',
+				)
+			);
+			if (!is_wp_error($type_terms) && !empty($type_terms)) {
+				$present = array_flip((array) $type_terms);
+				foreach (\wc_get_product_types() as $type_key => $type_label) {
+					if (isset($present[$type_key])) {
+						$options['product_type'][$type_key] = $type_label;
+					}
+				}
+			}
+		}
+
+		/**
+		 * Filters the taxonomy filter choices offered for a table.
+		 *
+		 * Use this to add or remove options — for example to keep offering a
+		 * category the table does not currently contain but soon will.
+		 *
+		 * @since 1.3.4
+		 *
+		 * @param array $options  Resolved options, keyed `product_cat` and `product_type`.
+		 * @param array $source   The table's source configuration.
+		 * @param array $settings The table settings.
+		 * @param int   $table_id The table post ID.
+		 */
+		$options = \apply_filters('productbay_filter_options', $options, $source, $settings, $table_id);
+
+		/**
+		 * Filters how long resolved filter choices stay cached, in seconds.
+		 * Return 0 to disable caching entirely.
+		 *
+		 * @since 1.3.4
+		 *
+		 * @param int $ttl      Cache lifetime in seconds.
+		 * @param int $table_id The table post ID.
+		 */
+		$ttl = (int) \apply_filters('productbay_filter_options_cache_ttl', 12 * HOUR_IN_SECONDS, $table_id);
+		if ($ttl > 0) {
+			\set_transient($cache_key, $options, $ttl);
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Render the category and product type filter controls above the table.
+	 *
+	 * The choices offered come from get_available_filter_options(), so they are
+	 * limited to values that can actually return rows for this table.
+	 *
+	 * @param array $settings     The table settings.
+	 * @param array $runtime_args Runtime arguments (the visitor's current selection).
+	 * @param array $source       The table's source configuration.
+	 * @param int   $table_id     The table post ID (0 for an unsaved preview).
+	 * @return void
+	 * @since 1.0.0
+	 */
+	private function render_taxonomy_filters($settings, $runtime_args, $source = array(), $table_id = 0)
 	{
 		$filters = $settings['filters'] ?? array();
 		if (empty($filters['enabled'])) {
@@ -1724,18 +1864,16 @@ class TableRenderer
 		$show_category = !isset($filters['showCategory']) || !empty($filters['showCategory']);
 		$show_type = !isset($filters['showType']) || !empty($filters['showType']);
 
+		// Only offer choices that can actually return rows for this table.
+		$filter_options = $this->get_available_filter_options($source, $settings, $table_id);
+
 		echo '<div class="productbay-taxonomy-filters">';
 
 		// Product Category Filter (custom checkbox dropdown).
 		if ($show_category) {
-			$categories = get_terms(
-				array(
-					'taxonomy' => 'product_cat',
-					'hide_empty' => true,
-				)
-			);
+			$categories = $filter_options['product_cat'];
 
-			if (!is_wp_error($categories) && !empty($categories)) {
+			if (!empty($categories)) {
 				// Support comma-separated slugs for multi-select.
 				$current_cats = array();
 				if (!empty($runtime_args['product_cat'])) {
@@ -1759,10 +1897,9 @@ class TableRenderer
 				echo '<div class="productbay-multiselect-dropdown">';
 
 				foreach ($categories as $category) {
-					$checked = in_array($category->slug, $current_cats, true) ? ' checked' : '';
 					echo '<label class="productbay-multiselect-option">';
-					echo '<input type="checkbox" value="' . esc_attr($category->slug) . '" ' . checked(in_array($category->slug, $current_cats, true), true, false) . ' />';
-					echo '<span>' . esc_html($category->name) . '</span>';
+					echo '<input type="checkbox" value="' . esc_attr($category['slug']) . '" ' . checked(in_array($category['slug'], $current_cats, true), true, false) . ' />';
+					echo '<span>' . esc_html($category['name']) . '</span>';
 					echo '</label>';
 				}
 
@@ -1778,7 +1915,7 @@ class TableRenderer
 
 		// Product Type Filter.
 		if ($show_type) {
-			$types = wc_get_product_types();
+			$types = $filter_options['product_type'];
 
 			if (!empty($types)) {
 				$current_type = $runtime_args['product_type'] ?? '';
