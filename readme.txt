@@ -96,7 +96,7 @@ ProductBay is built for WooCommerce from the ground up:
 * **External / Affiliate Products**: Displays the external buy button correctly
 * **AJAX Add-to-Cart**: Products are added without any page reload
 * **Bulk Add-to-Cart**: Customers can select multiple products, including variable and grouped products and add them all to the cart at once with a single click
-* **Selected Items Panel**: A floating popup showing selected products with individual quantities, pricing, and remove controls
+* **Bulk List Panel**: A floating popup showing everything in the bulk list with individual quantities, pricing, and remove controls
 
 ---
 
@@ -227,7 +227,7 @@ Yes. Each table uses its own scoped CSS, so multiple tables on the same page wil
 
 = Can customers add multiple products to the cart at once? =
 
-Yes. ProductBay includes a **Bulk Add-to-Cart** feature. Customers can select multiple products using checkboxes and add them all to the cart in a single click. A "Selected Items" panel shows a live summary of selections, and a "Clear All" button resets them instantly.
+Yes. ProductBay includes a **Bulk Add-to-Cart** feature. Customers can select multiple products using checkboxes and add them all to the cart in a single click. A "Bulk list" panel shows a live summary of the selection, and a "Clear All" button resets it instantly.
 
 = How do variable products work inside the table? =
 
@@ -274,7 +274,7 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 1. Create/View/Modify product tables with live preview and smooth experience.
 2. The ProductBay dashboard — manage all your tables with status indicators and shortcodes at a glance.
 3. Show the product in any page or post using the shortcode througout your website. View products efficiently and filter by catrgory and type. 
-4. Add products to cart in bulk using the checkbox and add to cart button. View selected items in the floating panel and remove them if needed.
+4. Add products to cart in bulk using the checkbox and add to cart button. View the bulk list in the floating panel and remove items if needed.
 5. Step 1 of the creation wizard — name your table and choose your product source.
 6. Step 2 — the column editor with drag-and-drop reordering and per-device responsive visibility controls.
 7. Step 3 — the design panel with live preview updating in real time as you customize colors, typography, and spacing.

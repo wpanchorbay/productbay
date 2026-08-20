@@ -48,6 +48,7 @@ Adjust the structural feel of the table.
  - **Border Color**: Set the color of the table and cell borders.
  - **Border Radius**: Round the corners of your table for a softer look.
  - **Cell Padding**: Control the space between the content and the cell borders.
+ - **Layout on Phones**: Choose how tables reflow below 767px — Stacked cards (default) or Horizontal scroll. See [Layout on Phones](/features/display-customization#layout-on-phones).
 #### **Typography**
 Fine-tune the text appearance for the header.
  - **Header Font Weight**: Choose between Normal, Bold, or Extra Bold.
@@ -74,7 +75,7 @@ Configure which features are enabled by default:
  - **Show Quantity Selector**: Allow quantity input per row.
  - **Variation Badges**: Show badges for variations added to cart.
  - **Show Clear All Button**: Display a bulk deselect button.
- - **Selected Items View Panel**: Show a floating summary of selected items.
+ - **Bulk List Panel**: Show a floating summary of the bulk list.
 #### **Variable & Grouped Products**
  - **Variable Product Mode**: Inline Dropdown (Free), Popup Modal <ProBadge />, Nested Rows <ProBadge />, Separate Rows <ProBadge />.
  - **Grouped Product Mode**: Inline Dropdown (Free), Popup Modal <ProBadge />, Nested Rows <ProBadge />, Separate Rows <ProBadge />.

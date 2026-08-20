@@ -103,8 +103,9 @@ The backend is highly extensible. If implementing a feature that might be overri
 - `productbay_query_args`: Customize WooCommerce product queries.
 - `productbay_cell_output`: Customize how table cell data is rendered.
 - `productbay_table_columns`: Alter table columns before frontend generation.
+- `productbay_add_to_cart_text` / `productbay_select_options_text` / `productbay_bulk_list_text` / `productbay_bulk_list_added_text`: Override customer-facing button and toggle labels. Note the last two are applied through a variable in `TableRenderer::resolve_custom_text()`, so grepping for a literal `apply_filters( 'productbay_bulk_list_text'` will not find them.
 
-Refer to [docs/developer/hooks.md](file:///var/www/html/wp-content/plugins/productbay/docs/developer/hooks.md) for a complete list of the ~37 extension hooks.
+Refer to [docs/developer/hooks.md](file:///var/www/html/wp-content/plugins/productbay/docs/developer/hooks.md) for a complete list of the ~39 extension hooks.
 
 ### 3. Global UI Component Sharing (SlotFill & Proxy)
 To keep the bundle sizes small, the free plugin shares its React component library globally via the `window` object:

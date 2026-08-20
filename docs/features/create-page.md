@@ -85,7 +85,7 @@ The **Options Tab** provides advanced controls for table functionality, filters,
    - **Show Quantity Selector**: Allow quantity input per row.
    - **Variation Badges**: Show badges for variations added to cart.
    - **Show Clear All Button**: Display a bulk deselect button.
-   - **Selected Items View Panel**: Show a floating summary of selected items.
+   - **Bulk List Panel**: Show a floating summary of the bulk list.
 5. **Variable & Grouped Products**: Configure display modes for complex product types.
    - **Variable Product Mode**: Inline Dropdown (Free), Popup Modal <ProBadge />, Nested Rows <ProBadge />, Separate Rows <ProBadge />.
    - **Grouped Product Mode**: Inline Dropdown (Free), Popup Modal <ProBadge />, Nested Rows <ProBadge />, Separate Rows <ProBadge />.

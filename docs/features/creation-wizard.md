@@ -112,6 +112,7 @@ Key areas:
 - Button styling (colors, hover colors)
 - Layout (border style, border radius toggle, cell padding)
 - Hover effects (row hover toggle with custom colors)
+- Layout on phones (stacked cards or horizontal scroll)
 
 ## Step 4: Options
 
@@ -134,7 +135,7 @@ Key areas:
 - **Show Quantity Selector** — Display quantity input fields
 - **Variation Badges** — Show badges indicating which variations were added
 - **Show Clear All Button** — Display a button to clear all selected products
-- **Selected Items View Panel** — Show a floating summary of selected items
+- **Bulk List Panel** — Show a floating summary of the bulk list
 
 ### Variable & Grouped Products
 - **Variable Product Mode** — Choose display mode: Inline Dropdown (Free), Popup Modal <ProBadge />, Nested Rows <ProBadge />, or Separate Rows <ProBadge />

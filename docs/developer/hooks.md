@@ -3,7 +3,7 @@
 ProductBay provides an extensive set of WordPress action hooks and filters, enabling developers to extend, customize, and integrate with the plugin without modifying its core source files.
 
 ::: info Since v1.0.0
-All hooks listed on this page were introduced in ProductBay **1.0.0**.
+All hooks listed on this page were introduced in ProductBay **1.0.0**, unless the hook notes a later version.
 :::
 
 ## Hook Naming Convention
@@ -239,6 +239,39 @@ Filters the generated scoped CSS for a table.
 |------|--------|
 | **Parameters** | `$css` *(string)*, `$table` *(array)* |
 | **Returns** | `string` — Modified CSS |
+
+### Button & toggle text filters
+
+Four filters override the customer-facing labels on a table's action controls. Each receives an empty string plus the table's resolved cart settings, so returning a non-empty string wins. Returning `''` falls through to the global **Cart Customization** setting, and then to the built-in translatable default.
+
+These are the seam ProductBay Pro uses to implement per-table custom text; a filter added at the default priority will run alongside it, so use a later priority if you need to override Pro.
+
+| Filter | Default label | Since |
+|--------|---------------|-------|
+| `productbay_add_to_cart_text` | WooCommerce's add-to-cart text | 1.3.2 |
+| `productbay_select_options_text` | "Select Options" / "View Products" | 1.3.2 |
+| `productbay_bulk_list_text` | "Add to bulk list" | 1.3.4 |
+| `productbay_bulk_list_added_text` | "Added" | 1.3.4 |
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$text` *(string)* — empty by default, `$cart_settings` *(array)* — the table's resolved cart settings |
+| **Returns** | `string` — The label to render, or `''` to fall back |
+
+```php
+// Call the bulk list an "order sheet" on every table.
+add_filter( 'productbay_bulk_list_text', function( $text, $cart_settings ) {
+    return __( 'Add to order sheet', 'my-textdomain' );
+}, 10, 2 );
+
+add_filter( 'productbay_bulk_list_added_text', function( $text, $cart_settings ) {
+    return __( 'On sheet', 'my-textdomain' );
+}, 10, 2 );
+```
+
+::: tip
+The bulk-list labels are always rendered — they give the select checkbox its accessible name on desktop, and become the visible toggle button on [stacked mobile cards](/features/display-customization#layout-on-phones).
+:::
 
 ### `productbay_before_table` / `productbay_after_table`
 

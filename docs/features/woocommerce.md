@@ -26,12 +26,16 @@ The button's "added" indicator stays in sync with the live cart. If a customer *
 Enable per-row quantity inputs so customers can specify how many units to add. The input respects WooCommerce's min/max and step settings for each product.
 
 ### Bulk Add to Cart
-ProductBay supports adding multiple products at once:
+ProductBay supports adding multiple products at once. The products a customer has picked are called the **bulk list**:
 
 1. Enable the checkbox column by turning on cart features
-2. Customers select multiple products using checkboxes
+2. Customers add products to the bulk list using the checkboxes
 3. Click the "Add Selected to Cart" button
-4. All selected products are added in a single AJAX request
+4. Everything in the bulk list is added in a single AJAX request
+
+::: tip On phones <Badge type="tip" text="Since v1.3.4" />
+When a table uses the [stacked-card mobile layout](/features/display-customization#layout-on-phones), the checkbox is replaced by a full-width **Add to bulk list** button at the bottom of each card, which reads **Added** once the product is in the list. Pro can rename both labels — see [Cart Customization](/features/plugin-settings#cart-customization).
+:::
 
 ::: tip
 Bulk add-to-cart works with simple products. Variable products need their attributes selected individually before they can be added.
@@ -47,10 +51,10 @@ When bulk selection is active, a **Clear All** button can be shown to instantly 
 
 Toggle **Show Clear All Button** in the **Options** step under **Cart Functionality**.
 
-### Selected Items View Panel
-A floating panel that displays all currently selected items with their individual quantities. This gives customers a running summary of what they're about to add to cart before clicking the bulk action button.
+### Bulk List Panel
+A floating panel that displays everything in the bulk list with individual quantities. This gives customers a running summary of what they're about to add to cart before clicking the bulk action button. Open it with the **View (n)** button in the table toolbar.
 
-Toggle **Selected Items View Panel** in the **Options** step under **Cart Functionality**.
+Toggle **Bulk List Panel** in the **Options** step under **Cart Functionality**.
 
 ## Variable Products
 

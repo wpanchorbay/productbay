@@ -59,6 +59,29 @@ The border radius has its own **enable toggle**. When off, the table has sharp c
 - **Normal** — Standard spacing (default)
 - **Spacious** — Extra spacing for readability
 
+## Layout on Phones <Badge type="tip" text="Since v1.3.4" />
+
+A table with more than a few columns cannot fit a phone screen, so ProductBay reflows it. Pick the behaviour per table under **Display → Layout on phones**; it applies below **767px** and never changes the desktop or tablet layout.
+
+| Mode | Description |
+|------|-------------|
+| **Stacked cards** *(default)* | Each row becomes a self-contained card. The table header is hidden and every value is labeled with its column heading instead. |
+| **Horizontal scroll** | Keeps the classic table and lets the customer swipe it sideways. Best when column alignment matters, such as a price list meant to be compared row by row. |
+
+### How a stacked card is arranged
+1. **Product name** as the card heading.
+2. **Labeled values** — one line per visible column, each prefixed with its column heading (this is why headings stay useful even when the header row is hidden).
+3. **Add to cart controls** — variation dropdowns, quantity, and the button, each full width.
+4. **Add to bulk list** — a full-width toggle button that replaces the desktop checkbox, showing **Added** once the product is in the bulk list.
+
+::: tip
+Per-column [responsive visibility](/features/column-editor#responsive-visibility) still applies inside cards. A column set to "Hide on mobile" stays hidden, so you can trim a card down to just the essentials.
+:::
+
+::: info Existing tables
+Stacked cards apply automatically to tables created before v1.3.4 — there is nothing to migrate. Switch a table to **Horizontal scroll** if you prefer the old behaviour.
+:::
+
 ## Hover Effects
 
 The **Row Hover Effect** has its own **enable toggle**. When on, rows are visually highlighted when the cursor passes over them.
