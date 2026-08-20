@@ -1891,29 +1891,44 @@ dialog.productbay-lightbox::backdrop {
     .productbay-wrapper.productbay-has-selection .productbay-bulk-actions {
         display: flex;
         position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        /* Inset from the edges so the rounding is actually visible -- a
+           full-bleed bar has no corners to round. Bottom clears the iOS home
+           indicator. */
+        left: 12px;
+        right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
         z-index: 999;
         justify-content: center;
         gap: 8px;
-        padding: 10px 12px;
-        /* Clear the iOS home indicator. */
-        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        padding: 8px;
         background: #fff;
-        border-top: 1px solid #e2e8f0;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+        border-radius: 999px;
+        /* Shadow on all sides now that it floats rather than sits on the edge. */
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
     }
 
     /* The bar overlays the page, so reserve room below the table for the
        last card / pagination to stay reachable. */
     .productbay-wrapper.productbay-has-selection {
-        padding-bottom: 72px;
+        padding-bottom: 84px;
     }
 
-    /* Let the group fill the bar so the primary action is a wide target. */
+    /* Fill the bar so the primary action is a wide target, and clip to the
+       pill -- the group's children carry `border-radius: 0 !important` from
+       the base button-group rules, so overflow is what rounds their ends. */
     .productbay-wrapper.productbay-has-selection .productbay-btn-group {
         width: 100%;
+        border-radius: inherit;
+        overflow: hidden;
+    }
+
+    .productbay-wrapper.productbay-has-selection .productbay-btn-group .productbay-button:first-child {
+        padding-left: 20px;
+    }
+
+    .productbay-wrapper.productbay-has-selection .productbay-btn-group .productbay-button:last-child {
+        padding-right: 20px;
     }
 
     .productbay-wrapper.productbay-has-selection .productbay-btn-bulk {
