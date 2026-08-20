@@ -239,9 +239,9 @@ export const OptionsPanel = ({
 				</SettingsOption>
 
 				<SettingsOption
-					title={__('Selected Items View Panel', 'productbay')}
+					title={__('Bulk List Panel', 'productbay')}
 					description={__(
-						'Show a floating panel displaying all selected items with individual quantities',
+						'Show a floating panel listing everything in the bulk list with individual quantities',
 						'productbay'
 					)}
 				>

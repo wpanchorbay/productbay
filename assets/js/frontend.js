@@ -1344,7 +1344,7 @@
 
             let totalPrice = 0;
             let html = '<div class="productbay-popup-header">';
-            html += `<strong>Selected Items <span class="productbay-popup-count">(${this.selectedProducts.size})</span></strong>`;
+            html += `<strong>Bulk list <span class="productbay-popup-count">(${this.selectedProducts.size})</span></strong>`;
             html += '<button class="productbay-popup-close" title="Close popup">&times;</button>';
             html += '</div>';
             html += '<div class="productbay-popup-items">';

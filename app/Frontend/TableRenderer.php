@@ -316,9 +316,9 @@ class TableRenderer
 			echo esc_html( !empty($this->add_to_cart_text) ? $this->add_to_cart_text : __('Add to Cart', 'productbay') );
 			echo '</button>';
 
-			// Selected Items Panel Trigger
+			// Bulk List Panel Trigger
 			if (!isset($settings['features']['selectedItemsPanel']['enabled']) || $settings['features']['selectedItemsPanel']['enabled']) {
-				echo '<button class="productbay-button productbay-btn-panel" disabled title="' . esc_attr__('View selected items', 'productbay') . '">';
+				echo '<button class="productbay-button productbay-btn-panel" disabled title="' . esc_attr__('View bulk list', 'productbay') . '">';
 				echo esc_html__('View', 'productbay') . ' (<span class="productbay-panel-count">0</span>)';
 				echo '</button>';
 			}
