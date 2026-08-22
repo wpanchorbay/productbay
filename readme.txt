@@ -290,7 +290,12 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 * Feature: Product tables are now mobile-responsive. On phones each row reflows into a labeled card (default), or you can keep the classic horizontal-scroll table — chosen per table under Display → Layout on phones.
 * Improvement: Stacked cards are the new default and apply to existing tables automatically, so no table is left with cramped or cut-off columns on small screens.
 * Improvement: Mobile cards lead with the product name, then the add-to-cart controls, with bulk selection as a full-width "Add to bulk list" button instead of a small checkbox — far easier to tap on a phone.
+* Improvement: Card controls now fill the width of the card on phones. The variation and grouped-product dropdowns, the quantity stepper, and the add-to-cart button all share one height, and the stepper is now a minus / field / plus control sized for thumbs.
+* Improvement: Grouped products keep their dropdown and quantity stepper on a single row wherever there is room, stacking only on very narrow screens.
+* Improvement: Every storefront control on phones now meets the 44px minimum touch target, and the filter bar wraps instead of pushing the page sideways on narrow screens.
 * Improvement: Bulk selection is now called the "bulk list" throughout the storefront and the table builder, so the checkbox, the "View" button, and the floating panel all use the same wording.
+* Improvement: On phones the bulk actions now float in a rounded bar pinned to the bottom of the screen as soon as something is selected, so the bulk button, "View", and "Clear" stay reachable however far you scroll — and the bar disappears again when the list is empty.
+* Improvement: The bulk list popup opens above that bar, fits the screen, and scrolls internally instead of running off the edge, with a tinted header matching its footer.
 * Improvement: Wide tables now get a sensible minimum width plus an edge scroll hint, so many-column tables scroll comfortably instead of squishing.
 * Fix: The category and product type filters above a table now only offer values that exist in that table. Previously they listed every category and type on the store, so a table scoped to one category still offered the whole catalog and picking any of those choices returned an empty table.
 * Fix: Tables with a draft or pending status are no longer labelled "Private" in the dashboard and the table builder. Private means published but restricted; draft means not published at all.
