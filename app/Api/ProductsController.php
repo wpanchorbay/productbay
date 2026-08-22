@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WpabProductBay\Api;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,8 +25,8 @@ use WpabProductBay\Http\Request;
  * @since   1.0.0
  * @package WpabProductBay\Api
  */
-class ProductsController extends ApiController
-{
+class ProductsController extends ApiController {
+
 
 
 	/**
@@ -35,9 +35,8 @@ class ProductsController extends ApiController
 	 * @param Request $request HTTP request instance.
 	 * @since 1.0.0
 	 */
-	public function __construct(Request $request)
-	{
-		parent::__construct($request);
+	public function __construct( Request $request ) {
+		parent::__construct( $request );
 	}
 
 	/**
@@ -50,77 +49,74 @@ class ProductsController extends ApiController
 	 *
 	 * @since 1.0.0
 	 */
-	public function index()
-	{
-		$search = $this->request->get('search');
-		$include = $this->request->get('include'); // For ID search.
-		$sku = $this->request->get('sku'); // For SKU search.
-		$limit = $this->request->get('limit', 10);
-		$page = $this->request->get('page', 1);
+	public function index() {
+		$search  = $this->request->get( 'search' );
+		$include = $this->request->get( 'include' ); // For ID search.
+		$sku     = $this->request->get( 'sku' ); // For SKU search.
+		$limit   = $this->request->get( 'limit', 10 );
+		$page    = $this->request->get( 'page', 1 );
 
-		$is_default_search = empty($search) && empty($include) && empty($sku);
+		$is_default_search = empty( $search ) && empty( $include ) && empty( $sku );
 
 		$args = array(
-			'limit' => $limit,
-			'page' => $page,
-			'status' => 'publish',
+			'limit'   => $limit,
+			'page'    => $page,
+			'status'  => 'publish',
 			'orderby' => $is_default_search ? 'date' : 'title',
-			'order' => $is_default_search ? 'DESC' : 'ASC',
+			'order'   => $is_default_search ? 'DESC' : 'ASC',
 		);
 
 		// Handle ID search (exact match).
-		if (!empty($include)) {
-			$args['include'] = array((int)$include);
-			$args['limit'] = 1; // Only one product by ID.
-		}
-		elseif (!empty($sku)) {
+		if ( ! empty( $include ) ) {
+			$args['include'] = array( (int) $include );
+			$args['limit']   = 1; // Only one product by ID.
+		} elseif ( ! empty( $sku ) ) {
 			// Handle SKU search (exact or prefix match).
 			// Query a bounded set of products and filter by SKU in PHP.
 			// WC's `sku` param only supports exact match, so we fetch a capped set.
 			// and do prefix matching manually. Cap at 200 to avoid unbounded queries.
-			unset($args['page']);
+			unset( $args['page'] );
 			$args['limit'] = 200;
-			$all_products = \wc_get_products($args);
-			$data = array();
+			$all_products  = \wc_get_products( $args );
+			$data          = array();
 
-			$sku_lower = strtolower(sanitize_text_field($sku));
+			$sku_lower = strtolower( sanitize_text_field( $sku ) );
 
-			foreach ($all_products as $product) {
-				$product_sku = strtolower($product->get_sku());
+			foreach ( $all_products as $product ) {
+				$product_sku = strtolower( $product->get_sku() );
 
 				// Exact match or starts with.
-				if ($product_sku === $sku_lower || strpos($product_sku, $sku_lower) === 0) {
+				if ( $product_sku === $sku_lower || strpos( $product_sku, $sku_lower ) === 0 ) {
 					$data[] = array(
-						'id' => $product->get_id(),
-						'name' => $product->get_name(),
-						'sku' => $product->get_sku(),
+						'id'    => $product->get_id(),
+						'name'  => $product->get_name(),
+						'sku'   => $product->get_sku(),
 						'price' => $product->get_price_html(),
-						'image' => \wp_get_attachment_image_url($product->get_image_id(), 'thumbnail'),
+						'image' => \wp_get_attachment_image_url( $product->get_image_id(), 'thumbnail' ),
 					);
 				}
 			}
 
 			// Paginate the filtered results.
-			$offset = ((int)$page - 1) * (int)$limit;
-			$data = array_slice($data, $offset, (int)$limit);
+			$offset = ( (int) $page - 1 ) * (int) $limit;
+			$data   = array_slice( $data, $offset, (int) $limit );
 
 			return $data;
-		}
-		elseif (!empty($search)) {
+		} elseif ( ! empty( $search ) ) {
 			// Handle name search (partial match).
 			$args['s'] = $search;
 		}
 
-		$products = \wc_get_products($args);
-		$data = array();
+		$products = \wc_get_products( $args );
+		$data     = array();
 
-		foreach ($products as $product) {
+		foreach ( $products as $product ) {
 			$data[] = array(
-				'id' => $product->get_id(),
-				'name' => $product->get_name(),
-				'sku' => $product->get_sku(),
+				'id'    => $product->get_id(),
+				'name'  => $product->get_name(),
+				'sku'   => $product->get_sku(),
 				'price' => $product->get_price_html(),
-				'image' => \wp_get_attachment_image_url($product->get_image_id(), 'thumbnail'),
+				'image' => \wp_get_attachment_image_url( $product->get_image_id(), 'thumbnail' ),
 			);
 		}
 
@@ -132,26 +128,25 @@ class ProductsController extends ApiController
 	 *
 	 * @since 1.0.0
 	 */
-	public function categories()
-	{
+	public function categories() {
 		$terms = \get_terms(
 			array(
-			'taxonomy' => 'product_cat',
-			'hide_empty' => false,
-		)
+				'taxonomy'   => 'product_cat',
+				'hide_empty' => false,
+			)
 		);
 
-		if (\is_wp_error($terms)) {
+		if ( \is_wp_error( $terms ) ) {
 			return array();
 		}
 
 		$data = array();
-		foreach ($terms as $term) {
+		foreach ( $terms as $term ) {
 			$data[] = array(
-				'id' => $term->term_id,
-				'name' => $term->name,
+				'id'    => $term->term_id,
+				'name'  => $term->name,
 				'count' => $term->count,
-				'slug' => $term->slug,
+				'slug'  => $term->slug,
 			);
 		}
 
@@ -168,40 +163,39 @@ class ProductsController extends ApiController
 	 * @return array Statistics data with 'categories' and 'products' counts
 	 * @since 1.0.0
 	 */
-	public function sourceStats()
-	{
-		$type = $this->request->get('type', 'all');
+	public function sourceStats() {
+		$type = $this->request->get( 'type', 'all' );
 
 		$stats = array(
 			'categories' => 0,
-			'products' => 0,
+			'products'   => 0,
 		);
 
-		switch ($type) {
+		switch ( $type ) {
 			case 'all':
 				// Count all published products.
-				$stats['products'] = (int)\wp_count_posts('product')->publish;
+				$stats['products'] = (int) \wp_count_posts( 'product' )->publish;
 
 				// Count all non-empty categories.
-				$terms = \get_terms(
+				$terms               = \get_terms(
 					array(
-					'taxonomy' => 'product_cat',
-					'hide_empty' => false, // Count all categories.
-				)
+						'taxonomy'   => 'product_cat',
+						'hide_empty' => false, // Count all categories.
+					)
 				);
-				$stats['categories'] = is_array($terms) ? count($terms) : 0;
+				$stats['categories'] = is_array( $terms ) ? count( $terms ) : 0;
 				break;
 
 			case 'sale':
 				// Get products on sale using WC native function (handles dates, variations, etc.).
-				$sale_ids = \wc_get_product_ids_on_sale();
-				$stats['products'] = count($sale_ids);
+				$sale_ids          = \wc_get_product_ids_on_sale();
+				$stats['products'] = count( $sale_ids );
 
-				if (!empty($sale_ids)) {
+				if ( ! empty( $sale_ids ) ) {
 					// Get unique categories from sale products.
-					$terms = \wp_get_object_terms($sale_ids, 'product_cat', array('fields' => 'ids'));
-					if (!is_wp_error($terms)) {
-						$stats['categories'] = count(array_unique($terms));
+					$terms = \wp_get_object_terms( $sale_ids, 'product_cat', array( 'fields' => 'ids' ) );
+					if ( ! is_wp_error( $terms ) ) {
+						$stats['categories'] = count( array_unique( $terms ) );
 					}
 				}
 				break;

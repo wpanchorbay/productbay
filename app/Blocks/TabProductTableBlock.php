@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WpabProductBay\Blocks;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -27,8 +27,8 @@ use WpabProductBay\Frontend\TableRenderer;
  * @package WpabProductBay\Blocks
  * @since   1.1.0
  */
-class TabProductTableBlock
-{
+class TabProductTableBlock {
+
 	/**
 	 * Repository for table data access.
 	 *
@@ -43,8 +43,7 @@ class TabProductTableBlock
 	 * @param TableRepository $repository Table data repository.
 	 * @since 1.1.0
 	 */
-	public function __construct(TableRepository $repository)
-	{
+	public function __construct( TableRepository $repository ) {
 		$this->repository = $repository;
 	}
 
@@ -56,21 +55,20 @@ class TabProductTableBlock
 	 * @return string Rendered HTML.
 	 * @since 1.1.0
 	 */
-	public function render(array $attributes, string $content): string
-	{
-		$table_ids  = array_map('absint', $attributes['tableIds'] ?? array());
+	public function render( array $attributes, string $content ): string {
+		$table_ids  = array_map( 'absint', $attributes['tableIds'] ?? array() );
 		$tab_labels = $attributes['tabLabels'] ?? array();
-		$active_tab = absint($attributes['activeTab'] ?? 0);
+		$active_tab = absint( $attributes['activeTab'] ?? 0 );
 
-		$request_uri = isset($_SERVER['REQUEST_URI']) ? \sanitize_text_field(\wp_unslash($_SERVER['REQUEST_URI'])) : '';
-		$is_editor   = defined('REST_REQUEST') && REST_REQUEST && strpos($request_uri, '/block-renderer/') !== false;
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? \sanitize_text_field( \wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$is_editor   = defined( 'REST_REQUEST' ) && REST_REQUEST && strpos( $request_uri, '/block-renderer/' ) !== false;
 
-		if (empty($table_ids)) {
+		if ( empty( $table_ids ) ) {
 			return $this->get_mockup();
 		}
 
 		// Ensure active tab index is within bounds.
-		if ($active_tab >= count($table_ids)) {
+		if ( $active_tab >= count( $table_ids ) ) {
 			$active_tab = 0;
 		}
 
@@ -79,15 +77,17 @@ class TabProductTableBlock
 		// Unique wrapper ID prevents JS conflicts when multiple tab blocks exist on one page.
 		$block_id = 'pb-tabs-' . wp_unique_id();
 
-		$renderer = new TableRenderer($this->repository);
+		$renderer = new TableRenderer( $this->repository );
 
 		ob_start();
 
-		// get_block_wrapper_attributes() automatically includes classes/styles from block supports (Color, Typography, etc.)
-		$wrapper_attributes = \get_block_wrapper_attributes( array(
-			'class' => 'productbay-tabs-block',
-			'id'    => $block_id,
-		) );
+		// get_block_wrapper_attributes() automatically includes classes/styles from block supports (Color, Typography, etc.).
+		$wrapper_attributes = \get_block_wrapper_attributes(
+			array(
+				'class' => 'productbay-tabs-block',
+				'id'    => $block_id,
+			)
+		);
 
 		// Only suppress clicks in the editor preview (ServerSideRender) — on the frontend all interactions must work normally.
 		$onclick = $is_editor ? ' onclick="return false;"' : '';
@@ -96,81 +96,81 @@ class TabProductTableBlock
 
 		// Tab List — accessible navigation.
 		echo '<div class="productbay-tabs-nav" role="tablist">';
-		foreach ($table_ids as $index => $table_id) {
-			$label     = isset($tab_labels[$index]) && $tab_labels[$index] !== ''
-				? $tab_labels[$index]
+		foreach ( $table_ids as $index => $table_id ) {
+			$label = isset( $tab_labels[ $index ] ) && $tab_labels[ $index ] !== ''
+				? $tab_labels[ $index ]
 				: sprintf(
 					/* translators: %d: tab index number */
-					esc_html__('Tab %d', 'productbay'),
+					esc_html__( 'Tab %d', 'productbay' ),
 					$index + 1
 				);
-			$tab_id    = esc_attr($block_id . '-tab-' . $index);
-			$panel_id  = esc_attr($block_id . '-panel-' . $index);
+			$tab_id    = esc_attr( $block_id . '-tab-' . $index );
+			$panel_id  = esc_attr( $block_id . '-panel-' . $index );
 			$is_active = $index === $active_tab;
 
 			echo '<button'
-				. ' id="' . esc_attr($tab_id) . '"'
-				. ' class="productbay-tab-button' . ($is_active ? ' is-active' : '') . '"'
+				. ' id="' . esc_attr( $tab_id ) . '"'
+				. ' class="productbay-tab-button' . ( $is_active ? ' is-active' : '' ) . '"'
 				. ' role="tab"'
-				. ' aria-selected="' . ($is_active ? 'true' : 'false') . '"'
-				. ' aria-controls="' . esc_attr($panel_id) . '"'
-				. ' tabindex="' . ($is_active ? '0' : '-1') . '"'
+				. ' aria-selected="' . ( $is_active ? 'true' : 'false' ) . '"'
+				. ' aria-controls="' . esc_attr( $panel_id ) . '"'
+				. ' tabindex="' . ( $is_active ? '0' : '-1' ) . '"'
 				. '>'
-				. esc_html($label)
+				. esc_html( $label )
 				. '</button>';
 		}
 		echo '</div>'; // .productbay-tabs-nav
 
 		// Tab Panels — one per table.
-		foreach ($table_ids as $index => $table_id) {
-			$table     = $this->repository->get_table($table_id);
-			$tab_id    = esc_attr($block_id . '-tab-' . $index);
-			$panel_id  = esc_attr($block_id . '-panel-' . $index);
+		foreach ( $table_ids as $index => $table_id ) {
+			$table     = $this->repository->get_table( $table_id );
+			$tab_id    = esc_attr( $block_id . '-tab-' . $index );
+			$panel_id  = esc_attr( $block_id . '-panel-' . $index );
 			$is_active = $index === $active_tab;
 
 			echo '<div'
-				. ' id="' . esc_attr($panel_id) . '"'
-				. ' class="productbay-tab-panel' . ($is_active ? ' is-active' : '') . '"'
+				. ' id="' . esc_attr( $panel_id ) . '"'
+				. ' class="productbay-tab-panel' . ( $is_active ? ' is-active' : '' ) . '"'
 				. ' role="tabpanel"'
-				. ' aria-labelledby="' . esc_attr($tab_id) . '"'
-				. ($is_active ? '' : ' hidden')
+				. ' aria-labelledby="' . esc_attr( $tab_id ) . '"'
+				. ( $is_active ? '' : ' hidden' )
 				. '>';
 
-			if (!$table) {
-				if ($is_editor || is_admin() || is_preview()) {
+			if ( ! $table ) {
+				if ( $is_editor || is_admin() || is_preview() ) {
 					echo '<div style="padding:16px; border:1px dashed #fca5a5; background:#fef2f2; border-radius:8px; color:#991b1b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif; font-size: 14px;">'
 						. '<div style="font-weight:700; margin-bottom:8px;">⚠️ ProductBay Tabbed Table</div>'
 						. sprintf(
 							/* translators: %d: table ID */
-							\esc_html__('The selected table (ID: %d) could not be found. It may have been deleted. Please select a different table or update the block settings.', 'productbay'),
-							absint($table_id)
+							\esc_html__( 'The selected table (ID: %d) could not be found. It may have been deleted. Please select a different table or update the block settings.', 'productbay' ),
+							absint( $table_id )
 						)
 						. '</div>';
 				} else {
-					echo '<p>' . esc_html__('Table not found.', 'productbay') . '</p>';
+					echo '<p>' . esc_html__( 'Table not found.', 'productbay' ) . '</p>';
 				}
 			} else {
 				$status = $table['status'] ?? 'draft';
-				if ('publish' !== $status && !is_preview() && !is_admin()) {
-					if (\current_user_can('manage_options')) {
+				if ( 'publish' !== $status && ! is_preview() && ! is_admin() ) {
+					if ( \current_user_can( 'manage_options' ) ) {
 						echo '<p style="padding:12px 16px;background:#fef3cd;border:1px solid #e9b006;border-radius:4px;color:#664d03;font-size:14px;">'
 							. sprintf(
 								/* translators: 1: table title, 2: table status, e.g. "draft" */
-								\esc_html__('ProductBay: Table "%1$s" is not visible to visitors (status: %2$s). It will appear here once it is published.', 'productbay'),
-								\esc_html($table['title'] ?? (string) $table_id),
-								\esc_html(TableRepository::status_label($status))
+								\esc_html__( 'ProductBay: Table "%1$s" is not visible to visitors (status: %2$s). It will appear here once it is published.', 'productbay' ),
+								\esc_html( $table['title'] ?? (string) $table_id ),
+								\esc_html( TableRepository::status_label( $status ) )
 							)
 							. '</p>';
 					}
 				} else {
-					$html = $renderer->render($table);
-					if (empty(trim($html)) && ($is_editor || is_admin() || is_preview())) {
+					$html = $renderer->render( $table );
+					if ( empty( trim( $html ) ) && ( $is_editor || is_admin() || is_preview() ) ) {
 						echo '<div style="padding:16px; border:1px dashed #fcd34d; background:#fffbeb; border-radius:8px; color:#92400e; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif; font-size: 14px;">'
 							. '<div style="font-weight:700; margin-bottom:8px;">⚠️ ProductBay Tabbed Table</div>'
 							. sprintf(
 								/* translators: %s: table title */
-								\esc_html__('The table "%s" rendered completely empty. Please check your table configuration, product source, and filters.', 'productbay'),
-								\esc_html($table['title'])
+								\esc_html__( 'The table "%s" rendered completely empty. Please check your table configuration, product source, and filters.', 'productbay' ),
+								\esc_html( $table['title'] )
 							)
 							. '</div>';
 					} else {
@@ -195,14 +195,13 @@ class TabProductTableBlock
 	 * @since 1.1.0
 	 * @return string Sample HTML.
 	 */
-	private function get_mockup(bool $content_only = false): string
-	{
-		if (!is_admin() && !is_preview()) {
+	private function get_mockup( bool $content_only = false ): string {
+		if ( ! is_admin() && ! is_preview() ) {
 			return '';
 		}
 
 		ob_start();
-		if (!$content_only) {
+		if ( ! $content_only ) {
 			?>
 			<div class="productbay-tabs-mockup" style="max-width:100%; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; background:#fff; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
 				<div style="display:flex; background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:0 8px;">
@@ -225,7 +224,7 @@ class TabProductTableBlock
 			<div style="font-size:12px; font-weight:700; color:#4f46e5; text-align:right;">$1,249</div>
 		</div>
 		<?php
-		if (!$content_only) {
+		if ( ! $content_only ) {
 			?>
 				</div>
 			</div>
@@ -244,21 +243,20 @@ class TabProductTableBlock
 	 *
 	 * @return void
 	 */
-	private function enqueue_assets()
-	{
+	private function enqueue_assets() {
 		// Shared ProductBay frontend assets (CSS + cart JS).
 		\wp_enqueue_style(
 			'productbay-frontend',
 			PRODUCTBAY_URL . 'assets/css/frontend.css',
 			array(),
-			(string) filemtime(PRODUCTBAY_PATH . 'assets/css/frontend.css')
+			(string) filemtime( PRODUCTBAY_PATH . 'assets/css/frontend.css' )
 		);
 
 		\wp_enqueue_style(
 			'productbay-tabs',
 			PRODUCTBAY_URL . 'assets/css/block-tabs.css',
 			array(),
-			(string) filemtime(PRODUCTBAY_PATH . 'assets/css/block-tabs.css')
+			(string) filemtime( PRODUCTBAY_PATH . 'assets/css/block-tabs.css' )
 		);
 
 		\wp_enqueue_script(
@@ -268,22 +266,22 @@ class TabProductTableBlock
 			// we trigger 'wc_fragment_refresh' after an AJAX add-to-cart. WooCommerce
 			// registers it but only enqueues it via the Cart widget, so depend on it
 			// here to guarantee it loads on any theme.
-			array('jquery', 'wc-cart-fragments'),
-			(string) filemtime(PRODUCTBAY_PATH . 'assets/js/frontend.js'),
+			array( 'jquery', 'wc-cart-fragments' ),
+			(string) filemtime( PRODUCTBAY_PATH . 'assets/js/frontend.js' ),
 			true
 		);
 
-		if (!\wp_script_is('productbay-frontend', 'localized')) {
+		if ( ! \wp_script_is( 'productbay-frontend', 'localized' ) ) {
 			\wp_localize_script(
 				'productbay-frontend',
 				'productbay_frontend',
 				array(
-					'ajaxurl'               => \admin_url('admin-ajax.php'),
-					'nonce'                 => \wp_create_nonce('productbay_frontend'),
+					'ajaxurl'               => \admin_url( 'admin-ajax.php' ),
+					'nonce'                 => \wp_create_nonce( 'productbay_frontend' ),
 					'cart_url'              => \wc_get_cart_url(),
 					'currency_symbol'       => \get_woocommerce_currency_symbol(),
-					'currency_position'     => \get_option('woocommerce_currency_pos', 'left'),
-					'currency_decimals'     => absint(\get_option('woocommerce_price_num_decimals', 2)),
+					'currency_position'     => \get_option( 'woocommerce_currency_pos', 'left' ),
+					'currency_decimals'     => absint( \get_option( 'woocommerce_price_num_decimals', 2 ) ),
 					'currency_decimal_sep'  => \wc_get_price_decimal_separator(),
 					'currency_thousand_sep' => \wc_get_price_thousand_separator(),
 				)
@@ -292,12 +290,12 @@ class TabProductTableBlock
 
 		// Lightweight tab-switcher — only loaded when this block is on the page.
 		$tabs_js = PRODUCTBAY_PATH . 'assets/js/block-tabs.js';
-		if (file_exists($tabs_js)) {
+		if ( file_exists( $tabs_js ) ) {
 			\wp_enqueue_script(
 				'productbay-tabs',
 				PRODUCTBAY_URL . 'assets/js/block-tabs.js',
 				array(), // No deps — pure vanilla JS.
-				(string) filemtime($tabs_js),
+				(string) filemtime( $tabs_js ),
 				true
 			);
 		}
@@ -307,6 +305,6 @@ class TabProductTableBlock
 		 *
 		 * @since 1.1.0
 		 */
-		\do_action('productbay_enqueue_frontend_assets');
+		\do_action( 'productbay_enqueue_frontend_assets' );
 	}
 }

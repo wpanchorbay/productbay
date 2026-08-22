@@ -186,18 +186,21 @@ add_action(
 			return;
 		}
 
-		// ONLY auto-login if the specific query parameter is present.
+		// ONLY auto-login if the specific query parameter is present. This is a
+		// demo-site convenience gate, not a form submission, so there is no nonce
+		// to verify — the parameter only selects a code path, it changes nothing.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['auto-login'] ) || 'true' !== $_GET['auto-login'] ) {
 			return;
 		}
 
 		// Skip contexts where auto-login would be harmful or unnecessary.
 		if (
-			defined( 'DOING_CRON' ) && DOING_CRON ||
-			defined( 'DOING_AJAX' ) && DOING_AJAX ||
-			defined( 'REST_REQUEST' ) && REST_REQUEST ||
+			( defined( 'DOING_CRON' ) && DOING_CRON ) ||
+			( defined( 'DOING_AJAX' ) && DOING_AJAX ) ||
+			( defined( 'REST_REQUEST' ) && REST_REQUEST ) ||
 			defined( 'WP_CLI' ) ||
-			defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST
+			( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
 		) {
 			return;
 		}
@@ -489,8 +492,8 @@ add_action(
 		$current_user = wp_get_current_user();
 		$wp_admin_bar->add_node(
 			array(
-				'id'    => 'user-actions',
-				'title' => sprintf(
+				'id'     => 'user-actions',
+				'title'  => sprintf(
 					/* translators: %s: display name */
 					__( 'Howdy, %s', 'productbay' ),
 					'<span class="display-name">' . esc_html( $current_user->display_name ) . '</span>'

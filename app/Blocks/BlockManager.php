@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WpabProductBay\Blocks;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,8 +25,8 @@ use WpabProductBay\Data\TableRepository;
  * @package WpabProductBay\Blocks
  * @since   1.1.0
  */
-class BlockManager
-{
+class BlockManager {
+
 	/**
 	 * Repository for table data access.
 	 *
@@ -41,8 +41,7 @@ class BlockManager
 	 * @param TableRepository $repository Table data repository.
 	 * @since 1.1.0
 	 */
-	public function __construct(TableRepository $repository)
-	{
+	public function __construct( TableRepository $repository ) {
 		$this->table_repository = $repository;
 	}
 
@@ -55,10 +54,9 @@ class BlockManager
 	 *
 	 * @return void
 	 */
-	public function init()
-	{
-		$product_table_block     = new ProductTableBlock($this->table_repository);
-		$tab_product_table_block = new TabProductTableBlock($this->table_repository);
+	public function init() {
+		$product_table_block     = new ProductTableBlock( $this->table_repository );
+		$tab_product_table_block = new TabProductTableBlock( $this->table_repository );
 
 		// Register the shared frontend CSS handle.
 		$css_path = PRODUCTBAY_PATH . 'assets/css/frontend.css';
@@ -66,7 +64,7 @@ class BlockManager
 			'productbay-frontend',
 			PRODUCTBAY_URL . 'assets/css/frontend.css',
 			array(),
-			file_exists($css_path) ? (string) filemtime($css_path) : PRODUCTBAY_VERSION
+			file_exists( $css_path ) ? (string) filemtime( $css_path ) : PRODUCTBAY_VERSION
 		);
 
 		// Register the tabs CSS handle.
@@ -75,32 +73,32 @@ class BlockManager
 			'productbay-tabs',
 			PRODUCTBAY_URL . 'assets/css/block-tabs.css',
 			array(),
-			file_exists($tabs_css_path) ? (string) filemtime($tabs_css_path) : PRODUCTBAY_VERSION
+			file_exists( $tabs_css_path ) ? (string) filemtime( $tabs_css_path ) : PRODUCTBAY_VERSION
 		);
 
 		\register_block_type(
 			PRODUCTBAY_PATH . 'blocks/product-table',
 			array(
-				'render_callback'      => array($product_table_block, 'render'),
-				'style_handles'        => array('productbay-frontend'),
-				'editor_style_handles' => array('productbay-frontend'),
+				'render_callback'      => array( $product_table_block, 'render' ),
+				'style_handles'        => array( 'productbay-frontend' ),
+				'editor_style_handles' => array( 'productbay-frontend' ),
 			)
 		);
 
 		\register_block_type(
 			PRODUCTBAY_PATH . 'blocks/tab-product-table',
 			array(
-				'render_callback'      => array($tab_product_table_block, 'render'),
-				'style_handles'        => array('productbay-frontend', 'productbay-tabs'),
-				'editor_style_handles' => array('productbay-frontend', 'productbay-tabs'),
+				'render_callback'      => array( $tab_product_table_block, 'render' ),
+				'style_handles'        => array( 'productbay-frontend', 'productbay-tabs' ),
+				'editor_style_handles' => array( 'productbay-frontend', 'productbay-tabs' ),
 			)
 		);
 
 		// Force the styles into the editor's iFrame for ServerSideRender accuracy.
-		\add_action('enqueue_block_editor_assets', array($this, 'enqueue_editor_preview_styles'));
-		
+		\add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_preview_styles' ) );
+
 		// Inject core + add-on CSS directly into the block editor's iframe via WP's settings API.
-		\add_filter('block_editor_settings_all', array($this, 'inject_editor_iframe_styles'));
+		\add_filter( 'block_editor_settings_all', array( $this, 'inject_editor_iframe_styles' ) );
 	}
 
 	/**
@@ -116,8 +114,7 @@ class BlockManager
 	 * @param array $settings Editor settings array.
 	 * @return array Modified editor settings.
 	 */
-	public function inject_editor_iframe_styles($settings)
-	{
+	public function inject_editor_iframe_styles( $settings ) {
 		// Core ProductBay CSS files to inject into the editor iframe.
 		$css_paths = array(
 			PRODUCTBAY_PATH . 'assets/css/frontend.css',
@@ -138,13 +135,13 @@ class BlockManager
 		 *
 		 * @param string[] $paths Array of absolute CSS file paths.
 		 */
-		$css_paths = \apply_filters('productbay_block_editor_css_paths', $css_paths);
+		$css_paths = \apply_filters( 'productbay_block_editor_css_paths', $css_paths );
 
-		foreach ($css_paths as $path) {
-			if (file_exists($path)) {
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local CSS file.
+		foreach ( $css_paths as $path ) {
+			if ( file_exists( $path ) ) {
 				$settings['styles'][] = array(
-					'css' => file_get_contents($path),
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading a local CSS file, not a remote URL.
+					'css' => file_get_contents( $path ),
 				);
 			}
 		}
@@ -166,17 +163,18 @@ class BlockManager
 	 *
 	 * @since 1.1.0
 	 */
-	public function enqueue_editor_preview_styles()
-	{
-		\wp_enqueue_style('productbay-frontend');
-		\wp_enqueue_style('productbay-tabs');
+	public function enqueue_editor_preview_styles() {
+		\wp_enqueue_style( 'productbay-frontend' );
+		\wp_enqueue_style( 'productbay-tabs' );
 
 		// Pass localization data to the block editor JS so we don't rely on relative URLs.
 		\wp_add_inline_script(
 			'wp-blocks',
-			'window.productbayEditorData = ' . wp_json_encode(array(
-				'adminUrl' => admin_url('admin.php?page=productbay'),
-			)) . ';',
+			'window.productbayEditorData = ' . wp_json_encode(
+				array(
+					'adminUrl' => admin_url( 'admin.php?page=productbay' ),
+				)
+			) . ';',
 			'before'
 		);
 
@@ -188,6 +186,6 @@ class BlockManager
 		 *
 		 * @since 1.1.0
 		 */
-		\do_action('productbay_enqueue_frontend_assets');
+		\do_action( 'productbay_enqueue_frontend_assets' );
 	}
 }

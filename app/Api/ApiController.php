@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WpabProductBay\Api;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,8 +25,8 @@ use WpabProductBay\Http\Request;
  * @package WpabProductBay\Api
  * @since 1.0.0
  */
-abstract class ApiController
-{
+abstract class ApiController {
+
 
 	/**
 	 * HTTP request wrapper instance.
@@ -42,8 +42,7 @@ abstract class ApiController
 	 * @param Request $request HTTP request instance.
 	 * @since 1.0.0
 	 */
-	public function __construct(Request $request)
-	{
+	public function __construct( Request $request ) {
 		$this->request = $request;
 	}
 
@@ -55,15 +54,14 @@ abstract class ApiController
 	 * @return \WP_REST_Response
 	 * @since 1.0.0
 	 */
-	protected function success($data = array(), $status = 200)
-	{
+	protected function success( $data = array(), $status = 200 ) {
 		return new \WP_REST_Response(
 			array(
-			'success' => true,
-			'data' => $data,
-		),
+				'success' => true,
+				'data'    => $data,
+			),
 			$status
-			);
+		);
 	}
 
 	/**
@@ -75,12 +73,11 @@ abstract class ApiController
 	 * @return \WP_Error
 	 * @since 1.0.0
 	 */
-	protected function error($message, $code = 'bad_request', $status = 400)
-	{
+	protected function error( $message, $code = 'bad_request', $status = 400 ) {
 		return new \WP_Error(
 			$code,
 			$message,
-			array('status' => $status)
-			);
+			array( 'status' => $status )
+		);
 	}
 }

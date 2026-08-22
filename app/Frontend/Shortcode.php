@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WpabProductBay\Frontend;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -24,8 +24,8 @@ use WpabProductBay\Data\TableRepository;
  * @package WpabProductBay\Frontend
  * @since 1.0.0
  */
-class Shortcode
-{
+class Shortcode {
+
 
 	/**
 	 * Repository for table data access.
@@ -41,8 +41,7 @@ class Shortcode
 	 * @param TableRepository $repository Table repository instance.
 	 * @since 1.0.0
 	 */
-	public function __construct(TableRepository $repository)
-	{
+	public function __construct( TableRepository $repository ) {
 		$this->repository = $repository;
 	}
 
@@ -51,11 +50,10 @@ class Shortcode
 	 *
 	 * @since 1.0.0
 	 */
-	public function init()
-	{
-		add_shortcode('productbay', array($this, 'render_product_table'));
-		add_filter('woocommerce_add_to_cart_fragments', array($this, 'add_cart_fragments'));
-		add_filter('the_content', array($this, 'render_table_on_permalink'));
+	public function init() {
+		add_shortcode( 'productbay', array( $this, 'render_product_table' ) );
+		add_filter( 'woocommerce_add_to_cart_fragments', array( $this, 'add_cart_fragments' ) );
+		add_filter( 'the_content', array( $this, 'render_table_on_permalink' ) );
 	}
 
 	/**
@@ -65,40 +63,39 @@ class Shortcode
 	 * @return string
 	 * @since 1.2.0
 	 */
-	public function render_table_on_permalink($content)
-	{
-		if (is_singular('productbay_table') && in_the_loop() && is_main_query()) {
+	public function render_table_on_permalink( $content ) {
+		if ( is_singular( 'productbay_table' ) && in_the_loop() && is_main_query() ) {
 			$table_id = get_the_ID();
-			$table = $this->repository->get_table($table_id);
-			
-			if (!$table) {
+			$table    = $this->repository->get_table( $table_id );
+
+			if ( ! $table ) {
 				return $content;
 			}
-			
-			if ('publish' !== $table['status'] && !current_user_can('manage_options')) {
+
+			if ( 'publish' !== $table['status'] && ! current_user_can( 'manage_options' ) ) {
 				return $content;
 			}
-			
+
 			$this->enqueue_assets();
-			
-			$renderer = new TableRenderer($this->repository);
-			$html = $renderer->render($table);
-			
-			if ('publish' !== $table['status']) {
+
+			$renderer = new TableRenderer( $this->repository );
+			$html     = $renderer->render( $table );
+
+			if ( 'publish' !== $table['status'] ) {
 				$notice = '<p style="padding:12px 16px;background:#fef3cd;border:1px solid #e9b006ff;border-radius:4px;color:#664d03;font-size:14px;margin-bottom:20px;">'
 					. sprintf(
 						/* translators: 1: table title, 2: table status, e.g. "draft" */
-						esc_html__('ProductBay: Previewing "%1$s" (status: %2$s). This URL is not accessible to public visitors.', 'productbay'),
-						esc_html($table['title']),
-						esc_html(TableRepository::status_label($table['status']))
+						esc_html__( 'ProductBay: Previewing "%1$s" (status: %2$s). This URL is not accessible to public visitors.', 'productbay' ),
+						esc_html( $table['title'] ),
+						esc_html( TableRepository::status_label( $table['status'] ) )
 					)
 					. '</p>';
 				$html = $notice . $html;
 			}
-			
+
 			return $html;
 		}
-		
+
 		return $content;
 	}
 
@@ -109,10 +106,9 @@ class Shortcode
 	 * @return array
 	 * @since 1.0.2
 	 */
-	public function add_cart_fragments($fragments)
-	{
-		$cart_data = \WpabProductBay\Frontend\TableRenderer::get_cart_data();
-		$fragments['div.productbay-cart-data'] = '<div class="productbay-cart-data" style="display:none;" data-cart="' . esc_attr(wp_json_encode($cart_data)) . '"></div>';
+	public function add_cart_fragments( $fragments ) {
+		$cart_data                             = \WpabProductBay\Frontend\TableRenderer::get_cart_data();
+		$fragments['div.productbay-cart-data'] = '<div class="productbay-cart-data" style="display:none;" data-cart="' . esc_attr( wp_json_encode( $cart_data ) ) . '"></div>';
 		return $fragments;
 	}
 
@@ -123,14 +119,13 @@ class Shortcode
 	 * @return string
 	 * @since 1.0.0
 	 */
-	public function render_product_table($atts)
-	{
+	public function render_product_table( $atts ) {
 		$this->enqueue_assets();
 
 		$atts = shortcode_atts(
 			array(
-			'id' => 0,
-		),
+				'id' => 0,
+			),
 			$atts,
 			'productbay'
 		);
@@ -142,39 +137,39 @@ class Shortcode
 		 *
 		 * @param array $atts The shortcode attributes.
 		 */
-		$atts = \apply_filters('productbay_shortcode_atts', $atts);
+		$atts = \apply_filters( 'productbay_shortcode_atts', $atts );
 
-		$table_id = intval($atts['id']);
+		$table_id = intval( $atts['id'] );
 
-		if (!$table_id) {
+		if ( ! $table_id ) {
 			return '';
 		}
 
-		$table = $this->repository->get_table($table_id);
+		$table = $this->repository->get_table( $table_id );
 
-		if (!$table) {
+		if ( ! $table ) {
 			return '';
 		}
 
 		// Only render published tables on the frontend.
-		if ('publish' !== $table['status']) {
+		if ( 'publish' !== $table['status'] ) {
 			// Show a helpful notice to admins so they know why the table isn't rendering.
-			if (current_user_can('manage_options')) {
+			if ( current_user_can( 'manage_options' ) ) {
 				return '<p style="padding:12px 16px;background:#fef3cd;border:1px solid #e9b006ff;border-radius:4px;color:#664d03;font-size:14px;">'
 					. sprintf(
 					/* translators: 1: table title, 2: table status, e.g. "draft" */
-					esc_html__('ProductBay: Table "%1$s" is not visible to visitors (status: %2$s). It will appear here once it is published.', 'productbay'),
-					esc_html($table['title']),
-					esc_html(TableRepository::status_label($table['status']))
-				)
+						esc_html__( 'ProductBay: Table "%1$s" is not visible to visitors (status: %2$s). It will appear here once it is published.', 'productbay' ),
+						esc_html( $table['title'] ),
+						esc_html( TableRepository::status_label( $table['status'] ) )
+					)
 					. '</p>';
 			}
 			return '';
 		}
 
 		// Instantiate renderer (or inject if we refactor Plugin.php).
-		$renderer = new TableRenderer($this->repository);
-		return $renderer->render($table);
+		$renderer = new TableRenderer( $this->repository );
+		return $renderer->render( $table );
 	}
 
 	/**
@@ -182,10 +177,9 @@ class Shortcode
 	 *
 	 * @since 1.0.0
 	 */
-	private function enqueue_assets()
-	{
+	private function enqueue_assets() {
 		$css_file = PRODUCTBAY_PATH . 'assets/css/frontend.css';
-		$css_ver = (string)time();
+		$css_ver  = (string) time();
 
 		\wp_enqueue_style(
 			'productbay-frontend',
@@ -201,8 +195,8 @@ class Shortcode
 			// we trigger 'wc_fragment_refresh' after an AJAX add-to-cart. WooCommerce
 			// registers it but only enqueues it via the Cart widget, so depend on it
 			// here to guarantee it loads on any theme.
-			array('jquery', 'wc-cart-fragments'),
-			(string)time(),
+			array( 'jquery', 'wc-cart-fragments' ),
+			(string) time(),
 			true
 		);
 
@@ -210,15 +204,15 @@ class Shortcode
 			'productbay-frontend',
 			'productbay_frontend',
 			array(
-			'ajaxurl' => \admin_url('admin-ajax.php'),
-			'nonce' => \wp_create_nonce('productbay_frontend'),
-			'cart_url' => wc_get_cart_url(),
-			'currency_symbol' => get_woocommerce_currency_symbol(),
-			'currency_position' => get_option('woocommerce_currency_pos', 'left'),
-			'currency_decimals' => absint(get_option('woocommerce_price_num_decimals', 2)),
-			'currency_decimal_sep' => wc_get_price_decimal_separator(),
-			'currency_thousand_sep' => wc_get_price_thousand_separator(),
-		)
+				'ajaxurl'               => \admin_url( 'admin-ajax.php' ),
+				'nonce'                 => \wp_create_nonce( 'productbay_frontend' ),
+				'cart_url'              => wc_get_cart_url(),
+				'currency_symbol'       => get_woocommerce_currency_symbol(),
+				'currency_position'     => get_option( 'woocommerce_currency_pos', 'left' ),
+				'currency_decimals'     => absint( get_option( 'woocommerce_price_num_decimals', 2 ) ),
+				'currency_decimal_sep'  => wc_get_price_decimal_separator(),
+				'currency_thousand_sep' => wc_get_price_thousand_separator(),
+			)
 		);
 
 		/**
@@ -228,6 +222,6 @@ class Shortcode
 		 *
 		 * @since 1.0.0
 		 */
-		\do_action('productbay_enqueue_frontend_assets');
+		\do_action( 'productbay_enqueue_frontend_assets' );
 	}
 }
