@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-20T20:52:40+00:00\n"
+"POT-Creation-Date: 2026-08-22T11:32:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: productbay\n"
@@ -158,14 +158,14 @@ msgstr ""
 msgid "The selected table (ID: %d) could not be found. It may have been deleted. Please select a different table or update the block settings."
 msgstr ""
 
-#. translators: %s: table title
+#. translators: 1: table title, 2: table status, e.g. "draft"
 #: app/Blocks/ProductTableBlock.php:93
-#: app/Frontend/Shortcode.php:165
+#: app/Frontend/Shortcode.php:166
 #, php-format
-msgid "ProductBay: Table \"%s\" is currently private. It will appear here once it is published."
+msgid "ProductBay: Table \"%1$s\" is not visible to visitors (status: %2$s). It will appear here once it is published."
 msgstr ""
 
-#: app/Blocks/ProductTableBlock.php:142
+#: app/Blocks/ProductTableBlock.php:143
 msgid "Select a table to see live content"
 msgstr ""
 
@@ -275,6 +275,26 @@ msgstr ""
 msgid "No significant field changes detected (likely a metadata or timestamp update)."
 msgstr ""
 
+#: app/Data/TableRepository.php:327
+msgctxt "table status"
+msgid "published"
+msgstr ""
+
+#: app/Data/TableRepository.php:329
+msgctxt "table status"
+msgid "private"
+msgstr ""
+
+#: app/Data/TableRepository.php:331
+msgctxt "table status"
+msgid "draft"
+msgstr ""
+
+#: app/Data/TableRepository.php:333
+msgctxt "table status"
+msgid "pending review"
+msgstr ""
+
 #: app/Frontend/AjaxRenderer.php:204
 msgid "No products selected"
 msgstr ""
@@ -319,10 +339,10 @@ msgstr ""
 msgid "Failed to add products to cart."
 msgstr ""
 
-#. translators: %s: table title
+#. translators: 1: table title, 2: table status, e.g. "draft"
 #: app/Frontend/Shortcode.php:91
 #, php-format
-msgid "ProductBay: Previewing private table \"%s\". This URL is not accessible to public visitors."
+msgid "ProductBay: Previewing \"%1$s\" (status: %2$s). This URL is not accessible to public visitors."
 msgstr ""
 
 #: app/Frontend/TableRenderer.php:296

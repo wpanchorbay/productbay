@@ -298,7 +298,7 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 * Improvement: The bulk list popup opens above that bar, fits the screen, and scrolls internally instead of running off the edge, with a tinted header matching its footer.
 * Improvement: Wide tables now get a sensible minimum width plus an edge scroll hint, so many-column tables scroll comfortably instead of squishing.
 * Fix: The category and product type filters above a table now only offer values that exist in that table. Previously they listed every category and type on the store, so a table scoped to one category still offered the whole catalog and picking any of those choices returned an empty table.
-* Fix: Tables with a draft or pending status are no longer labelled "Private" in the dashboard and the table builder. Private means published but restricted; draft means not published at all.
+* Fix: Tables with a draft or pending status are no longer labelled "Private" in the dashboard, the table builder, or the admin-only notice shown in place of an unpublished table. Private means published but restricted; draft means not published at all. The notice now names the actual status.
 * Dev: Added `productbay_bulk_list_text` and `productbay_bulk_list_added_text` filters so the bulk-list toggle labels can be customized (available in Pro).
 * Dev: Added `productbay_filter_options` and `productbay_filter_options_cache_ttl` filters to adjust or re-cache the resolved filter choices.
 

@@ -301,4 +301,38 @@ class TableRepository
 		$query = new \WP_Query($args);
 		return (int)$query->found_posts;
 	}
+
+	/**
+	 * Human-readable label for a table's post status.
+	 *
+	 * The builder only ever sets `publish` or `private`, but save() also
+	 * accepts `draft` and `pending`, so a table created through the REST API,
+	 * an import, or WP-CLI can arrive with either. Naming the status keeps the
+	 * admin notices from calling every unpublished table "private", which is a
+	 * meaningfully different thing: private means published but restricted to
+	 * capable logged-in users, draft means not published at all.
+	 *
+	 * Mirrors `src/utils/tableStatus.ts` on the admin side.
+	 *
+	 * @since 1.3.4
+	 *
+	 * @param string $status The table's post status.
+	 * @return string Translated lower-case label, or the raw status when
+	 *                another plugin has registered one we do not map.
+	 */
+	public static function status_label(string $status): string
+	{
+		switch ($status) {
+			case 'publish':
+				return \_x('published', 'table status', 'productbay');
+			case 'private':
+				return \_x('private', 'table status', 'productbay');
+			case 'draft':
+				return \_x('draft', 'table status', 'productbay');
+			case 'pending':
+				return \_x('pending review', 'table status', 'productbay');
+			default:
+				return $status;
+		}
+	}
 }
