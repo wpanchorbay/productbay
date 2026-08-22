@@ -56,9 +56,13 @@
             // Map: cartKey → { quantity, variationId, attributes, productId }
             this.cartQuantities = new Map();
             this.loadSelectionsFromStorage();
-            this.syncWithWCCart(); // Sync initial cart state
 
             this.init();
+
+            // Sync initial cart state AFTER init(): restoreCartBadges() (called from
+            // syncWithWCCart) reads this.features, which init() populates. Running it
+            // earlier left features undefined and silently aborted badge restoration.
+            this.syncWithWCCart();
         }
 
         init() {
@@ -119,6 +123,13 @@
             // Sync with actual WooCommerce Cart on AJAX refreshes
             $(document.body).on('wc_fragments_refreshed wc_fragments_loaded', this.syncWithWCCart.bind(this));
 
+            // Live-sync the "added" badges when the cart changes OUTSIDE the table.
+            // Classic themes fire these jQuery events on add/remove; block themes
+            // (mini-cart / cart block) dispatch `wc-blocks_store_sync_required` on the
+            // window whenever the Store API cart mutates.
+            $(document.body).on('added_to_cart removed_from_cart', this.handleExternalCartChange.bind(this));
+            window.addEventListener('wc-blocks_store_sync_required', this.handleExternalCartChange.bind(this));
+
             // Selected Items Popup
             this.$wrapper.on('click', '.productbay-btn-panel', this.toggleSelectedItemsPopup.bind(this));
             this.$wrapper.on('click', '.productbay-popup-close', this.closeSelectedItemsPopup.bind(this));
@@ -158,13 +169,91 @@
                     const data = $cartData.data('cart');
                     if (Array.isArray(data)) {
                         this.cartQuantities.clear();
-                        data.forEach(([k, v]) => this.cartQuantities.set(k, v));
+                        // String() keys: PHP coerces numeric array keys (simple product
+                        // IDs) to integers, but lookups use String(productId), and Map
+                        // keys are type-sensitive (35 !== '35').
+                        data.forEach(([k, v]) => this.cartQuantities.set(String(k), v));
                         this.restoreCartBadges();
                     }
                 } catch (e) {
                     console.error('ProductBay: Failed to sync with WooCommerce cart fragments.', e);
                 }
             }
+        }
+
+        /**
+         * Reconcile tracked cart quantities from an authoritative server payload
+         * (the list of [cartKey, entry] pairs returned by the add-to-cart AJAX).
+         *
+         * @param {Array} cartData List of [cartKey, entry] pairs from the server.
+         */
+        syncCartQuantities(cartData) {
+            if (Array.isArray(cartData)) {
+                this.cartQuantities.clear();
+                // See syncWithWCCart: force String keys so simple-product IDs (which PHP
+                // returns as integers) match the String(productId) lookups elsewhere.
+                cartData.forEach(([k, v]) => this.cartQuantities.set(String(k), v));
+            }
+        }
+
+        /**
+         * Push the updated cart to the theme UI (header count / mini-cart) without a
+         * page refresh. Mirrors WooCommerce core's own AJAX add-to-cart behaviour, so
+         * it works on both classic themes (cart fragments) and block themes (the
+         * Mini-Cart block, which listens for the `added_to_cart` event).
+         *
+         * @param {Object} data The AJAX success payload (expects `fragments` + `cart_hash`).
+         */
+        updateThemeCart(data) {
+            const fragments = (data && data.fragments) || null;
+            const cartHash = (data && data.cart_hash) || '';
+
+            // Swap in the refreshed fragment markup (cart count, mini-cart, etc.).
+            if (fragments && typeof fragments === 'object') {
+                try {
+                    Object.keys(fragments).forEach((key) => {
+                        $(key).replaceWith(fragments[key]);
+                    });
+                } catch (err) {
+                    console.error('ProductBay: Failed to apply cart fragments.', err);
+                }
+            }
+
+            // Notify WooCommerce, the theme and the block Mini-Cart. The button arg is
+            // intentionally omitted so core add-to-cart.js does not inject its own
+            // "View cart" link next to our table button.
+            $(document.body).trigger('added_to_cart', [fragments || {}, cartHash]);
+        }
+
+        /**
+         * Debounced reaction to cart changes that happen OUTSIDE the table — e.g. the
+         * customer removes or reduces an item in the mini-cart, the Cart block, or the
+         * classic cart widget. Coalesces bursts of events into a single refresh.
+         */
+        handleExternalCartChange() {
+            clearTimeout(this._cartSyncTimer);
+            this._cartSyncTimer = setTimeout(() => this.syncCartFromServer(), 300);
+        }
+
+        /**
+         * Fetch the authoritative cart quantity map from the server and re-render the
+         * in-table badges. Read-only — it never mutates the cart, so it cannot loop.
+         */
+        syncCartFromServer() {
+            $.ajax({
+                url: productbay_frontend.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'productbay_get_cart_data',
+                    nonce: productbay_frontend.nonce
+                },
+                success: (response) => {
+                    if (response && response.success && response.data) {
+                        this.syncCartQuantities(response.data.cart_data);
+                        this.restoreCartBadges();
+                    }
+                }
+            });
         }
 
         /**
@@ -975,36 +1064,19 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        $(document.body).trigger('wc_fragment_refresh');
+                        const data = response.data || {};
 
-                        // Track accumulated cart quantity
-                        itemsPayload.forEach(itemInfo => {
-                            const pId = itemInfo.product_id;
-                            const cartKey = this.buildCartKey(pId, itemInfo.variation_id, itemInfo.attributes);
-                            const prevEntry = this.cartQuantities.get(cartKey);
-                            const prevQty = prevEntry ? prevEntry.quantity : 0;
-                            const newQty = prevQty + quantity;
+                        // Update the theme's cart icon / mini-cart without a page reload.
+                        this.updateThemeCart(data);
 
-                            // We store an object for all cart quantities to support variation badge generation easily
-                            this.cartQuantities.set(cartKey, {
-                                quantity: newQty,
-                                variationId: itemInfo.variation_id,
-                                attributes: Object.assign({}, itemInfo.attributes),
-                                productId: pId
-                            });
-                        });
+                        // Reconcile tracked quantities with the authoritative server cart,
+                        // then re-render the in-table badges so the confirmation checkmark
+                        // reflects what is actually in the cart (and is not wiped by a
+                        // later async fragment refresh).
+                        this.syncCartQuantities(data.cart_data);
+                        this.restoreCartBadges();
 
-
-                        // Update button text with SVG checkmark and quantity
-                        const checkSvg = '<svg class="productbay-check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-                        // For display on the button, we sum all quantities added
-                        const totalAddedThisTime = itemsPayload.length * quantity;
-                        $btn.html(originalLabel + ' <span class="productbay-added-badge">(' + checkSvg + ' +' + totalAddedThisTime + ')</span>');
                         $btn.prop('disabled', false);
-
-                        if (variationId && this.features.variationBadges !== false) {
-                            this.renderVariationBadges(productIds[0]); // fallback legacy call
-                        }
 
                     } else {
                         const msg = response.data?.errors?.join('\n') || response.data?.message || 'Error adding product.';
@@ -1053,6 +1125,10 @@
                 this.$wrapper.find('.productbay-btn-clear-all').remove();
                 this.$wrapper.find('.productbay-btn-panel').prop('disabled', true).find('.productbay-panel-count').text(0);
             }
+
+            // Drives the mobile sticky action bar (see frontend.css section 21):
+            // the bar is only rendered while a selection exists.
+            this.$wrapper.toggleClass('productbay-has-selection', count > 0);
 
             this.renderSelectedItemsPopup();
             this.updateParentRowBadges(parentCounts);
@@ -1118,67 +1194,27 @@
                 },
                 success: (response) => {
                     if (response.success) {
+                        const data = response.data || {};
                         $btn.text('Added!');
-                        $(document.body).trigger('wc_fragment_refresh');
+
+                        // Update the theme's cart icon / mini-cart without a page reload.
+                        this.updateThemeCart(data);
+
                         if (this.features.cartEnabled === false) {
                             window.location.reload();
                         }
 
                         // Show warnings if any
-                        if (response.data.warnings && response.data.warnings.length > 0) {
+                        if (data.warnings && data.warnings.length > 0) {
                             setTimeout(() => {
-                                alert('Some items had issues:\n' + response.data.warnings.join('\n'));
+                                alert('Some items had issues:\n' + data.warnings.join('\n'));
                             }, 500);
                         }
 
-                        // Update variation badges for variable products we just added
-                        this.selectedProducts.forEach((item, id) => {
-                            if (item.productType === 'variable') {
-                                const cartKey = this.buildCartKey(id, item.variationId, item.attributes);
-                                const prevEntry = this.cartQuantities.get(cartKey);
-                                const prevQty = prevEntry ? prevEntry.quantity : 0;
-                                const newQty = prevQty + item.quantity;
-                                this.cartQuantities.set(cartKey, {
-                                    quantity: newQty,
-                                    variationId: item.variationId,
-                                    attributes: Object.assign({}, item.attributes),
-                                    productId: id
-                                });
-
-                                if (item.variationId && this.features.variationBadges !== false) {
-                                    this.renderVariationBadges(id);
-                                }
-                            } else {
-                                const cartKey = String(id);
-                                const prevEntry = this.cartQuantities.get(cartKey);
-                                const prevQty = prevEntry ? prevEntry.quantity : 0;
-                                const newQty = prevQty + item.quantity;
-                                this.cartQuantities.set(cartKey, {
-                                    quantity: newQty,
-                                    productId: id
-                                });
-                            }
-
-                            // Let's also refresh single add to cart buttons for items added in bulk
-                            let $row = this.$tbody.find(`tr[data-product-id="${id}"]`);
-                            if (!$row.length) {
-                                $row = this.$tbody.find(`.productbay-select-product[value="${id}"]`).closest('tr');
-                            }
-                            const $btn = $row.find('.productbay-btn-addtocart');
-                            if ($btn.length) {
-                                if (!$btn.data('original-text')) {
-                                    $btn.data('original-text', $btn.text());
-                                }
-                                const originalLabel = $btn.data('original-text');
-
-                                const cartKey = this.buildCartKey(id, item.variationId, item.attributes);
-                                const existing = this.cartQuantities.get(cartKey);
-                                if (existing) {
-                                    const checkSvg = '<svg class="productbay-check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-                                    $btn.html((originalLabel || $btn.text()) + ` <span class="productbay-added-badge">(${checkSvg} ${existing.quantity})</span>`);
-                                }
-                            }
-                        });
+                        // Reconcile tracked quantities with the authoritative server cart,
+                        // then re-render every in-table badge/button in a single pass.
+                        this.syncCartQuantities(data.cart_data);
+                        this.restoreCartBadges();
 
 
                         setTimeout(() => {
@@ -1312,7 +1348,7 @@
 
             let totalPrice = 0;
             let html = '<div class="productbay-popup-header">';
-            html += `<strong>Selected Items <span class="productbay-popup-count">(${this.selectedProducts.size})</span></strong>`;
+            html += `<strong>Bulk list <span class="productbay-popup-count">(${this.selectedProducts.size})</span></strong>`;
             html += '<button class="productbay-popup-close" title="Close popup">&times;</button>';
             html += '</div>';
             html += '<div class="productbay-popup-items">';
@@ -1511,7 +1547,21 @@
 			success: (response) => {
 				if (response.success) {
 					btn.innerHTML = 'Added ✓';
-					$(document.body).trigger('wc_fragment_refresh');
+
+					// Refresh the theme cart icon / mini-cart without a page reload,
+					// mirroring WooCommerce core's AJAX add-to-cart (classic + block).
+					const data = response.data || {};
+					const fragments = data.fragments || null;
+					if (fragments && typeof fragments === 'object') {
+						try {
+							Object.keys(fragments).forEach((key) => {
+								$(key).replaceWith(fragments[key]);
+							});
+						} catch (err) {
+							console.error('ProductBay: Failed to apply cart fragments.', err);
+						}
+					}
+					$(document.body).trigger('added_to_cart', [fragments || {}, data.cart_hash || '']);
 				} else {
 					btn.innerHTML = 'Error';
 					alert(response.data?.errors?.join('\n') || 'Error adding to cart');

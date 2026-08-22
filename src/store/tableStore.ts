@@ -18,6 +18,8 @@ import type {
 	SourceType,
 	Product,
 	Category,
+	TableStatus,
+	EditableTableStatus,
 } from '@/types';
 import {
 	createDefaultSource as defaultSource,
@@ -50,7 +52,7 @@ interface TableStore {
 	/** Table metadata */
 	tableId: number | null;
 	tableTitle: string;
-	tableStatus: 'publish' | 'private';
+	tableStatus: TableStatus;
 	permalink?: string;
 
 	/** Data source configuration (_pb_source) */
@@ -114,7 +116,7 @@ interface TableStore {
 	setTitle: (title: string) => void;
 
 	/** Set table status (publish/private) */
-	setStatus: (status: 'publish' | 'private') => void;
+	setStatus: (status: EditableTableStatus) => void;
 
 	// =========================================================================
 	// Source Actions
@@ -573,7 +575,7 @@ export const useTableStore = create<TableStore>((set, get) => ({
 		set({
 			tableId: data.id || null,
 			tableTitle: data.title || '',
-			tableStatus: (data.status as 'publish' | 'private') || 'private',
+			tableStatus: (data.status as TableStatus) || 'private',
 			permalink: data.permalink,
 			// Use default if source is empty array or invalid
 			source: isSourceValid(data.source) ? data.source : defaultSource(),

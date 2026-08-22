@@ -2,9 +2,9 @@
 Contributors: wpanchorbay, forhadkhan, sankarsan, arifac
 Tags: product table for woocommerce, woocommerce product table, woocommerce product list, product table, product list
 Requires at least: 6.8
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.3.2
+Stable tag: 1.3.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -96,7 +96,7 @@ ProductBay is built for WooCommerce from the ground up:
 * **External / Affiliate Products**: Displays the external buy button correctly
 * **AJAX Add-to-Cart**: Products are added without any page reload
 * **Bulk Add-to-Cart**: Customers can select multiple products, including variable and grouped products and add them all to the cart at once with a single click
-* **Selected Items Panel**: A floating popup showing selected products with individual quantities, pricing, and remove controls
+* **Bulk List Panel**: A floating popup showing everything in the bulk list with individual quantities, pricing, and remove controls
 
 ---
 
@@ -227,7 +227,7 @@ Yes. Each table uses its own scoped CSS, so multiple tables on the same page wil
 
 = Can customers add multiple products to the cart at once? =
 
-Yes. ProductBay includes a **Bulk Add-to-Cart** feature. Customers can select multiple products using checkboxes and add them all to the cart in a single click. A "Selected Items" panel shows a live summary of selections, and a "Clear All" button resets them instantly.
+Yes. ProductBay includes a **Bulk Add-to-Cart** feature. Customers can select multiple products using checkboxes and add them all to the cart in a single click. A "Bulk list" panel shows a live summary of the selection, and a "Clear All" button resets it instantly.
 
 = How do variable products work inside the table? =
 
@@ -274,7 +274,7 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 1. Create/View/Modify product tables with live preview and smooth experience.
 2. The ProductBay dashboard — manage all your tables with status indicators and shortcodes at a glance.
 3. Show the product in any page or post using the shortcode througout your website. View products efficiently and filter by catrgory and type. 
-4. Add products to cart in bulk using the checkbox and add to cart button. View selected items in the floating panel and remove them if needed.
+4. Add products to cart in bulk using the checkbox and add to cart button. View the bulk list in the floating panel and remove items if needed.
 5. Step 1 of the creation wizard — name your table and choose your product source.
 6. Step 2 — the column editor with drag-and-drop reordering and per-device responsive visibility controls.
 7. Step 3 — the design panel with live preview updating in real time as you customize colors, typography, and spacing.
@@ -284,6 +284,28 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 
 
 == Changelog ==
+
+= 1.3.4 =
+
+* Feature: Product tables are now mobile-responsive. On phones each row reflows into a labeled card (default), or you can keep the classic horizontal-scroll table — chosen per table under Display → Layout on phones.
+* Improvement: Stacked cards are the new default and apply to existing tables automatically, so no table is left with cramped or cut-off columns on small screens.
+* Improvement: Mobile cards lead with the product name, then the add-to-cart controls, with bulk selection as a full-width "Add to bulk list" button instead of a small checkbox — far easier to tap on a phone.
+* Improvement: Card controls now fill the width of the card on phones. The variation and grouped-product dropdowns, the quantity stepper, and the add-to-cart button all share one height, and the stepper is now a minus / field / plus control sized for thumbs.
+* Improvement: Grouped products keep their dropdown and quantity stepper on a single row wherever there is room, stacking only on very narrow screens.
+* Improvement: Every storefront control on phones now meets the 44px minimum touch target, and the filter bar wraps instead of pushing the page sideways on narrow screens.
+* Improvement: Bulk selection is now called the "bulk list" throughout the storefront and the table builder, so the checkbox, the "View" button, and the floating panel all use the same wording.
+* Improvement: On phones the bulk actions now float in a rounded bar pinned to the bottom of the screen as soon as something is selected, so the bulk button, "View", and "Clear" stay reachable however far you scroll — and the bar disappears again when the list is empty.
+* Improvement: The bulk list popup opens above that bar, fits the screen, and scrolls internally instead of running off the edge, with a tinted header matching its footer.
+* Improvement: Wide tables now get a sensible minimum width plus an edge scroll hint, so many-column tables scroll comfortably instead of squishing.
+* Fix: The category and product type filters above a table now only offer values that exist in that table. Previously they listed every category and type on the store, so a table scoped to one category still offered the whole catalog and picking any of those choices returned an empty table.
+* Fix: Tables with a draft or pending status are no longer labelled "Private" in the dashboard, the table builder, or the admin-only notice shown in place of an unpublished table. Private means published but restricted; draft means not published at all. The notice now names the actual status.
+* Dev: Added `productbay_bulk_list_text` and `productbay_bulk_list_added_text` filters so the bulk-list toggle labels can be customized (available in Pro).
+* Dev: Added `productbay_filter_options` and `productbay_filter_options_cache_ttl` filters to adjust or re-cache the resolved filter choices.
+
+= 1.3.3 =
+
+* Fix: The cart icon (header count / mini-cart) and the add-to-cart button confirmation now update instantly when adding to cart, without a page refresh, on both classic themes (cart fragments) and block themes (the Mini-Cart block).
+* Improvement: The in-table "added" badge now stays in sync when items are removed or reduced from the cart outside the table (mini-cart, Cart block, or classic cart widget).
 
 = 1.3.2 =
 
@@ -331,6 +353,9 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 * Initial release of ProductBay.
 
 == Upgrade Notice ==
+
+= 1.3.4 =
+Mobile update: product tables now reflow into stacked cards on phones, with full-size tap targets and a floating bulk list bar. Also fixes table filters offering categories the table cannot show, and draft tables labelled "Private".
 
 = 1.3.0 =
 Major functional update: Introduces native permalink pages for tables, decouples cart actions from AJAX, and adds an Activity Log system for better management.

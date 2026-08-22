@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WpabProductBay\Api;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,8 +25,8 @@ use WpabProductBay\Data\TableRepository;
  * @since   1.0.0
  * @package WpabProductBay\Api
  */
-class TablesController extends ApiController
-{
+class TablesController extends ApiController {
+
 
 	/**
 	 * The table repository instance.
@@ -44,9 +44,8 @@ class TablesController extends ApiController
 	 * @param TableRepository $repository Table data repository.
 	 * @param Request         $request    HTTP request handler.
 	 */
-	public function __construct(TableRepository $repository, Request $request)
-	{
-		parent::__construct($request);
+	public function __construct( TableRepository $repository, Request $request ) {
+		parent::__construct( $request );
 		$this->repository = $repository;
 	}
 
@@ -57,8 +56,7 @@ class TablesController extends ApiController
 	 *
 	 * @return array List of formatted table data.
 	 */
-	public function index()
-	{
+	public function index() {
 		return $this->repository->get_tables();
 	}
 
@@ -70,10 +68,9 @@ class TablesController extends ApiController
 	 * @param \WP_REST_Request $request REST request containing 'id' parameter.
 	 * @return array|null Table data or null if not found.
 	 */
-	public function show($request)
-	{
+	public function show( $request ) {
 		$id = $request['id'];
-		return $this->repository->get_table($id);
+		return $this->repository->get_table( $id );
 	}
 
 	/**
@@ -83,17 +80,16 @@ class TablesController extends ApiController
 	 *
 	 * @return array Saved table data or error.
 	 */
-	public function store()
-	{
+	public function store() {
 		// Get raw data from $_REQUEST to avoid sanitization destroying nested structures.
 		// The Repository will handle field-specific sanitization (title, etc.).
-		$data = $this->request->get('data');
+		$data = $this->request->get( 'data' );
 
-		if (!$data) {
-			return array('error' => 'No data provided');
+		if ( ! $data ) {
+			return array( 'error' => 'No data provided' );
 		}
 
-		return $this->repository->save_table($data);
+		return $this->repository->save_table( $data );
 	}
 
 	/**
@@ -104,9 +100,8 @@ class TablesController extends ApiController
 	 * @param \WP_REST_Request $request REST request containing 'id' parameter.
 	 * @return \WP_Post|false|null Deleted post object or false/null on failure.
 	 */
-	public function destroy($request)
-	{
+	public function destroy( $request ) {
 		$id = $request['id'];
-		return $this->repository->delete_table($id);
+		return $this->repository->delete_table( $id );
 	}
 }

@@ -156,6 +156,11 @@ const Settings = () => {
 			...style,
 			hover: { ...style.hover, ...v },
 		});
+	const setResponsiveStyle = (v: any) =>
+		updateDefaults('style', {
+			...style,
+			responsive: { ...style.responsive, ...v },
+		});
 
 	// Functionality handlers for granular sub-objects
 	const setFeatures = (v: any) =>
@@ -321,6 +326,7 @@ const Settings = () => {
 						setLayoutStyle={setLayoutStyle}
 						setTypographyStyle={setTypographyStyle}
 						setHoverStyle={setHoverStyle}
+						setResponsiveStyle={setResponsiveStyle}
 						setPagination={setPagination}
 						setCart={setCart}
 						setFilters={setFilters}

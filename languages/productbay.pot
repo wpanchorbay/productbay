@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ProductBay – High-Performance Product Table for WooCommerce 1.3.2\n"
+"Project-Id-Version: ProductBay – High-Performance Product Table for WooCommerce 1.3.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/productbay\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-17T21:52:34+00:00\n"
+"POT-Creation-Date: 2026-08-22T11:41:11+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: productbay\n"
@@ -39,23 +39,23 @@ msgstr ""
 msgid "https://wpanchorbay.com/"
 msgstr ""
 
+#: app/Admin/Admin.php:72
 #: app/Admin/Admin.php:74
-#: app/Admin/Admin.php:76
+#: app/Admin/Admin.php:210
 #: app/Admin/Admin.php:215
-#: app/Admin/Admin.php:220
 msgid "ProductBay"
 msgstr ""
 
+#: app/Admin/Admin.php:93
 #: app/Admin/Admin.php:95
-#: app/Admin/Admin.php:97
-#: app/Admin/Admin.php:230
+#: app/Admin/Admin.php:225
 #: assets/js/admin.js:20
 msgid "All Tables"
 msgstr ""
 
-#: app/Admin/Admin.php:109
-#: app/Admin/Admin.php:110
-#: app/Admin/Admin.php:250
+#: app/Admin/Admin.php:107
+#: app/Admin/Admin.php:108
+#: app/Admin/Admin.php:245
 #: assets/js/admin.js:28
 #: blocks/product-table/index.js:20
 #: blocks/tab-product-table/index.js:20
@@ -64,108 +64,109 @@ msgstr ""
 msgid "Create New Table"
 msgstr ""
 
-#: app/Admin/Admin.php:119
-#: app/Admin/Admin.php:120
-#: app/Admin/Admin.php:240
+#: app/Admin/Admin.php:117
+#: app/Admin/Admin.php:118
+#: app/Admin/Admin.php:235
 #: assets/js/admin.js:28
 #: blocks/product-table/index.js:20
 #: blocks/tab-product-table/index.js:20
 msgid "Settings"
 msgstr ""
 
-#: app/Admin/Admin.php:130
-#: app/Admin/Admin.php:131
+#: app/Admin/Admin.php:128
+#: app/Admin/Admin.php:129
 msgid "Product Tables"
 msgstr ""
 
-#: app/Admin/Admin.php:177
+#: app/Admin/Admin.php:173
 msgid "Manage"
 msgstr ""
 
-#: app/Api/LogController.php:82
+#: app/Api/LogController.php:79
 msgid "Log directory not found."
 msgstr ""
 
-#: app/Api/LogController.php:82
-#: app/Api/LogController.php:101
+#: app/Api/LogController.php:79
+#: app/Api/LogController.php:98
 msgid "Export Failed"
 msgstr ""
 
-#: app/Api/LogController.php:101
+#: app/Api/LogController.php:98
 msgid "No logs found for the selected range."
 msgstr ""
 
-#: app/Api/LogController.php:128
+#: app/Api/LogController.php:125
 msgid "Logs exported"
 msgstr ""
 
 #. translators: 1: Log range (e.g. day or week), 2: Formatted file size
-#: app/Api/LogController.php:130
+#: app/Api/LogController.php:127
 #, php-format
 msgid "Log range \"%1$s\" exported (Size: %2$s)."
 msgstr ""
 
-#: app/Api/LogController.php:162
+#: app/Api/LogController.php:157
 msgid "Logs cleared"
 msgstr ""
 
 #. translators: %d: Number of deleted log files
-#: app/Api/LogController.php:164
+#: app/Api/LogController.php:159
 #, php-format
 msgid "%d daily log file(s) were permanently deleted."
 msgstr ""
 
-#: app/Api/SettingsController.php:107
+#: app/Api/SettingsController.php:104
 msgid "Settings saved"
 msgstr ""
 
-#: app/Api/SettingsController.php:107
+#: app/Api/SettingsController.php:104
 msgid "Settings saved without any visible changes."
 msgstr ""
 
 #. translators: %s: Enabled or Disabled status
-#: app/Api/SettingsController.php:113
+#: app/Api/SettingsController.php:110
 #, php-format
 msgid "Logging %s"
 msgstr ""
 
 #. translators: %d: Number of days
-#: app/Api/SettingsController.php:116
+#: app/Api/SettingsController.php:113
 #, php-format
 msgid "Retention set to %d days"
 msgstr ""
 
 #. translators: %s: Comma-separated list of log settings changes
-#: app/Api/SettingsController.php:122
+#: app/Api/SettingsController.php:119
 #, php-format
 msgid "Log settings updated: %s"
 msgstr ""
 
 #. translators: %s: Comma-separated list of changed global setting keys
-#: app/Api/SettingsController.php:125
+#: app/Api/SettingsController.php:122
 #, php-format
 msgid "Global settings updated: %s"
 msgstr ""
 
-#: app/Api/SettingsController.php:128
+#: app/Api/SettingsController.php:125
 msgid "Settings updated"
 msgstr ""
 
 #. translators: %d: table ID
-#: app/Blocks/ProductTableBlock.php:79
+#: app/Blocks/ProductTableBlock.php:77
 #: app/Blocks/TabProductTableBlock.php:145
 #, php-format
 msgid "The selected table (ID: %d) could not be found. It may have been deleted. Please select a different table or update the block settings."
 msgstr ""
 
-#. translators: %s: table title
-#: app/Blocks/ProductTableBlock.php:93
-#: app/Frontend/Shortcode.php:165
+#. translators: 1: table title, 2: table status, e.g. "draft"
+#: app/Blocks/ProductTableBlock.php:91
+#: app/Blocks/TabProductTableBlock.php:159
+#: app/Frontend/Shortcode.php:161
 #, php-format
-msgid "ProductBay: Table \"%s\" is currently private. It will appear here once it is published."
+msgid "ProductBay: Table \"%1$s\" is not visible to visitors (status: %2$s). It will appear here once it is published."
 msgstr ""
 
-#: app/Blocks/ProductTableBlock.php:142
+#: app/Blocks/ProductTableBlock.php:140
 msgid "Select a table to see live content"
 msgstr ""
 
@@ -180,170 +181,184 @@ msgid "Table not found."
 msgstr ""
 
 #. translators: %s: table title
-#: app/Blocks/TabProductTableBlock.php:159
-#, php-format
-msgid "ProductBay: Table \"%s\" is not published."
-msgstr ""
-
-#. translators: %s: table title
-#: app/Blocks/TabProductTableBlock.php:171
+#: app/Blocks/TabProductTableBlock.php:172
 #, php-format
 msgid "The table \"%s\" rendered completely empty. Please check your table configuration, product source, and filters."
 msgstr ""
 
 #. translators: 1: Table title, 2: Table ID
-#: app/Core/Plugin.php:206
+#: app/Core/Plugin.php:214
 #, php-format
 msgid "Table \"%1$s\" (ID: %2$d) modified."
 msgstr ""
 
-#: app/Data/SettingsLogger.php:62
+#: app/Data/SettingsLogger.php:60
 msgid "\"Add to Cart\" text"
 msgstr ""
 
-#: app/Data/SettingsLogger.php:63
+#: app/Data/SettingsLogger.php:61
 msgid "Products per page"
 msgstr ""
 
-#: app/Data/SettingsLogger.php:64
+#: app/Data/SettingsLogger.php:62
 msgid "Admin bar visibility"
 msgstr ""
 
-#: app/Data/SettingsLogger.php:65
+#: app/Data/SettingsLogger.php:63
 msgid "Delete data on uninstall"
 msgstr ""
 
 #. translators: 1: Setting label, 2: Old value, 3: New value
-#: app/Data/SettingsLogger.php:75
+#: app/Data/SettingsLogger.php:73
 #, php-format
 msgid "%1$s changed: %2$s → %3$s"
 msgstr ""
 
-#: app/Data/SettingsLogger.php:87
+#: app/Data/SettingsLogger.php:85
 msgid "Design defaults updated (colors/borders)."
 msgstr ""
 
-#: app/Data/SettingsLogger.php:94
+#: app/Data/SettingsLogger.php:92
 msgid "Default table configuration updated."
 msgstr ""
 
-#: app/Data/TableLogger.php:61
+#: app/Data/TableLogger.php:59
 msgid "Internal change tracking data not available."
 msgstr ""
 
 #. translators: 1: Old title, 2: New title
-#: app/Data/TableLogger.php:71
+#: app/Data/TableLogger.php:69
 #, php-format
 msgid "Title changed: \"%1$s\" → \"%2$s\""
 msgstr ""
 
 #. translators: 1: Old status, 2: New status
-#: app/Data/TableLogger.php:81
+#: app/Data/TableLogger.php:79
 #, php-format
 msgid "Status changed: %1$s → %2$s"
 msgstr ""
 
 #. translators: 1: Old source type, 2: New source type
-#: app/Data/TableLogger.php:97
+#: app/Data/TableLogger.php:95
 #, php-format
 msgid "Product source changed from %1$s to %2$s"
 msgstr ""
 
-#: app/Data/TableLogger.php:102
+#: app/Data/TableLogger.php:100
 msgid "Product source selection updated."
 msgstr ""
 
 #. translators: 1: Old count, 2: New count
-#: app/Data/TableLogger.php:116
+#: app/Data/TableLogger.php:114
 #, php-format
 msgid "Column count changed: %1$d → %2$d"
 msgstr ""
 
-#: app/Data/TableLogger.php:121
+#: app/Data/TableLogger.php:119
 msgid "Table columns reordered or modified."
 msgstr ""
 
-#: app/Data/TableLogger.php:129
+#: app/Data/TableLogger.php:127
 msgid "Display settings updated."
 msgstr ""
 
-#: app/Data/TableLogger.php:135
+#: app/Data/TableLogger.php:133
 msgid "Styling tokens modified."
 msgstr ""
 
-#: app/Data/TableLogger.php:139
+#: app/Data/TableLogger.php:137
 msgid "No significant field changes detected (likely a metadata or timestamp update)."
 msgstr ""
 
-#: app/Frontend/AjaxRenderer.php:177
+#: app/Data/TableRepository.php:317
+msgctxt "table status"
+msgid "published"
+msgstr ""
+
+#: app/Data/TableRepository.php:319
+msgctxt "table status"
+msgid "private"
+msgstr ""
+
+#: app/Data/TableRepository.php:321
+msgctxt "table status"
+msgid "draft"
+msgstr ""
+
+#: app/Data/TableRepository.php:323
+msgctxt "table status"
+msgid "pending review"
+msgstr ""
+
+#: app/Frontend/AjaxRenderer.php:198
 msgid "No products selected"
 msgstr ""
 
 #. translators: %d: product ID
-#: app/Frontend/AjaxRenderer.php:203
+#: app/Frontend/AjaxRenderer.php:224
 #, php-format
 msgid "Product #%d not found."
 msgstr ""
 
 #. translators: %s: product name
-#: app/Frontend/AjaxRenderer.php:218
+#: app/Frontend/AjaxRenderer.php:239
 #, php-format
 msgid "\"%s\" is out of stock."
 msgstr ""
 
 #. translators: %s: product name
-#: app/Frontend/AjaxRenderer.php:237
+#: app/Frontend/AjaxRenderer.php:258
 #, php-format
 msgid "Please select options for \"%s\"."
 msgstr ""
 
 #. translators: %s: product name
-#: app/Frontend/AjaxRenderer.php:247
+#: app/Frontend/AjaxRenderer.php:268
 #, php-format
 msgid "Selected variation for \"%s\" is unavailable."
 msgstr ""
 
 #. translators: %s: product name
-#: app/Frontend/AjaxRenderer.php:271
+#: app/Frontend/AjaxRenderer.php:292
 #, php-format
 msgid "Could not add \"%s\" to cart."
 msgstr ""
 
 #. translators: %d: number of products added to cart
-#: app/Frontend/AjaxRenderer.php:308
+#: app/Frontend/AjaxRenderer.php:326
 #, php-format
 msgid "%d product(s) added to cart."
 msgstr ""
 
-#: app/Frontend/AjaxRenderer.php:319
+#: app/Frontend/AjaxRenderer.php:350
 msgid "Failed to add products to cart."
 msgstr ""
 
-#. translators: %s: table title
-#: app/Frontend/Shortcode.php:91
+#. translators: 1: table title, 2: table status, e.g. "draft"
+#: app/Frontend/Shortcode.php:88
 #, php-format
-msgid "ProductBay: Previewing private table \"%s\". This URL is not accessible to public visitors."
+msgid "ProductBay: Previewing \"%1$s\" (status: %2$s). This URL is not accessible to public visitors."
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:259
+#: app/Frontend/TableRenderer.php:293
 #: assets/js/admin.js:23
 msgid "Filter"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:276
+#: app/Frontend/TableRenderer.php:310
 msgid "Reset all filters to default"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:276
-#: app/Frontend/TableRenderer.php:1688
+#: app/Frontend/TableRenderer.php:310
+#: app/Frontend/TableRenderer.php:1923
 #: assets/js/admin.js:20
 #: blocks/product-table/index.js:20
 #: blocks/tab-product-table/index.js:20
 msgid "Clear"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:306
-#: app/Frontend/TableRenderer.php:1049
+#: app/Frontend/TableRenderer.php:340
+#: app/Frontend/TableRenderer.php:1067
 #: assets/js/admin.js:16
 #: assets/js/admin.js:19
 #: blocks/product-table/index.js:16
@@ -353,24 +368,24 @@ msgstr ""
 msgid "Add to Cart"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:311
-msgid "View selected items"
+#: app/Frontend/TableRenderer.php:345
+msgid "View bulk list"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:312
+#: app/Frontend/TableRenderer.php:346
 msgid "View"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:458
-#: app/Frontend/TableRenderer.php:1978
+#: app/Frontend/TableRenderer.php:481
+#: app/Frontend/TableRenderer.php:2205
 msgid "No products found."
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:477
+#: app/Frontend/TableRenderer.php:500
 msgid "Toggle Fullscreen"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:481
+#: app/Frontend/TableRenderer.php:504
 #: assets/js/admin.js:13
 #: assets/js/admin.js:16
 #: assets/js/admin.js:19
@@ -385,129 +400,137 @@ msgid "Close"
 msgstr ""
 
 #. translators: %d: number of available product options/variations
-#: app/Frontend/TableRenderer.php:681
+#: app/Frontend/TableRenderer.php:702
 #, php-format
 msgid "%d option available"
 msgid_plural "%d options available"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/Frontend/TableRenderer.php:701
+#: app/Frontend/TableRenderer.php:722
 msgid "Out of stock"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:703
+#: app/Frontend/TableRenderer.php:724
 msgid "On backorder"
 msgstr ""
 
 #. translators: %d: stock quantity
-#: app/Frontend/TableRenderer.php:707
+#: app/Frontend/TableRenderer.php:727
 #, php-format
 msgid "%d in stock"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:709
+#: app/Frontend/TableRenderer.php:729
 msgid "In stock"
 msgstr ""
 
 #. translators: %s: average star rating, e.g. "4.5"
-#: app/Frontend/TableRenderer.php:758
-#: app/Frontend/TableRenderer.php:778
+#: app/Frontend/TableRenderer.php:777
+#: app/Frontend/TableRenderer.php:797
 #, php-format
 msgid "Rated %s out of 5"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:784
+#: app/Frontend/TableRenderer.php:803
 msgid "No ratings"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:889
+#: app/Frontend/TableRenderer.php:910
 msgid "Buy product"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:917
-#: app/Frontend/TableRenderer.php:982
+#: app/Frontend/TableRenderer.php:938
+#: app/Frontend/TableRenderer.php:1000
 msgid "View Options"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:927
-#: app/Frontend/TableRenderer.php:1007
+#: app/Frontend/TableRenderer.php:948
+#: app/Frontend/TableRenderer.php:1025
 msgid "Out of Stock"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1023
+#: app/Frontend/TableRenderer.php:1041
 msgid "Select a product..."
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1025
+#: app/Frontend/TableRenderer.php:1043
 msgid "Select All"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1039
+#: app/Frontend/TableRenderer.php:1057
 msgid "Increase"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1040
+#: app/Frontend/TableRenderer.php:1058
 msgid "Decrease"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1120
+#: app/Frontend/TableRenderer.php:1137
 msgid "Add to cart"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1156
+#: app/Frontend/TableRenderer.php:1172
 msgid "Increase quantity"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1157
+#: app/Frontend/TableRenderer.php:1173
 msgid "Decrease quantity"
 msgstr ""
 
+#: app/Frontend/TableRenderer.php:1652
+msgid "Add to bulk list"
+msgstr ""
+
+#: app/Frontend/TableRenderer.php:1653
+msgid "Added"
+msgstr ""
+
 #. translators: %d: number of selected categories
-#: app/Frontend/TableRenderer.php:1626
+#: app/Frontend/TableRenderer.php:1868
 #, php-format
 msgid "%s selected"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1627
+#: app/Frontend/TableRenderer.php:1869
 msgid "All Categories"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1661
+#: app/Frontend/TableRenderer.php:1897
 msgid "All Types"
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1687
+#: app/Frontend/TableRenderer.php:1922
 msgid "Search products..."
 msgstr ""
 
-#: app/Frontend/TableRenderer.php:1737
+#: app/Frontend/TableRenderer.php:1971
 msgid "Load More"
 msgstr ""
 
-#: scripts/demo/productbay-demo.php:285
+#: scripts/demo/productbay-demo.php:288
 msgid "Profile editing is disabled on the demo site."
 msgstr ""
 
-#: scripts/demo/productbay-demo.php:286
+#: scripts/demo/productbay-demo.php:289
 msgid "Action Blocked"
 msgstr ""
 
-#: scripts/demo/productbay-demo.php:439
+#: scripts/demo/productbay-demo.php:442
 msgid "License management is disabled on the demo site."
 msgstr ""
 
 #. translators: %s: display name
-#: scripts/demo/productbay-demo.php:495
+#: scripts/demo/productbay-demo.php:498
 #, php-format
 msgid "Howdy, %s"
 msgstr ""
 
-#: scripts/demo/productbay-demo.php:520
+#: scripts/demo/productbay-demo.php:523
 msgid "ProductBay Demo Environment"
 msgstr ""
 
-#: scripts/demo/productbay-demo.php:521
+#: scripts/demo/productbay-demo.php:524
 msgid "This site resets every 4 hours."
 msgstr ""
 
@@ -1436,6 +1459,42 @@ msgstr ""
 #: assets/js/admin.js:16
 #: blocks/product-table/index.js:16
 #: blocks/tab-product-table/index.js:16
+msgid "Mobile Layout"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "How the table adapts on phones and narrow screens"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Layout on phones"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Stacked cards turn each row into a labeled card, and horizontal scroll keeps the full table."
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Stacked cards"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Horizontal scroll"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
 msgid "Table Controls"
 msgstr ""
 
@@ -1622,13 +1681,13 @@ msgstr ""
 #: assets/js/admin.js:16
 #: blocks/product-table/index.js:16
 #: blocks/tab-product-table/index.js:16
-msgid "Selected Items View Panel"
+msgid "Bulk List Panel"
 msgstr ""
 
 #: assets/js/admin.js:16
 #: blocks/product-table/index.js:16
 #: blocks/tab-product-table/index.js:16
-msgid "Show a floating panel displaying all selected items with individual quantities"
+msgid "Show a floating panel listing everything in the bulk list with individual quantities"
 msgstr ""
 
 #: assets/js/admin.js:16
@@ -1653,6 +1712,18 @@ msgstr ""
 #: blocks/product-table/index.js:16
 #: blocks/tab-product-table/index.js:16
 msgid "Text for \"Select Options\" / \"View Products\" buttons that open popups or nested rows"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Custom \"Add to bulk list\" Text"
+msgstr ""
+
+#: assets/js/admin.js:16
+#: blocks/product-table/index.js:16
+#: blocks/tab-product-table/index.js:16
+msgid "Rename the bulk-select toggle shown on mobile cards"
 msgstr ""
 
 #: assets/js/admin.js:16
@@ -2547,29 +2618,40 @@ msgid "Failed to copy to clipboard. Please copy manually."
 msgstr ""
 
 #: assets/js/admin.js:19
-#: blocks/product-table/index.js:19
-#: blocks/tab-product-table/index.js:19
-msgid "Custom"
-msgstr ""
-
-#: assets/js/admin.js:19
-#: assets/js/admin.js:20
 #: assets/js/admin.js:23
 #: blocks/product-table/index.js:19
-#: blocks/product-table/index.js:20
 #: blocks/tab-product-table/index.js:19
-#: blocks/tab-product-table/index.js:20
 msgid "Published"
 msgstr ""
 
 #: assets/js/admin.js:19
-#: assets/js/admin.js:20
-#: assets/js/admin.js:23
 #: blocks/product-table/index.js:19
-#: blocks/product-table/index.js:20
 #: blocks/tab-product-table/index.js:19
-#: blocks/tab-product-table/index.js:20
 msgid "Private"
+msgstr ""
+
+#: assets/js/admin.js:19
+#: blocks/product-table/index.js:19
+#: blocks/tab-product-table/index.js:19
+msgid "Draft"
+msgstr ""
+
+#: assets/js/admin.js:19
+#: blocks/product-table/index.js:19
+#: blocks/tab-product-table/index.js:19
+msgid "Pending Review"
+msgstr ""
+
+#: assets/js/admin.js:19
+#: blocks/product-table/index.js:19
+#: blocks/tab-product-table/index.js:19
+msgid "Unknown"
+msgstr ""
+
+#: assets/js/admin.js:19
+#: blocks/product-table/index.js:19
+#: blocks/tab-product-table/index.js:19
+msgid "Custom"
 msgstr ""
 
 #: assets/js/admin.js:19

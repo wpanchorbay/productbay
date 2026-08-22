@@ -239,9 +239,9 @@ export const OptionsPanel = ({
 				</SettingsOption>
 
 				<SettingsOption
-					title={__('Selected Items View Panel', 'productbay')}
+					title={__('Bulk List Panel', 'productbay')}
 					description={__(
-						'Show a floating panel displaying all selected items with individual quantities',
+						'Show a floating panel listing everything in the bulk list with individual quantities',
 						'productbay'
 					)}
 				>
@@ -269,6 +269,12 @@ export const OptionsPanel = ({
 						<SettingsOption
 							title={__('Custom \"Select Options\" Button Text', 'productbay')}
 							description={__('Text for \"Select Options\" / \"View Products\" buttons that open popups or nested rows', 'productbay')}
+						>
+							<ProBadge />
+						</SettingsOption>
+						<SettingsOption
+							title={__('Custom \"Add to bulk list\" Text', 'productbay')}
+							description={__('Rename the bulk-select toggle shown on mobile cards', 'productbay')}
 						>
 							<ProBadge />
 						</SettingsOption>

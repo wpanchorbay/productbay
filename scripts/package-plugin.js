@@ -93,6 +93,52 @@ async function stripComposerDevSections(composerPath) {
 	await fs.writeJson(composerPath, composerData, { spaces: '\t' });
 }
 
+/**
+ * Path to the generated POT file.
+ */
+const POT_FILE = path.join(ROOT_DIR, 'languages', `${PLUGIN_SLUG}.pot`);
+
+/**
+ * Generate the POT file.
+ *
+ * `wp i18n make-pot` downloads the block.json i18n schema from
+ * develop.svn.wordpress.org to know which block.json keys are translatable.
+ * When that host is unreachable the command aborts instead of falling back to
+ * the schema bundled in wp-cli/i18n-command, which takes the whole release
+ * build down with it.
+ *
+ * So: try the normal run first, and if it fails, regenerate with
+ * --skip-block-json and merge the previous POT back in, which preserves the
+ * block.json strings that were extracted the last time the host was up.
+ */
+async function makePot() {
+	try {
+		execSync('bun run i18n:make-pot', { stdio: 'inherit', cwd: ROOT_DIR });
+		return;
+	} catch (err) {
+		console.warn('⚠️  make-pot failed (block.json i18n schema unreachable?).');
+	}
+
+	if (!(await fs.pathExists(POT_FILE))) {
+		console.warn('⚠️  No existing POT to merge from — block.json strings will be missing.');
+		execSync('bun run i18n:make-pot -- --skip-block-json', { stdio: 'inherit', cwd: ROOT_DIR });
+		return;
+	}
+
+	// Merge from a copy: the merge source cannot be the file being written.
+	const mergeSrc = path.join(ROOT_DIR, 'languages', `.${PLUGIN_SLUG}.merge.pot`);
+	await fs.copy(POT_FILE, mergeSrc);
+	try {
+		console.warn('⚠️  Retrying with --skip-block-json, merging block.json strings from the previous POT.');
+		execSync(`bun run i18n:make-pot -- --skip-block-json --merge="${mergeSrc}"`, {
+			stdio: 'inherit',
+			cwd: ROOT_DIR,
+		});
+	} finally {
+		await fs.remove(mergeSrc);
+	}
+}
+
 (async () => {
 	try {
 		console.log('🚀 Starting Release Build with Bun...');
@@ -105,10 +151,7 @@ async function stripComposerDevSections(composerPath) {
 
 		// 2. Generate i18n files (POT + JSON translations)
 		console.log('🌐 Generating i18n files...');
-		execSync('bun run i18n:make-pot', {
-			stdio: 'inherit',
-			cwd: ROOT_DIR,
-		});
+		await makePot();
 		execSync('bun run i18n:make-json', {
 			stdio: 'inherit',
 			cwd: ROOT_DIR,

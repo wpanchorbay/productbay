@@ -21,6 +21,7 @@ interface DefaultSettingsProps {
 	setLayoutStyle: (v: any) => void;
 	setTypographyStyle: (v: any) => void;
 	setHoverStyle: (v: any) => void;
+	setResponsiveStyle: (v: any) => void;
 	setPagination: (v: any) => void;
 	setCart: (v: any) => void;
 	setFilters: (v: any) => void;
@@ -51,6 +52,7 @@ const DefaultSettings: React.FC<DefaultSettingsProps> = ({
 	setLayoutStyle,
 	setTypographyStyle,
 	setHoverStyle,
+	setResponsiveStyle,
 	setPagination,
 	setCart,
 	setFilters,
@@ -165,6 +167,7 @@ const DefaultSettings: React.FC<DefaultSettingsProps> = ({
 						setLayoutStyle={setLayoutStyle}
 						setTypographyStyle={setTypographyStyle}
 						setHoverStyle={setHoverStyle}
+						setResponsiveStyle={setResponsiveStyle}
 						className="border-none"
 					/>
 				</div>

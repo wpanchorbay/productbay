@@ -4,6 +4,28 @@ All notable changes to ProductBay are documented on this page.
 
 Looking for Pro version changes? See the **[Pro Changelog](./pro-changelog.md)**.
 
+## 1.3.4
+
+* **Feature:** Product tables are now mobile-responsive. On phones each row reflows into a labeled **stacked card** (default), or you can keep the classic **horizontal-scroll** table — selectable per table under **Display → Layout on phones**.
+* **Improvement:** Stacked cards are the new default and apply to existing tables automatically — no table is left with cramped or cut-off columns on small screens.
+* **Improvement:** Mobile cards now lead with the product name, followed by the add-to-cart controls and a full-width **Add to bulk list** button in place of the small checkbox, so every control is comfortable to tap.
+* **Improvement:** Card controls now fill the width of the card on phones — the variation and grouped-product dropdowns, the quantity stepper, and the add-to-cart button share a single 44px height, and the stepper is now a `−` / field / `+` control sized for thumbs.
+* **Improvement:** Grouped products keep their dropdown and quantity stepper on one row wherever there is room, stacking only on very narrow screens.
+* **Improvement:** Every storefront control on phones now meets the 44px minimum touch target, and the taxonomy filter bar wraps instead of pushing the page sideways on narrow screens.
+* **Improvement:** Bulk selection is now called the **bulk list** across the storefront and the table builder — the toggle, the **View** button, and the floating panel share the same wording, and the per-table option is now **Bulk List Panel**.
+* **Improvement:** On phones the bulk actions now float in a rounded bar pinned to the bottom of the viewport as soon as a selection exists, keeping the bulk button, **View**, and **Clear** reachable however far you scroll — and the bar hides again once the list is empty.
+* **Improvement:** The bulk list popup opens above that bar, fits within the screen, and scrolls internally instead of running off the edge, with a tinted header matching its footer.
+* **Improvement:** Wide, many-column tables now get an automatic minimum width and an edge scroll hint so they scroll comfortably instead of squishing.
+* **Fix:** The **category** and **product type** filters above a table now only offer values present in that table. They were previously built from every category and product type on the store, so a table scoped to one category still offered the whole catalog — and selecting any of those choices rendered an empty table.
+* **Fix:** Tables with a `draft` or `pending` status are no longer labelled **Private** in the dashboard, the table builder, or the admin-only notice rendered in place of an unpublished table. Private means published but restricted to capable logged-in users; draft means not published at all — the notice now names the actual status.
+* **Dev:** Added the `productbay_bulk_list_text` and `productbay_bulk_list_added_text` filters so the bulk-list toggle labels can be customized (available in Pro).
+* **Dev:** Added the `productbay_filter_options` and `productbay_filter_options_cache_ttl` filters to adjust or re-cache the resolved filter choices.
+
+## 1.3.3
+
+* **Fix:** The cart icon (header count / mini-cart) and the add-to-cart button confirmation now update instantly when adding to cart, without a page refresh, on both classic themes (cart fragments) and block themes (the Mini-Cart block).
+* **Improvement:** The in-table "added" badge now stays in sync when items are removed or reduced from the cart outside the table (mini-cart, Cart block, or classic cart widget).
+
 ## 1.3.2
 
 * **Feature:** Added core support and hooks for customizable Add to Cart button text and "Select Options" button text (available in Pro).

@@ -3,7 +3,7 @@
 ProductBay provides an extensive set of WordPress action hooks and filters, enabling developers to extend, customize, and integrate with the plugin without modifying its core source files.
 
 ::: info Since v1.0.0
-All hooks listed on this page were introduced in ProductBay **1.0.0**.
+All hooks listed on this page were introduced in ProductBay **1.0.0**, unless the hook notes a later version.
 :::
 
 ## Hook Naming Convention
@@ -30,6 +30,23 @@ Fires after all free plugin components are initialized. This is the primary hook
 ```php
 add_action( 'productbay_loaded', function( $plugin ) {
     // Your add-on logic here
+} );
+```
+
+### `productbay_admin_capability`
+
+Filters the capability required to reach the ProductBay admin screens and REST routes. Use it to delegate table management to a restricted role instead of full administrators.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$capability` *(string)* — defaults to `manage_options` |
+| **Returns** | `string` — A WordPress capability |
+| **File** | `app/Core/Constants.php` |
+| **Since** | 1.3.1 |
+
+```php
+add_filter( 'productbay_admin_capability', function() {
+    return 'edit_products';
 } );
 ```
 
@@ -240,6 +257,78 @@ Filters the generated scoped CSS for a table.
 | **Parameters** | `$css` *(string)*, `$table` *(array)* |
 | **Returns** | `string` — Modified CSS |
 
+### Button & toggle text filters
+
+Four filters override the customer-facing labels on a table's action controls. Each receives an empty string plus the table's resolved cart settings, so returning a non-empty string wins. Returning `''` falls through to the global **Cart Customization** setting, and then to the built-in translatable default.
+
+These are the seam ProductBay Pro uses to implement per-table custom text; a filter added at the default priority will run alongside it, so use a later priority if you need to override Pro.
+
+| Filter | Default label | Since |
+|--------|---------------|-------|
+| `productbay_add_to_cart_text` | WooCommerce's add-to-cart text | 1.3.2 |
+| `productbay_select_options_text` | "Select Options" / "View Products" | 1.3.2 |
+| `productbay_bulk_list_text` | "Add to bulk list" | 1.3.4 |
+| `productbay_bulk_list_added_text` | "Added" | 1.3.4 |
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$text` *(string)* — empty by default, `$cart_settings` *(array)* — the table's resolved cart settings |
+| **Returns** | `string` — The label to render, or `''` to fall back |
+
+```php
+// Call the bulk list an "order sheet" on every table.
+add_filter( 'productbay_bulk_list_text', function( $text, $cart_settings ) {
+    return __( 'Add to order sheet', 'my-textdomain' );
+}, 10, 2 );
+
+add_filter( 'productbay_bulk_list_added_text', function( $text, $cart_settings ) {
+    return __( 'On sheet', 'my-textdomain' );
+}, 10, 2 );
+```
+
+::: tip
+The bulk-list labels are always rendered — they give the select checkbox its accessible name on desktop, and become the visible toggle button on [stacked mobile cards](/features/display-customization#layout-on-phones).
+:::
+
+### `productbay_filter_options`
+
+Filters the choices offered by the category and product type dropdowns above a table.
+
+Options are resolved from the table's own base product set — the source scope, ignoring the visitor's current selection — so the dropdowns never offer a value that would render an empty table. Use this filter to add a choice back (for example a category the table does not contain yet but soon will) or to drop one.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$options` *(array)*, `$source` *(array)*, `$settings` *(array)*, `$table_id` *(int)* |
+| **Returns** | `array` — `product_cat` as a list of `['slug' => …, 'name' => …]`, `product_type` as a map of slug => label |
+
+```php
+add_filter( 'productbay_filter_options', function( $options, $source, $settings, $table_id ) {
+    // Always offer the Clearance category, even while it is empty.
+    $options['product_cat'][] = array( 'slug' => 'clearance', 'name' => __( 'Clearance', 'my-textdomain' ) );
+    return $options;
+}, 10, 4 );
+```
+
+### `productbay_filter_options_cache_ttl`
+
+Filters how long resolved filter choices stay cached, in seconds. Resolving them costs one ID-only product query plus two term queries, so the result is cached per table; the cache key carries a hash of the resolved query args, so editing a table's source takes effect immediately, while catalog changes are picked up when the transient expires.
+
+Return `0` to disable caching — useful on a store whose product categories change constantly.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$ttl` *(int)* — default `12 * HOUR_IN_SECONDS`, `$table_id` *(int)* |
+| **Returns** | `int` — Lifetime in seconds, or `0` to skip caching |
+
+### `productbay_render_filters`
+
+Action fired inside the filter bar, after the built-in category and product type dropdowns and before the **Clear** button. This is where add-ons inject their own filter controls — Pro's price range filter uses it.
+
+| Type | Action |
+|------|--------|
+| **Parameters** | `$settings` *(array)*, `$source` *(array)* |
+| **File** | `app/Frontend/TableRenderer.php` |
+
 ### `productbay_before_table` / `productbay_after_table`
 
 Actions fired before and after the table wrapper `<div>`.
@@ -309,6 +398,63 @@ Action to enqueue additional frontend assets when a ProductBay shortcode is rend
 | Type | Action |
 |------|--------|
 | **Parameters** | *(none)* |
+
+---
+
+## Blocks & Preview
+
+### `productbay_block_editor_css_paths`
+
+Filters the CSS files injected into the block editor's iframe, so a table rendered inside the editor looks like it does on the storefront. Return **absolute filesystem paths**, not URLs.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$paths` *(string[])* — absolute paths, defaults to the plugin's `frontend.css` and `block-tabs.css` |
+| **Returns** | `string[]` |
+| **File** | `app/Blocks/BlockManager.php` |
+| **Since** | 1.1.0 |
+
+```php
+add_filter( 'productbay_block_editor_css_paths', function( $paths ) {
+    $paths[] = MY_ADDON_PATH . 'assets/css/my-addon-frontend.css';
+    return $paths;
+} );
+```
+
+### `productbay_preview_css_urls`
+
+Filters the stylesheet **URLs** loaded inside the admin live-preview iframe. The block editor equivalent above takes paths; this one takes URLs.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$css_urls` *(array)* — defaults to the plugin's `frontend.css` |
+| **Returns** | `array` |
+| **File** | `app/Api/PreviewController.php` |
+
+---
+
+## Activity Log
+
+### `productbay_log_created`
+
+Fires after an entry has been appended to the activity log. Useful for mirroring ProductBay events into an external audit trail.
+
+| Type | Action |
+|------|--------|
+| **Parameters** | `$entry` *(array)* — the log entry that was written |
+| **File** | `app/Data/ActivityLog.php` |
+| **Since** | 1.2.0 |
+
+### `productbay_log_retention_days`
+
+Filters how many days of log files are kept before the daily prune deletes them. The unfiltered value comes from the `log_retention` plugin setting.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$retention_days` *(int)* |
+| **Returns** | `int` — Number of days to keep |
+| **File** | `app/Data/ActivityLog.php` |
+| **Since** | 1.2.0 |
 
 ---
 

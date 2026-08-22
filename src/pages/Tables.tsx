@@ -15,6 +15,7 @@ import { ProFeatureGate } from '@/components/ui/ProFeatureGate';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { useImportExportStore } from '@/store/importExportStore';
 import { WC_PRODUCTS_PATH, NEW_TABLE_PATH } from '@/utils/routes';
+import { getTableStatusBadge } from '@/utils/tableStatus';
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
@@ -1017,15 +1018,11 @@ const Tables = () => {
 										</td>
 										{/* Status Badge */}
 										<td className="p-4">
-											{table.status === 'publish' ? (
-												<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-													{__('Published', 'productbay')}
-												</span>
-											) : (
-												<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-													{__('Private', 'productbay')}
-												</span>
-											)}
+											<span
+												className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTableStatusBadge(table.status).badgeClassName}`}
+											>
+												{getTableStatusBadge(table.status).label}
+											</span>
 										</td>
 										{/* Shortcode */}
 										<td className="p-4">

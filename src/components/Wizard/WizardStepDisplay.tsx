@@ -19,6 +19,7 @@ const WizardStepDisplay: React.FC = () => {
 		setLayoutStyle,
 		setTypographyStyle,
 		setHoverStyle,
+		setResponsiveStyle,
 	} = useTableStore();
 
 	return (
@@ -33,6 +34,7 @@ const WizardStepDisplay: React.FC = () => {
 					setLayoutStyle={setLayoutStyle}
 					setTypographyStyle={setTypographyStyle}
 					setHoverStyle={setHoverStyle}
+					setResponsiveStyle={setResponsiveStyle}
 				/>
 			</div>
 

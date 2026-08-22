@@ -22,10 +22,11 @@ Control the visibility of the ProductBay quick-access link in the WordPress admi
 
 ### Cart Customization <ProBadge />
 
-Control global texts for Add to Cart buttons and "Select Options" buttons.
+Control global texts for Add to Cart buttons, "Select Options" buttons, and the bulk-list toggle.
 
 - **Add to Cart Text**: Define a global custom text (e.g., "Buy Now") that will replace the default WooCommerce "Add to Cart" text across all product tables. This can be individually overridden on a per-table basis.
 - **"Select Options" Button Text**: Define a global custom text (e.g., "Select Options") that will replace the default text for buttons that open popups or nested rows. This can be individually overridden on a per-table basis.
+- **"Add to bulk list" Text** <Badge type="tip" text="Since v1.3.4" />: Define a global custom text (e.g., "Add to order") for the bulk-select toggle shown on [stacked mobile cards](/features/display-customization#layout-on-phones), together with the label it switches to once the product is in the list (default "Added"). This can be individually overridden on a per-table basis.
 
 ## Uninstall Options
 

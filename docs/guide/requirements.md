@@ -6,7 +6,7 @@ Before installing ProductBay, make sure your environment meets the following req
 
 | Requirement | Minimum Version | Recommended |
 |-------------|----------------|-------------|
-| **WordPress** | 6.0+ | Latest stable |
+| **WordPress** | 6.8+ | Latest stable |
 | **WooCommerce** | 6.1+ | Latest stable |
 | **PHP** | 7.4+ | 8.0+ |
 

@@ -52,6 +52,8 @@ Adjust the structural feel of the table.
 Fine-tune the text appearance for the header.
  - **Header Font Weight**: Choose between Normal, Bold, or Extra Bold.
  - **Header Text Transform**: Set text to Uppercase, Lowercase, Capitalize, or leave as Normal.
+#### **Mobile Layout**
+ - **Layout on phones**: Choose how tables reflow below 767px — Stacked cards (default) or Horizontal scroll. See [Layout on Phones](/features/display-customization#layout-on-phones).
 
 
 ## Default Functionality
@@ -74,7 +76,7 @@ Configure which features are enabled by default:
  - **Show Quantity Selector**: Allow quantity input per row.
  - **Variation Badges**: Show badges for variations added to cart.
  - **Show Clear All Button**: Display a bulk deselect button.
- - **Selected Items View Panel**: Show a floating summary of selected items.
+ - **Bulk List Panel**: Show a floating summary of the bulk list.
 #### **Variable & Grouped Products**
  - **Variable Product Mode**: Inline Dropdown (Free), Popup Modal <ProBadge />, Nested Rows <ProBadge />, Separate Rows <ProBadge />.
  - **Grouped Product Mode**: Inline Dropdown (Free), Popup Modal <ProBadge />, Nested Rows <ProBadge />, Separate Rows <ProBadge />.

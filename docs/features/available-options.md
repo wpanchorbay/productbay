@@ -81,10 +81,10 @@ Configure Add to Cart behavior and selection tracking.
   * **Option Type**: Toggle
   * **Description**: Displays a standalone button to instantly clear or uncheck all selected products currently tracked in the active list.
 
-* **Selected Items View Panel**
-  * **Functionality**: Enables the floating selected items overview.
+* **Bulk List Panel**
+  * **Functionality**: Enables the floating bulk list overview.
   * **Option Type**: Toggle
-  * **Description**: Shows a floating, collapsible panel that displays all the items a user has selected or added to cart, along with their individual quantities.
+  * **Description**: Shows a floating, collapsible panel that displays everything the customer has added to the bulk list, along with their individual quantities.
 
 * **Custom Add to Cart Text** <ProBadge />
   * **Functionality**: Overrides the default "Add to Cart" button text for the specific table.
@@ -95,6 +95,11 @@ Configure Add to Cart behavior and selection tracking.
   * **Functionality**: Overrides the default text for "Select Options" / "View Products" buttons.
   * **Option Type**: Text Input
   * **Description**: Allows you to set a custom text for buttons that open popups or nested rows, separating navigation action from actual purchase buttons.
+
+* **Custom "Add to bulk list" Text** <ProBadge /> <Badge type="tip" text="v1.3.4+" />
+  * **Functionality**: Renames the bulk-select toggle shown on mobile cards.
+  * **Option Type**: Text Input
+  * **Description**: Allows you to replace the default "Add to bulk list" / "Added" labels on the bulk-select button that appears on stacked mobile cards (e.g. "Add to order", "In order").
 
 ---
 
@@ -123,8 +128,8 @@ Advanced configuration for complex WooCommerce product types. Some display modes
 * **Expand Nested Rows**
   * **Functionality**: Determines initial state for nested products. 
   * **Option Type**: Toggle
-  * **Dependancy**: Only available when `Nested Rows` is selected as a Group or Variable display mode.
-  * **Description**: Show nested variation/child rows expanded by default instead of having them initially collapsed. AJAX Add to Cart
+  * **Dependency**: Only available when `Nested Rows` is selected as a Group or Variable display mode.
+  * **Description**: Show nested variation/child rows expanded by default instead of having them initially collapsed.
 
 
 * **Show Options Count**

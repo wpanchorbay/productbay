@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WpabProductBay\Blocks;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -27,8 +27,8 @@ use WpabProductBay\Frontend\TableRenderer;
  * @package WpabProductBay\Blocks
  * @since   1.1.0
  */
-class ProductTableBlock
-{
+class ProductTableBlock {
+
 	/**
 	 * Repository for table data access.
 	 *
@@ -43,8 +43,7 @@ class ProductTableBlock
 	 * @param TableRepository $repository Table data repository.
 	 * @since 1.1.0
 	 */
-	public function __construct(TableRepository $repository)
-	{
+	public function __construct( TableRepository $repository ) {
 		$this->repository = $repository;
 	}
 
@@ -56,27 +55,26 @@ class ProductTableBlock
 	 * @return string Rendered HTML.
 	 * @since 1.1.0
 	 */
-	public function render(array $attributes, string $content): string
-	{
-		$table_id = absint($attributes['tableId'] ?? 0);
+	public function render( array $attributes, string $content ): string {
+		$table_id = absint( $attributes['tableId'] ?? 0 );
 
-		$request_uri = isset($_SERVER['REQUEST_URI']) ? \sanitize_text_field(\wp_unslash($_SERVER['REQUEST_URI'])) : '';
-		$is_editor   = defined('REST_REQUEST') && REST_REQUEST && strpos($request_uri, '/block-renderer/') !== false;
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? \sanitize_text_field( \wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$is_editor   = defined( 'REST_REQUEST' ) && REST_REQUEST && strpos( $request_uri, '/block-renderer/' ) !== false;
 
-		if (!$table_id) {
+		if ( ! $table_id ) {
 			return $this->get_mockup();
 		}
 
-		$table = $this->repository->get_table($table_id);
+		$table = $this->repository->get_table( $table_id );
 
-		if (!$table) {
-			if ($is_editor || is_admin() || is_preview()) {
+		if ( ! $table ) {
+			if ( $is_editor || is_admin() || is_preview() ) {
 				return '<div ' . \get_block_wrapper_attributes() . '>'
 					. '<div style="padding:16px; border:1px dashed #fca5a5; background:#fef2f2; border-radius:8px; color:#991b1b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif; font-size: 14px;">'
 					. '<div style="font-weight:700; margin-bottom:8px;">⚠️ ProductBay Table Block</div>'
 					. sprintf(
 						/* translators: %d: table ID */
-						\esc_html__('The selected table (ID: %d) could not be found. It may have been deleted. Please select a different table or update the block settings.', 'productbay'),
+						\esc_html__( 'The selected table (ID: %d) could not be found. It may have been deleted. Please select a different table or update the block settings.', 'productbay' ),
 						$table_id
 					)
 					. '</div></div>';
@@ -85,13 +83,14 @@ class ProductTableBlock
 		}
 
 		// Only render published tables on the frontend.
-		if ('publish' !== $table['status'] && !is_preview()) {
-			if (\current_user_can('manage_options')) {
+		if ( 'publish' !== $table['status'] && ! is_preview() ) {
+			if ( \current_user_can( 'manage_options' ) ) {
 				return '<p style="padding:12px 16px;background:#fef3cd;border:1px solid #e9b006;border-radius:4px;color:#664d03;font-size:14px;">'
 					. sprintf(
-						/* translators: %s: table title */
-						\esc_html__('ProductBay: Table "%s" is currently private. It will appear here once it is published.', 'productbay'),
-						\esc_html($table['title'])
+						/* translators: 1: table title, 2: table status, e.g. "draft" */
+						\esc_html__( 'ProductBay: Table "%1$s" is not visible to visitors (status: %2$s). It will appear here once it is published.', 'productbay' ),
+						\esc_html( $table['title'] ),
+						\esc_html( TableRepository::status_label( $table['status'] ) )
 					)
 					. '</p>';
 			}
@@ -100,8 +99,8 @@ class ProductTableBlock
 
 		$this->enqueue_assets();
 
-		$renderer = new TableRenderer($this->repository);
-		$html = $renderer->render($table);
+		$renderer = new TableRenderer( $this->repository );
+		$html     = $renderer->render( $table );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() and TableRenderer output are safe.
 		return '<div ' . \get_block_wrapper_attributes() . '>' . $html . '</div>';
@@ -113,9 +112,8 @@ class ProductTableBlock
 	 * @since 1.1.0
 	 * @return string Sample HTML.
 	 */
-	private function get_mockup(): string
-	{
-		if (!is_admin() && !is_preview()) {
+	private function get_mockup(): string {
+		if ( ! is_admin() && ! is_preview() ) {
 			return '';
 		}
 
@@ -139,7 +137,7 @@ class ProductTableBlock
 				<div style="font-size:13px; font-weight:700; color:#4f46e5; text-align:right;">$399.00</div>
 			</div>
 			<div style="margin-top:12px; padding-top:12px; border-top:1px solid #f1f5f9; text-align:center; font-size:11px; color:#64748b; font-style:italic;">
-				<?php \esc_html_e('Select a table to see live content', 'productbay'); ?>
+				<?php \esc_html_e( 'Select a table to see live content', 'productbay' ); ?>
 			</div>
 		</div>
 		<?php
@@ -156,34 +154,37 @@ class ProductTableBlock
 	 *
 	 * @return void
 	 */
-	private function enqueue_assets()
-	{
+	private function enqueue_assets() {
 		\wp_enqueue_style(
 			'productbay-frontend',
 			PRODUCTBAY_URL . 'assets/css/frontend.css',
 			array(),
-			(string) filemtime(PRODUCTBAY_PATH . 'assets/css/frontend.css')
+			(string) filemtime( PRODUCTBAY_PATH . 'assets/css/frontend.css' )
 		);
 
 		\wp_enqueue_script(
 			'productbay-frontend',
 			PRODUCTBAY_URL . 'assets/js/frontend.js',
-			array('jquery'),
-			(string) filemtime(PRODUCTBAY_PATH . 'assets/js/frontend.js'),
+			// 'wc-cart-fragments' powers the live cart refresh (header/mini-cart) when
+			// we trigger 'wc_fragment_refresh' after an AJAX add-to-cart. WooCommerce
+			// registers it but only enqueues it via the Cart widget, so depend on it
+			// here to guarantee it loads on any theme.
+			array( 'jquery', 'wc-cart-fragments' ),
+			(string) filemtime( PRODUCTBAY_PATH . 'assets/js/frontend.js' ),
 			true
 		);
 
-		if (!\wp_script_is('productbay-frontend', 'localized')) {
+		if ( ! \wp_script_is( 'productbay-frontend', 'localized' ) ) {
 			\wp_localize_script(
 				'productbay-frontend',
 				'productbay_frontend',
 				array(
-					'ajaxurl'            => \admin_url('admin-ajax.php'),
-					'nonce'              => \wp_create_nonce('productbay_frontend'),
-					'cart_url'           => \wc_get_cart_url(),
-					'currency_symbol'    => \get_woocommerce_currency_symbol(),
-					'currency_position'  => \get_option('woocommerce_currency_pos', 'left'),
-					'currency_decimals'  => absint(\get_option('woocommerce_price_num_decimals', 2)),
+					'ajaxurl'               => \admin_url( 'admin-ajax.php' ),
+					'nonce'                 => \wp_create_nonce( 'productbay_frontend' ),
+					'cart_url'              => \wc_get_cart_url(),
+					'currency_symbol'       => \get_woocommerce_currency_symbol(),
+					'currency_position'     => \get_option( 'woocommerce_currency_pos', 'left' ),
+					'currency_decimals'     => absint( \get_option( 'woocommerce_price_num_decimals', 2 ) ),
 					'currency_decimal_sep'  => \wc_get_price_decimal_separator(),
 					'currency_thousand_sep' => \wc_get_price_thousand_separator(),
 				)
@@ -195,6 +196,6 @@ class ProductTableBlock
 		 *
 		 * @since 1.1.0
 		 */
-		\do_action('productbay_enqueue_frontend_assets');
+		\do_action( 'productbay_enqueue_frontend_assets' );
 	}
 }

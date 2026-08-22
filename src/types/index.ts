@@ -369,10 +369,27 @@ export interface TableStyle {
 
 	/** Responsive display settings */
 	responsive: {
-		/** Responsive display mode */
-		mode: 'standard' | 'stack' | 'accordion';
+		/**
+		 * Mobile layout mode.
+		 * - `stack`     — each row becomes a labeled card (default)
+		 * - `scroll`    — keep the table, scroll horizontally
+		 * - `standard`  — legacy alias, treated as `stack` by the renderer
+		 * - `accordion` — retired; existing tables fall back to `stack`
+		 */
+		mode: 'standard' | 'stack' | 'scroll' | 'accordion';
 	};
 }
+
+/**
+ * Statuses the REST layer can return. `TableRepository::save()` accepts four,
+ * but the builder only ever sets `publish` or `private` — `draft` and `pending`
+ * arrive from the REST API, an import, or WP-CLI. Read paths must handle all
+ * four; use `EditableTableStatus` for anything the UI writes back.
+ */
+export type TableStatus = 'publish' | 'private' | 'draft' | 'pending';
+
+/** The subset of statuses the table builder can set. */
+export type EditableTableStatus = Extract<TableStatus, 'publish' | 'private'>;
 
 /* =============================================================================
  * Product Table Interface
@@ -384,7 +401,7 @@ export interface ProductTable {
 	id?: number;
 	title: string;
 	shortcode?: string;
-	status: 'publish' | 'private';
+	status: TableStatus;
 	date?: string;
 	modifiedDate?: string;
 	productCount?: number;
@@ -509,7 +526,7 @@ export const createDefaultStyle = (): TableStyle => ({
 		rowHoverTextColor: '',
 	},
 	responsive: {
-		mode: 'standard',
+		mode: 'stack',
 	},
 });
 

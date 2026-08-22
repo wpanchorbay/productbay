@@ -8,7 +8,7 @@ Yes. ProductBay is a WooCommerce extension and **will not function** without Woo
 
 ### Which WordPress versions are supported?
 
-ProductBay requires **WordPress 6.0 or later**. We recommend always running the latest stable version of WordPress.
+ProductBay requires **WordPress 6.8 or later**. We recommend always running the latest stable version of WordPress.
 
 ### Which PHP versions are supported?
 
@@ -73,8 +73,8 @@ Yes! Variable products display inline dropdown selectors for each attribute (siz
 
 ProductBay is built with performance in mind:
 - Assets are loaded **only on pages** where a table shortcode is present
-- Product queries are **cached for 30 minutes** to minimize database load
-- The frontend uses lightweight PHP rendering, not a heavy JavaScript framework
+- The frontend is rendered in PHP and enhanced with a small jQuery script — no heavy JavaScript framework, no client-side table library
+- The filter dropdown choices above a table are cached in a transient (12 hours by default) so building them never costs a query on a normal page view
 
 ### Does this plugin call any external services?
 
@@ -101,14 +101,14 @@ Yes. 100% of user-facing strings use WordPress localization functions (`__()`, `
 ### My table is not showing on the page
 
 Check the following:
-1. **Table status** — Make sure the table is set to "Published" (Private tables won't display)
+1. **Table status** — Make sure the table is set to "Published". A draft, pending, or private table renders for administrators only
 2. **Correct shortcode** — Verify the table ID in the shortcode matches your table
 3. **WooCommerce active** — Ensure WooCommerce is installed and active
 4. **Products exist** — Make sure the product source has matching published products
 
 ### I see a yellow notice instead of my table
 
-This means the table is set to **Private**. Only administrators see this notice — regular visitors see nothing. To fix it, edit the table and change its status to **Published**.
+This means the table is not published — it is draft, pending, or private. Only administrators see this notice; regular visitors see nothing. To fix it, edit the table and change its status to **Published**.
 
 ### The table looks broken or unstyled
 

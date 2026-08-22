@@ -10,7 +10,7 @@ Thank you for your interest in contributing to ProductBay! This guide will help 
 | **Bun** | Latest | Package manager & script runner |
 | **Composer** | 2+ | PHP dependency manager |
 | **PHP** | 7.4+ (8.0+ recommended) | Backend language |
-| **WordPress** | 6.0+ | CMS platform |
+| **WordPress** | 6.8+ | CMS platform |
 | **WooCommerce** | 6.1+ | E-commerce dependency |
 
 You'll also need a local WordPress development environment such as XAMPP, LAMP, LocalWP, or similar.

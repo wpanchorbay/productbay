@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WpabProductBay\Api;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -27,8 +27,8 @@ use WpabProductBay\Data\TableRepository;
  * @since   1.0.0
  * @package WpabProductBay\Api
  */
-class SystemController extends ApiController
-{
+class SystemController extends ApiController {
+
 
 	/**
 	 * The table repository instance.
@@ -46,9 +46,8 @@ class SystemController extends ApiController
 	 * @param TableRepository $repository Table data repository.
 	 * @param Request         $request    HTTP request handler.
 	 */
-	public function __construct(TableRepository $repository, Request $request)
-	{
-		parent::__construct($request);
+	public function __construct( TableRepository $repository, Request $request ) {
+		parent::__construct( $request );
 		$this->repository = $repository;
 	}
 
@@ -62,31 +61,30 @@ class SystemController extends ApiController
 	 * @return array
 	 * @since 1.0.0
 	 */
-	public function get_status()
-	{
-		$wc_active = class_exists('WooCommerce');
+	public function get_status() {
+		$wc_active     = class_exists( 'WooCommerce' );
 		$product_count = 0;
 
-		if ($wc_active) {
-			$query = new \WP_Query(
+		if ( $wc_active ) {
+			$query         = new \WP_Query(
 				array(
-				'post_type' => 'product',
-				'post_status' => 'publish',
-				'posts_per_page' => 1,
-				'fields' => 'ids',
-			)
-				);
+					'post_type'      => 'product',
+					'post_status'    => 'publish',
+					'posts_per_page' => 1,
+					'fields'         => 'ids',
+				)
+			);
 			$product_count = $query->found_posts;
 		}
 
-		$tables = $this->repository->get_tables();
-		$table_count = count($tables);
+		$tables      = $this->repository->get_tables();
+		$table_count = count( $tables );
 
 		$status = array(
-			'wc_active' => $wc_active,
+			'wc_active'     => $wc_active,
 			'product_count' => $product_count,
-			'table_count' => $table_count,
-			'version' => PRODUCTBAY_VERSION,
+			'table_count'   => $table_count,
+			'version'       => PRODUCTBAY_VERSION,
 		);
 
 		/**
@@ -96,7 +94,7 @@ class SystemController extends ApiController
 		 *
 		 * @param array $status The system status data.
 		 */
-		return \apply_filters('productbay_system_status', $status);
+		return \apply_filters( 'productbay_system_status', $status );
 	}
 
 	/**
@@ -108,9 +106,8 @@ class SystemController extends ApiController
 	 * @return array
 	 * @since 1.0.0
 	 */
-	public function mark_onboarded()
-	{
-		update_option('productbay_onboarding_completed', true);
+	public function mark_onboarded() {
+		update_option( 'productbay_onboarding_completed', true );
 		return array(
 			'success' => true,
 		);
