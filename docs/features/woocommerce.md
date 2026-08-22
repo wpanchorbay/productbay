@@ -35,6 +35,8 @@ ProductBay supports adding multiple products at once. The products a customer ha
 
 ::: tip On phones <Badge type="tip" text="Since v1.3.4" />
 When a table uses the [stacked-card mobile layout](/features/display-customization#layout-on-phones), the checkbox is replaced by a full-width **Add to bulk list** button at the bottom of each card, which reads **Added** once the product is in the list. Pro can rename both labels — see [Cart Customization](/features/plugin-settings#cart-customization).
+
+The bulk actions themselves move too. As soon as the list has something in it, they float in a rounded bar pinned to the bottom of the screen, so the add-to-cart button, **View**, and **Clear** stay reachable however far the customer has scrolled. The bar disappears again when the list is emptied, and the **View** panel opens above it, sized to fit the screen and scrolling internally when the list is long.
 :::
 
 ::: tip

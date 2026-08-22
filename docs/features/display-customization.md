@@ -71,7 +71,7 @@ A table with more than a few columns cannot fit a phone screen, so ProductBay re
 ### How a stacked card is arranged
 1. **Product name** as the card heading.
 2. **Labeled values** — one line per visible column, each prefixed with its column heading (this is why headings stay useful even when the header row is hidden).
-3. **Add to cart controls** — variation dropdowns, quantity, and the button, each full width.
+3. **Add to cart controls** — variation dropdowns, the quantity stepper, and the button. They fill the width of the card and share a common height so they line up, and every one of them clears the 44px minimum tap target. Grouped products keep their dropdown and stepper side by side unless the screen is too narrow to read both.
 4. **Add to bulk list** — a full-width toggle button that replaces the desktop checkbox, showing **Added** once the product is in the bulk list.
 
 ::: tip

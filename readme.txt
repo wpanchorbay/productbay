@@ -354,6 +354,9 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 
 == Upgrade Notice ==
 
+= 1.3.4 =
+Mobile update: product tables now reflow into stacked cards on phones, with full-size tap targets and a floating bulk list bar. Also fixes table filters offering categories the table cannot show, and draft tables labelled "Private".
+
 = 1.3.0 =
 Major functional update: Introduces native permalink pages for tables, decouples cart actions from AJAX, and adds an Activity Log system for better management.
 
