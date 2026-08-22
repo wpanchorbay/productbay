@@ -43,6 +43,16 @@ Enable the product type filter in the **Options** step:
 
 1. Under **Taxonomy & Type Filters**, toggle **Enable Product Type Filter** to on
 
+## What the Dropdowns Offer <Badge type="tip" text="Since v1.3.4" />
+
+Both dropdowns are built from the table's **own** products, not from your whole store. A table scoped to one category offers only the categories its products actually carry, and only the product types it actually contains — so every choice returns rows, and none of them can render an empty table.
+
+Resolving those choices costs one ID-only product query plus two term queries, so the result is cached per table for 12 hours. Editing a table's source takes effect immediately; a product gaining a new category elsewhere in the catalog is picked up when the cache expires.
+
+::: tip Developers
+Adjust the choices with [`productbay_filter_options`](/developer/hooks#productbay-filter-options), or change or disable the cache with [`productbay_filter_options_cache_ttl`](/developer/hooks#productbay-filter-options-cache-ttl).
+:::
+
 ## Pagination
 
 When pagination is enabled, products are split across multiple pages with navigation controls at the bottom of the table.

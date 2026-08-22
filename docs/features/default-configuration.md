@@ -48,11 +48,12 @@ Adjust the structural feel of the table.
  - **Border Color**: Set the color of the table and cell borders.
  - **Border Radius**: Round the corners of your table for a softer look.
  - **Cell Padding**: Control the space between the content and the cell borders.
- - **Layout on Phones**: Choose how tables reflow below 767px — Stacked cards (default) or Horizontal scroll. See [Layout on Phones](/features/display-customization#layout-on-phones).
 #### **Typography**
 Fine-tune the text appearance for the header.
  - **Header Font Weight**: Choose between Normal, Bold, or Extra Bold.
  - **Header Text Transform**: Set text to Uppercase, Lowercase, Capitalize, or leave as Normal.
+#### **Mobile Layout**
+ - **Layout on phones**: Choose how tables reflow below 767px — Stacked cards (default) or Horizontal scroll. See [Layout on Phones](/features/display-customization#layout-on-phones).
 
 
 ## Default Functionality

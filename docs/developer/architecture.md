@@ -44,12 +44,20 @@ app/
 │   ├── ProductsController.php  # Product search & categories
 │   ├── SettingsController.php  # Plugin settings management
 │   ├── SystemController.php    # System status & onboarding
-│   └── PreviewController.php   # Live preview rendering
-├── Core/            # Plugin bootstrapper, activation/deactivation
-├── Data/            # Data repositories (TableRepository)
+│   ├── PreviewController.php   # Live preview rendering
+│   └── LogController.php       # Activity log read, clear, export
+├── Blocks/          # Gutenberg block registration and server-side render
+│   ├── BlockManager.php        # Registers the blocks and editor assets
+│   ├── ProductTableBlock.php   # The Product Table block
+│   └── TabProductTableBlock.php # The tabbed Product Table block
+├── Core/            # Plugin bootstrapper, activation, shared constants
+├── Data/            # Repositories and the activity log
+│   ├── TableRepository.php     # CRUD for the productbay_table CPT
+│   ├── ActivityLog.php         # File-based log writer and reader
+│   ├── TableLogger.php         # Records table events
+│   └── SettingsLogger.php      # Records settings events
 ├── Frontend/        # Shortcode, TableRenderer, AjaxRenderer
-├── Http/            # Router (REST route registration), Request wrapper
-└── Utils/           # Utility classes
+└── Http/            # Router (REST route registration), Request wrapper
 ```
 
 ### Key Classes
@@ -63,6 +71,9 @@ app/
 | `Frontend\Shortcode` | Registers `[productbay]` shortcode and triggers rendering |
 | `Frontend\TableRenderer` | Generates the full HTML table from table config |
 | `Frontend\AjaxRenderer` | Handles AJAX requests (search, filter, pagination, add-to-cart) |
+| `Blocks\BlockManager` | Registers the Gutenberg blocks and their editor assets |
+| `Data\ActivityLog` | File-based activity log — writes, reads, and prunes entries |
+| `Core\Constants` | Shared constants, including the filterable admin capability |
 
 ### Data Storage
 - **Tables** are stored as a custom post type (`productbay_table`)
@@ -75,6 +86,7 @@ app/
 
 ```
 src/
+├── blocks/        # Block editor entry points and controls
 ├── components/    # Reusable UI components
 ├── context/       # React context providers
 ├── hooks/         # Custom React hooks

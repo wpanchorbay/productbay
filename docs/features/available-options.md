@@ -128,8 +128,8 @@ Advanced configuration for complex WooCommerce product types. Some display modes
 * **Expand Nested Rows**
   * **Functionality**: Determines initial state for nested products. 
   * **Option Type**: Toggle
-  * **Dependancy**: Only available when `Nested Rows` is selected as a Group or Variable display mode.
-  * **Description**: Show nested variation/child rows expanded by default instead of having them initially collapsed. AJAX Add to Cart
+  * **Dependency**: Only available when `Nested Rows` is selected as a Group or Variable display mode.
+  * **Description**: Show nested variation/child rows expanded by default instead of having them initially collapsed.
 
 
 * **Show Options Count**

@@ -67,7 +67,7 @@ There are two ways to find a table's shortcode:
 
 ### Table not showing?
 - Verify the **table ID** is correct
-- Check that the table status is **Published** (Private tables won't render for non-admin users)
+- Check that the table status is **Published** — draft, pending, and private tables do not render for non-admin users
 - Make sure **WooCommerce is active**
 
 ### Empty table?
@@ -76,5 +76,5 @@ There are two ways to find a table's shortcode:
 - Review any query modifiers (stock status filters, price ranges, excluded IDs)
 
 ::: tip Admin Notice
-If a table is set to **Private**, administrators will see a yellow notice saying the table is private. Regular visitors will see nothing.
+If a table is not published — draft, pending, or private — administrators will see a yellow notice in its place. Regular visitors will see nothing.
 :::

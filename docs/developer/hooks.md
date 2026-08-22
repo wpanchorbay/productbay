@@ -33,6 +33,23 @@ add_action( 'productbay_loaded', function( $plugin ) {
 } );
 ```
 
+### `productbay_admin_capability`
+
+Filters the capability required to reach the ProductBay admin screens and REST routes. Use it to delegate table management to a restricted role instead of full administrators.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$capability` *(string)* — defaults to `manage_options` |
+| **Returns** | `string` — A WordPress capability |
+| **File** | `app/Core/Constants.php` |
+| **Since** | 1.3.1 |
+
+```php
+add_filter( 'productbay_admin_capability', function() {
+    return 'edit_products';
+} );
+```
+
 ### `productbay_admin_init`
 
 Fires after the admin component is set up (inside `is_admin()` context only).
@@ -303,6 +320,15 @@ Return `0` to disable caching — useful on a store whose product categories cha
 | **Parameters** | `$ttl` *(int)* — default `12 * HOUR_IN_SECONDS`, `$table_id` *(int)* |
 | **Returns** | `int` — Lifetime in seconds, or `0` to skip caching |
 
+### `productbay_render_filters`
+
+Action fired inside the filter bar, after the built-in category and product type dropdowns and before the **Clear** button. This is where add-ons inject their own filter controls — Pro's price range filter uses it.
+
+| Type | Action |
+|------|--------|
+| **Parameters** | `$settings` *(array)*, `$source` *(array)* |
+| **File** | `app/Frontend/TableRenderer.php` |
+
 ### `productbay_before_table` / `productbay_after_table`
 
 Actions fired before and after the table wrapper `<div>`.
@@ -372,6 +398,63 @@ Action to enqueue additional frontend assets when a ProductBay shortcode is rend
 | Type | Action |
 |------|--------|
 | **Parameters** | *(none)* |
+
+---
+
+## Blocks & Preview
+
+### `productbay_block_editor_css_paths`
+
+Filters the CSS files injected into the block editor's iframe, so a table rendered inside the editor looks like it does on the storefront. Return **absolute filesystem paths**, not URLs.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$paths` *(string[])* — absolute paths, defaults to the plugin's `frontend.css` and `block-tabs.css` |
+| **Returns** | `string[]` |
+| **File** | `app/Blocks/BlockManager.php` |
+| **Since** | 1.1.0 |
+
+```php
+add_filter( 'productbay_block_editor_css_paths', function( $paths ) {
+    $paths[] = MY_ADDON_PATH . 'assets/css/my-addon-frontend.css';
+    return $paths;
+} );
+```
+
+### `productbay_preview_css_urls`
+
+Filters the stylesheet **URLs** loaded inside the admin live-preview iframe. The block editor equivalent above takes paths; this one takes URLs.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$css_urls` *(array)* — defaults to the plugin's `frontend.css` |
+| **Returns** | `array` |
+| **File** | `app/Api/PreviewController.php` |
+
+---
+
+## Activity Log
+
+### `productbay_log_created`
+
+Fires after an entry has been appended to the activity log. Useful for mirroring ProductBay events into an external audit trail.
+
+| Type | Action |
+|------|--------|
+| **Parameters** | `$entry` *(array)* — the log entry that was written |
+| **File** | `app/Data/ActivityLog.php` |
+| **Since** | 1.2.0 |
+
+### `productbay_log_retention_days`
+
+Filters how many days of log files are kept before the daily prune deletes them. The unfiltered value comes from the `log_retention` plugin setting.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$retention_days` *(int)* |
+| **Returns** | `int` — Number of days to keep |
+| **File** | `app/Data/ActivityLog.php` |
+| **Since** | 1.2.0 |
 
 ---
 

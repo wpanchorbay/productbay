@@ -33,7 +33,10 @@ features:
     details: Supports Simple, Variable, Grouped, and External products with inline variation selectors and AJAX add-to-cart.
   - icon: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>'
     title: High Performance
-    details: Lightweight frontend rendering optimized for Core Web Vitals. Smart 30-minute caching minimizes database load.
+    details: Lightweight PHP rendering optimized for Core Web Vitals, with assets loaded only on pages that actually contain a table.
+  - icon: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>'
+    title: Built for Phones
+    details: Below 767px each row reflows into a labeled card with full-size tap targets and a floating bulk list bar — or keep the classic table and let it scroll. Chosen per table.
   - icon: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>'
     title: Search, Sort & Filter
     details: Built-in AJAX search, category filters, and pagination — all without page reloads.
@@ -70,7 +73,7 @@ ProductBay is explicitly engineered to serve a variety of WooCommerce businesses
 
 Most WooCommerce product table plugins are built using outdated frameworks like DataTables.js, making them slow, bloated, and unresponsive on modern mobile devices. We built ProductBay from the ground up to solve these exact frustrations.
 
-- **Instant, Frictionless Architecture:** We completely decoupled the heavy lifting. The admin panel is a blazing fast React SPA, while the frontend output relies on vanilla JavaScript, raw HTML, and aggressive caching.
+- **Instant, Frictionless Architecture:** We completely decoupled the heavy lifting. The admin panel is a blazing fast React SPA, while the storefront ships plain server-rendered HTML enhanced by a single small jQuery script — no client-side table library to download, parse, and re-render.
 - **Maximized Conversion Rates:** By bringing all product types, including simple, variable with variations, grouped, and external, along with quantities, quick previews, and bulk adding directly into the catalog view on a single page, you eliminate the need for customers to visit individual product pages, accelerating the purchasing funnel.
 - **No Coding Skills Required:** You don't need to know shortcode attributes or custom CSS. ProductBay offers the market's only fully visual, 5-step guided creation wizard with a real-time live preview. What you see in the admin is precisely what your customers see.
 
