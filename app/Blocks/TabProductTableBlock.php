@@ -155,9 +155,10 @@ class TabProductTableBlock
 					if (\current_user_can('manage_options')) {
 						echo '<p style="padding:12px 16px;background:#fef3cd;border:1px solid #e9b006;border-radius:4px;color:#664d03;font-size:14px;">'
 							. sprintf(
-								/* translators: %s: table title */
-								\esc_html__('ProductBay: Table "%s" is not published.', 'productbay'),
-								\esc_html($table['title'] ?? (string) $table_id)
+								/* translators: 1: table title, 2: table status, e.g. "draft" */
+								\esc_html__('ProductBay: Table "%1$s" is not visible to visitors (status: %2$s). It will appear here once it is published.', 'productbay'),
+								\esc_html($table['title'] ?? (string) $table_id),
+								\esc_html(TableRepository::status_label($status))
 							)
 							. '</p>';
 					}
