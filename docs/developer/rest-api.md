@@ -223,6 +223,20 @@ Marks the onboarding process as completed.
 
 ---
 
+#### Clear Cache <Badge type="tip" text="Since v1.3.5" />
+
+```http
+POST /wp-json/productbay/v1/system/clear-cache
+```
+
+Invalidates ProductBay's cached filter-dropdown choices. Bumps the global `productbay_cache_gen`
+option, which every ProductBay cache key includes, and clears the plugin's own transient rows.
+Returns `{ "success": true }`.
+
+Products, prices, and stock are never cached, so this endpoint cannot change what a table renders.
+
+---
+
 ### Preview
 
 #### Generate Preview

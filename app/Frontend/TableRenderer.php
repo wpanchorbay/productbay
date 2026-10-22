@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use WpabProductBay\Data\CacheInvalidator;
 use WpabProductBay\Data\TableRepository;
 
 /**
@@ -229,6 +230,13 @@ class TableRenderer {
 
 		// 2. Execute Query.
 		$query = new \WP_Query( $args );
+
+		// Prime the thumbnail caches for the whole page in one go. Without this
+		// the image column costs an extra query per row; WooCommerce's own shop
+		// loop does the same thing (WC_Query).
+		if ( function_exists( 'update_post_thumbnail_cache' ) ) {
+			\update_post_thumbnail_cache( $query );
+		}
 
 		// 3. Generate Styles.
 		$css = $this->generate_styles( "#{$unique_id}", $style, $columns, $settings );
@@ -645,7 +653,75 @@ class TableRenderer {
 			);
 		}
 
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Required to exclude catalog-hidden products, matching WC_Query.
+		$args['tax_query'] = array_merge( $args['tax_query'], $this->get_visibility_tax_query( $stock_status ) );
+
 		return $args;
+	}
+
+	/**
+	 * Build the product-visibility exclusion clause a catalog listing owes WooCommerce.
+	 *
+	 * WooCommerce applies this in WC_Query::get_tax_query(), but WC_Query bails on
+	 * anything that is not the main query (`if ( ! $q->is_main_query() ) return;`),
+	 * and every ProductBay render is a secondary WP_Query. So without this, a table
+	 * shows products the shop itself deliberately hides: a product set to "Hidden"
+	 * under Product data → Advanced still appeared in every table, and so did
+	 * out-of-stock products on stores with "Hide out of stock items" enabled.
+	 *
+	 * Only `exclude-from-catalog` is excluded, never `exclude-from-search`: a table
+	 * is a catalog listing, so a product marked "Search results only" should stay
+	 * out while one marked "Shop only" should stay in — matching what the shop does.
+	 *
+	 * @param string $stock_status The table's own stock filter ('any' when unset).
+	 * @return array A tax_query clause list, empty if there is nothing to exclude.
+	 * @since 1.3.5
+	 */
+	private function get_visibility_tax_query( string $stock_status ): array {
+		$terms = \wc_get_product_visibility_term_ids();
+
+		$exclude = array();
+
+		if ( ! empty( $terms['exclude-from-catalog'] ) ) {
+			$exclude[] = (int) $terms['exclude-from-catalog'];
+		}
+
+		// Only honour the store-wide "hide out of stock" setting when the table
+		// has not made its own choice — an admin who explicitly built a table of
+		// out-of-stock products means it.
+		if (
+			'any' === $stock_status
+			&& 'yes' === \get_option( 'woocommerce_hide_out_of_stock_items' )
+			&& ! empty( $terms['outofstock'] )
+		) {
+			$exclude[] = (int) $terms['outofstock'];
+		}
+
+		/**
+		 * Filters the product_visibility term IDs excluded from a table's query.
+		 *
+		 * Return an empty array to show catalog-hidden products — for example a
+		 * private wholesale table built deliberately from hidden products.
+		 *
+		 * @since 1.3.5
+		 *
+		 * @param int[]  $exclude      product_visibility term IDs to exclude.
+		 * @param string $stock_status The table's own stock filter.
+		 */
+		$exclude = (array) \apply_filters( 'productbay_excluded_visibility_terms', $exclude, $stock_status );
+
+		if ( empty( $exclude ) ) {
+			return array();
+		}
+
+		return array(
+			array(
+				'taxonomy' => 'product_visibility',
+				'field'    => 'term_taxonomy_id',
+				'terms'    => array_map( 'intval', $exclude ),
+				'operator' => 'NOT IN',
+			),
+		);
 	}
 
 	/**
@@ -748,7 +824,12 @@ class TableRenderer {
 			case 'tax':
 				$taxonomy = $settings['taxonomy'] ?? 'product_cat';
 				$link     = ! empty( $settings['linkToArchive'] );
-				$terms    = \wp_get_post_terms( $product->get_id(), sanitize_key( $taxonomy ) );
+				// get_the_terms(), not wp_get_post_terms(): the former reads the
+				// object-term cache that WP_Query already primed for this page,
+				// the latter runs a fresh WP_Term_Query per row. On a 25-row
+				// table that was 31 queries instead of 6.
+				$terms = \get_the_terms( $product->get_id(), sanitize_key( $taxonomy ) );
+				$terms = is_array( $terms ) ? $terms : array();
 
 				if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
 					$parts = array();
@@ -1494,7 +1575,14 @@ class TableRenderer {
 			$w_value = intval( $width['value'] );
 			$w_unit  = $this->sanitize_css_unit( $width['unit'] ?? 'auto' );
 			if ( $w_value > 0 && $w_unit !== 'auto' ) {
-				$css .= "{$selector} .productbay-col-" . esc_attr( (string) $col['id'] ) . ' { width: ' . (string) $w_value . "{$w_unit}; }";
+				// sanitize_html_class(), not esc_attr(): this lands inside a CSS
+				// selector, and esc_attr() leaves `{`, `}` and `;` untouched, so a
+				// saved column ID could otherwise close the rule and inject
+				// page-wide CSS into the <style> block.
+				$col_class = \sanitize_html_class( (string) $col['id'] );
+				if ( '' !== $col_class ) {
+					$css .= "{$selector} .productbay-col-" . $col_class . ' { width: ' . (string) $w_value . "{$w_unit}; }";
+				}
 			}
 		}
 
@@ -1573,7 +1661,7 @@ class TableRenderer {
 	 * @since 1.0.0
 	 */
 	private function get_column_classes( $col ) {
-		$classes = array( 'productbay-col-' . (string) $col['id'] );
+		$classes = array( 'productbay-col-' . \sanitize_html_class( (string) $col['id'] ) );
 
 		$visibility = $col['advanced']['visibility'] ?? 'default';
 
@@ -1709,8 +1797,11 @@ class TableRenderer {
 	 *
 	 * This costs one ID-only query plus two term queries, so the result is
 	 * cached per table. The key carries a hash of the resolved query args, so
-	 * editing a table's source invalidates it immediately; catalogue changes (a
-	 * product gaining a category) are picked up when the transient expires.
+	 * editing a table's source invalidates it immediately; the key also carries
+	 * the global `productbay_cache_gen` counter, so a product or
+	 * term change invalidates it right away too — otherwise, a catalogue
+	 * change (a product gaining a category) is picked up when the transient
+	 * expires on its own TTL.
 	 *
 	 * @param array $source   The table's source configuration.
 	 * @param array $settings The table settings.
@@ -1733,7 +1824,10 @@ class TableRenderer {
 		$args['ignore_sticky_posts'] = true;
 		unset( $args['s'] );
 
-		$cache_key = 'productbay_filter_opts_' . md5( (string) wp_json_encode( array( $table_id, $args ) ) );
+		// The generation counter is included so this transient is flushed by
+		// the same product/table changes that invalidate the query cache,
+		// instead of only ever expiring on its own 12h TTL. See CacheInvalidator.
+		$cache_key = 'productbay_filter_opts_' . md5( (string) wp_json_encode( array( CacheInvalidator::get_generation(), $table_id, $args ) ) );
 		$cached    = \get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
 			return $cached;
@@ -2050,6 +2144,7 @@ class TableRenderer {
 	 * @since 1.0.0
 	 */
 	public function render_ajax_response( $table, $runtime_args ) {
+		$table_id = $table['id'] ?? 0;
 		$source   = $table['source'] ?? array();
 		$columns  = $table['columns'] ?? array();
 		$settings = $table['settings'] ?? array();

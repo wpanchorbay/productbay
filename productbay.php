@@ -12,8 +12,8 @@
  * Plugin URI:        https://wpanchorbay.com/products/productbay
  * Source URI:        https://github.com/wpanchorbay/productbay
  * Description:       WooCommerce product tables with search, filters, and pagination for high-converting, responsive product listings and easy browsing.
- * Version:           1.3.4
- * Stable tag:        1.3.4
+ * Version:           1.3.5
+ * Stable tag:        1.3.5
  * Requires at least: 6.8
  * Tested up to:      7.1
  * Requires PHP:      7.4
@@ -25,6 +25,7 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.txt
  * Requires Plugins:  woocommerce
  * WC requires at least: 6.1
+ * WC tested up to:   11.2
  */
 
 // Namespace - ProductBay.
@@ -42,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Global Constants
  * Prefixed with PRODUCTBAY_
  */
-define( 'PRODUCTBAY_VERSION', '1.3.4' );
+define( 'PRODUCTBAY_VERSION', '1.3.5' );
 define( 'PRODUCTBAY_PLUGIN_NAME', 'productbay' );
 define( 'PRODUCTBAY_TEXT_DOMAIN', 'productbay' );
 define( 'PRODUCTBAY_OPTION_NAME', 'productbay' );
@@ -69,8 +70,12 @@ if ( \file_exists( $productbay_dotenv_path ) && \class_exists( 'Dotenv\\Dotenv' 
 /**
  * Development Mode Constant
  * Loaded from .env file if available, defaults to false for production.
- * When true: enables file-based cache busting, debug features, etc.
- * When false: uses production-optimized settings.
+ * When true: enqueued assets are versioned with their file modification
+ * time, so a file you just edited is never served stale — while files you
+ * did not touch stay cached.
+ * When false: assets are versioned with the plugin version, or the build's
+ * own content hash where there is one (see WpabProductBay\Utils\Assets).
+ * That is identical on every server and changes only when the bytes do.
  */
 define( 'PRODUCTBAY_DEV_MODE', \filter_var( getenv( 'PRODUCTBAY_DEV_MODE' ) ? getenv( 'PRODUCTBAY_DEV_MODE' ) : false, FILTER_VALIDATE_BOOLEAN ) );
 
@@ -122,3 +127,32 @@ function productbay_init() {
 	$plugin->run();
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\\productbay_init' );
+
+/**
+ * Declare WooCommerce feature compatibility.
+ *
+ * Must run inside before_woocommerce_init — FeaturesUtil::declare_compatibility()
+ * calls wc_doing_it_wrong() and returns false anywhere else.
+ *
+ * custom_order_tables (HPOS) defaults to INCOMPATIBLE for any plugin
+ * WooCommerce considers WooCommerce-aware, and awareness is decided by the
+ * presence of the "WC tested up to" header. Staying silent while carrying that
+ * header would leave ProductBay counted as HPOS-incompatible, which disables the
+ * HPOS toggle for stores not yet migrated and raises a notice on those that are.
+ * The declaration is also simply true: this plugin reads and writes products and
+ * the cart, and never touches orders.
+ *
+ * cart_checkout_blocks already defaults to compatible, so declaring it changes
+ * nothing today; it is here so the position is explicit rather than assumed.
+ *
+ * @since 1.3.5
+ */
+add_action(
+	'before_woocommerce_init',
+	function () {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
+		}
+	}
+);

@@ -20,7 +20,7 @@ ProductBay gives you control over what happens when the plugin is deleted:
 
 | Setting | Effect on Uninstall |
 |---------|-------------------|
-| **Enabled** (default) | All ProductBay data is permanently deleted: tables, table configurations, plugin settings, and onboarding state |
+| **Enabled** (default) | All ProductBay data is permanently deleted: tables, table configurations, plugin settings, onboarding state, and cached filter choices |
 | **Disabled** | Data is preserved in the database even after the plugin is deleted. Useful if you plan to reinstall later. |
 
 ::: danger Data Deletion Is Permanent

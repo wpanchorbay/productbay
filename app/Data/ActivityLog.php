@@ -206,7 +206,7 @@ class ActivityLog {
 	 * @return array{entries: array, total: int, page: int, per_page: int, available_dates: array}
 	 */
 	public static function get_logs( array $args = array() ): array {
-		$date     = $args['date'] ?? \current_time( 'Y-m-d' );
+		$date     = self::sanitize_date( $args['date'] ?? '' );
 		$level    = $args['level'] ?? '';
 		$search   = $args['search'] ?? '';
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
@@ -297,6 +297,34 @@ class ActivityLog {
 			'available_dates' => $available_dates,
 			'users'           => $users, // Metadata for UI filters.
 		);
+	}
+
+	/**
+	 * Reduce a caller-supplied date to a safe Y-m-d string.
+	 *
+	 * Log filenames are built from this value, so it is validated as a real
+	 * calendar date and anything else falls back to today. Callers may pass
+	 * user input directly.
+	 *
+	 * @param string $date Candidate date string.
+	 * @return string A valid Y-m-d date; today's date if the input was not one.
+	 * @since 1.3.5
+	 */
+	public static function sanitize_date( string $date ): string {
+		// The date becomes part of a filesystem path, so anything that is not
+		// literally a calendar date is rejected outright rather than escaped.
+		// Without this, a value like '../debug' turned the log directory into
+		// its parent and read files that are none of this plugin's business.
+		if ( 1 !== \preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $date, $m ) ) {
+			return \current_time( 'Y-m-d' );
+		}
+
+		// A well-formed but impossible date (2026-02-31) is still not a date.
+		if ( ! \checkdate( (int) $m[2], (int) $m[3], (int) $m[1] ) ) {
+			return \current_time( 'Y-m-d' );
+		}
+
+		return $date;
 	}
 
 	/**

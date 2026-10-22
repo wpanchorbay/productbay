@@ -72,13 +72,22 @@ if ( $productbay_delete_on_uninstall ) {
 	// 2. Delete Plugin Options.
 	delete_option( 'productbay_settings' );
 	delete_option( 'productbay_onboarding_completed' );
+	delete_option( 'productbay_cache_gen' );
 
-	// 3. Clear any potential transients or temporary data.
-	// (Add transient cleanup here if implemented in the future)
+	// 3. Clear the cached filter choices. Transients are keyed by a hash, so they
+	// are matched by prefix; the timeout rows go with them.
+	global $wpdb;
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One-time cleanup during uninstall, caching not needed.
+	$wpdb->query(
+		$wpdb->prepare(
+			"DELETE FROM $wpdb->options WHERE option_name LIKE %s OR option_name LIKE %s",
+			$wpdb->esc_like( '_transient_productbay_filter_opts_' ) . '%',
+			$wpdb->esc_like( '_transient_timeout_productbay_filter_opts_' ) . '%'
+		)
+	);
 
 	// 4. Extra Safety Net: Clear all ProductBay metadata across the site.
 	// Includes all current meta keys and the legacy _productbay_config key.
-	global $wpdb;
 	$productbay_meta_keys = array(
 		'_productbay_source',
 		'_productbay_columns',

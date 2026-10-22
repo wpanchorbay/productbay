@@ -51,7 +51,7 @@ class LogController extends ApiController {
 	 */
 	public function index( \WP_REST_Request $request ) {
 		$args = array(
-			'date'     => $request->get_param( 'date' ) ?: \current_time( 'Y-m-d' ),
+			'date'     => ActivityLog::sanitize_date( (string) $request->get_param( 'date' ) ),
 			'level'    => $request->get_param( 'level' ) ?: '',
 			'user'     => $request->get_param( 'user' ) ?: '',
 			'search'   => $request->get_param( 'search' ) ?: '',
@@ -71,9 +71,15 @@ class LogController extends ApiController {
 	 * @return void
 	 */
 	public function export( \WP_REST_Request $request ): void {
-		$date  = $request->get_param( 'date' ) ?: \current_time( 'Y-m-d' );
-		$range = $request->get_param( 'range' ) ?: 'day';
-		$dir   = ActivityLog::get_log_dir();
+		$date  = ActivityLog::sanitize_date( (string) $request->get_param( 'date' ) );
+		$range = (string) ( $request->get_param( 'range' ) ?: 'day' );
+
+		// $range picks a day count and lands in the download filename, so keep
+		// it to the three values the UI actually offers.
+		if ( ! in_array( $range, array( 'day', 'week', 'month' ), true ) ) {
+			$range = 'day';
+		}
+		$dir = ActivityLog::get_log_dir();
 
 		if ( ! $dir ) {
 			\wp_die( \esc_html__( 'Log directory not found.', 'productbay' ), \esc_html__( 'Export Failed', 'productbay' ), array( 'response' => 500 ) );

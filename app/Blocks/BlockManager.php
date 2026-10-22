@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use WpabProductBay\Data\TableRepository;
+use WpabProductBay\Utils\Assets;
 
 /**
  * Class BlockManager
@@ -64,7 +65,7 @@ class BlockManager {
 			'productbay-frontend',
 			PRODUCTBAY_URL . 'assets/css/frontend.css',
 			array(),
-			file_exists( $css_path ) ? (string) filemtime( $css_path ) : PRODUCTBAY_VERSION
+			Assets::version( $css_path )
 		);
 
 		// Register the tabs CSS handle.
@@ -73,7 +74,7 @@ class BlockManager {
 			'productbay-tabs',
 			PRODUCTBAY_URL . 'assets/css/block-tabs.css',
 			array(),
-			file_exists( $tabs_css_path ) ? (string) filemtime( $tabs_css_path ) : PRODUCTBAY_VERSION
+			Assets::version( $tabs_css_path )
 		);
 
 		\register_block_type(

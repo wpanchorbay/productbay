@@ -51,6 +51,8 @@
 
             // State
             this.searchTimeout = null;
+            this._fetchSeq = 0;
+            this._fetchXhr = null;
             // Map: productId → { quantity, price, variationId, attributes }
             this.selectedProducts = new Map();
             // Map: cartKey → { quantity, variationId, attributes, productId }
@@ -549,11 +551,25 @@
                 ...args
             };
 
-            $.ajax({
+            // Search, filter and page requests replace the whole table, so only
+            // the newest of them may touch it. Without this a slow response for
+            // an older term landed after the newer one and overwrote it, leaving
+            // the table showing results for text that was no longer in the box.
+            // "Load more" appends instead of replacing, so it is left out.
+            const seq = isAppend ? null : ++this._fetchSeq;
+            const isStale = () => seq !== null && seq !== this._fetchSeq;
+
+            if (!isAppend && this._fetchXhr) {
+                this._fetchXhr.abort();
+            }
+
+            const xhr = $.ajax({
                 url: productbay_frontend.ajaxurl,
                 type: 'POST',
                 data: data,
                 success: (response) => {
+                    if (isStale()) return;
+
                     if (response.success) {
                         if (isAppend) {
                             this.$tbody.append(response.data.html);
@@ -561,11 +577,23 @@
                             this.$tbody.html(response.data.html);
                         }
 
+                        // The server renders no pagination at all when the result fits on
+                        // one page, so an empty string is a meaningful answer ("this needs
+                        // no pager"), not a no-op. Leaving the previous bar in place made a
+                        // narrowed search or filter keep offering the unfiltered page count,
+                        // and clicking one of those pages returned "No products found".
+                        // Because the bar is removed rather than emptied, it also has to be
+                        // re-inserted when a later filter does need one.
+                        const $pagination = this.$wrapper.find('.productbay-pagination');
+
                         if (response.data.pagination) {
-                            this.$wrapper.find('.productbay-pagination').replaceWith(response.data.pagination);
-                        } else if (isAppend) {
-                            // If appending and no new pagination, it means we reached the end
-                            this.$wrapper.find('.productbay-pagination').remove();
+                            if ($pagination.length) {
+                                $pagination.replaceWith(response.data.pagination);
+                            } else {
+                                this.$wrapper.find('.productbay-table-container').after(response.data.pagination);
+                            }
+                        } else {
+                            $pagination.remove();
                         }
 
                         // Restore selections for products visible on the new page
@@ -576,11 +604,19 @@
                     }
                 },
                 complete: () => {
+                    // A superseded request must not clear the spinner of the one
+                    // that replaced it.
+                    if (isStale()) return;
+
                     this.$wrapper.removeClass('productbay-loading');
                     this.$wrapper.find('.productbay-search').removeClass('loading');
                     this.$wrapper.find('.productbay-load-more-btn').removeClass('loading').prop('disabled', false);
                 }
             });
+
+            if (!isAppend) {
+                this._fetchXhr = xhr;
+            }
         }
 
         loadSelectionsFromStorage() {
@@ -1074,6 +1110,15 @@
                         // reflects what is actually in the cart (and is not wiped by a
                         // later async fragment refresh).
                         this.syncCartQuantities(data.cart_data);
+
+                        // Put the button's own label back before re-rendering badges.
+                        // For a simple product restoreCartBadges() rewrites this button
+                        // anyway, but for a variable one it only re-renders the variation
+                        // badges and never touches the button — so without this the button
+                        // sat reading "Adding..." forever after a *successful* add, with no
+                        // error and a cart that had in fact been updated.
+                        $btn.text(originalLabel);
+
                         this.restoreCartBadges();
 
                         $btn.prop('disabled', false);

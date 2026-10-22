@@ -139,7 +139,7 @@ class AjaxRenderer {
 			\wp_send_json_error( array( 'message' => 'Invalid table ID' ) );
 		}
 
-		$table = $this->repository->get_table( $table_id );
+		$table = $this->repository->get_table( $table_id, false );
 		if ( ! $table ) {
 			\wp_send_json_error( array( 'message' => 'Table not found' ) );
 		}
@@ -196,6 +196,31 @@ class AjaxRenderer {
 		$raw_items = wp_unslash( $_POST['items'] ?? array() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized below per field
 		if ( empty( $raw_items ) || ! is_array( $raw_items ) ) {
 			\wp_send_json_error( array( 'message' => __( 'No products selected', 'productbay' ) ) );
+		}
+
+		/**
+		 * Filters the maximum number of items one bulk add-to-cart request may carry.
+		 *
+		 * This endpoint is reachable by anonymous visitors and each item costs a
+		 * product load, a stock check and a cart write, so the list is bounded
+		 * rather than left to PHP's max_input_vars.
+		 *
+		 * @since 1.3.5
+		 *
+		 * @param int $max Maximum items per request.
+		 */
+		$max_items = (int) \apply_filters( 'productbay_max_bulk_items', 100 );
+
+		if ( count( $raw_items ) > $max_items ) {
+			\wp_send_json_error(
+				array(
+					'message' => sprintf(
+						/* translators: %d: maximum number of items allowed in one request */
+						__( 'Too many products in one request (maximum %d).', 'productbay' ),
+						$max_items
+					),
+				)
+			);
 		}
 
 		$added_count = 0;
@@ -262,7 +287,16 @@ class AjaxRenderer {
 				}
 
 				$variation = \wc_get_product( $variation_id );
-				if ( ! $variation || ! $variation->is_in_stock() ) {
+
+				// The variation ID and its attributes arrive from the browser, so
+				// confirm the variation is really a child of the product being
+				// added. Without this a crafted request could pair any product
+				// with any variation ID.
+				$belongs_to_product = $variation
+					&& $variation->is_type( 'variation' )
+					&& (int) $variation->get_parent_id() === (int) $product_id;
+
+				if ( ! $belongs_to_product || ! $variation->is_in_stock() ) {
 					$errors[] = sprintf(
 						/* translators: %s: product name */
 						__( 'Selected variation for "%s" is unavailable.', 'productbay' ),
@@ -270,6 +304,17 @@ class AjaxRenderer {
 					);
 					continue;
 				}
+
+				// Take the attribute values from the variation itself wherever it
+				// pins one, so only genuinely "any" attributes can be chosen by
+				// the request.
+				$resolved = array();
+				foreach ( $variation->get_variation_attributes() as $attr_key => $attr_value ) {
+					$resolved[ $attr_key ] = '' !== $attr_value
+						? $attr_value
+						: ( $attributes[ $attr_key ] ?? '' );
+				}
+				$attributes = $resolved;
 
 				// Validate variation stock quantity.
 				if ( $variation->managing_stock() && ! $variation->backorders_allowed() ) {

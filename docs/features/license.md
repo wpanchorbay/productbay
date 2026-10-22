@@ -78,5 +78,6 @@ If you prefer not to use automatic updates or your license has expired:
 ## Troubleshooting
 
 - **Firewall Blocking License Server:** Ensure your hosting environment doesn't block outgoing connections to the WPAnchorBay license server. This is required to validate the key.
+- **SSL Certificate Errors:** <Badge type="tip" text="Since Pro v1.0.3" /> The license key is only ever sent over a connection whose SSL certificate has been verified. If your host sits behind a proxy that intercepts TLS, license checks will fail until the proxy's CA certificate is supplied through the WordPress `http_request_args` filter.
 - **Domain Mismatch:** Once you activate your license, your domain is locked to that license. So you can't use the same license key on two different domains. If you change your domain name, you may need to contact us to reactivate the license key on new domain.
-- **"Requires ProductBay Free Version" Notice:** ProductBay Pro requires the free version of ProductBay (v1.2.0 or higher) to be active simultaneously. Please install and activate the free version of ProductBay to use ProductBay Pro.
+- **"Requires ProductBay Free Version" Notice:** ProductBay Pro requires the free version of ProductBay (v1.3.5 or higher) to be active simultaneously. Please install and activate the free version of ProductBay to use ProductBay Pro.

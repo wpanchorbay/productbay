@@ -66,15 +66,43 @@ This creates optimized, minified assets in the `assets/` directory.
 
 ```
 productbay/
-├── app/          # PHP backend (Admin, Api, Core, Data, Frontend, Http)
+├── app/          # PHP backend (Admin, Api, Core, Data, Frontend, Http, Utils)
 ├── src/          # React/TypeScript frontend source
 ├── assets/       # Compiled JS/CSS output
+├── tests/        # PHPUnit test suite (not shipped in the release zip)
 ├── languages/    # Translation files
 ├── scripts/      # Build helper scripts
 ├── docs/         # This documentation site (VitePress)
 ├── vendor/       # Composer dependencies
 └── node_modules/ # JavaScript dependencies
 ```
+
+## Testing <Badge type="tip" text="Since v1.3.5" />
+
+```bash
+composer test     # PHPUnit
+composer lint     # PHPCS
+composer lint:fix # PHPCBF
+```
+
+The suite runs at the [Brain Monkey](https://brain-wp.github.io/BrainMonkey/) level — it mocks
+WordPress rather than booting it, so it needs no database, no WordPress test library, and no
+Docker, and it finishes in under a second.
+
+Two things worth knowing before you add to it:
+
+- **Do not `class_exists()` a plugin class in a test.** Every file under `app/` opens with
+  `if ( ! defined( 'ABSPATH' ) ) exit;`, so autoloading one outside WordPress silently terminates
+  the whole PHPUnit process with exit code 0 and no error message. `PluginStructureTest` resolves
+  PSR-4 paths and inspects the file instead.
+- **`ReadmeClaimsTest` is a scar record, not a style rule.** It cross-checks the version, stable
+  tag, changelog heading, text domain, and compatibility headers across `productbay.php`,
+  `package.json`, and `readme.txt`, because nothing else in the toolchain reads prose and those
+  five values drift apart at release time. Read values out of the files at runtime; never re-type
+  a literal the test is meant to be guarding, or it will pass forever.
+
+Run both locally before you open a pull request. The repository has no CI workflow for them, so
+nothing else checks a change before it is reviewed.
 
 ## Coding Standards
 

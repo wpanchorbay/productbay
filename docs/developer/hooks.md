@@ -311,7 +311,7 @@ add_filter( 'productbay_filter_options', function( $options, $source, $settings,
 
 ### `productbay_filter_options_cache_ttl`
 
-Filters how long resolved filter choices stay cached, in seconds. Resolving them costs one ID-only product query plus two term queries, so the result is cached per table; the cache key carries a hash of the resolved query args, so editing a table's source takes effect immediately, while catalog changes are picked up when the transient expires.
+Filters how long resolved filter choices stay cached, in seconds. Resolving them costs one ID-only product query plus two term queries, so the result is cached per table; the cache key carries a hash of the resolved query args, so editing a table's source takes effect immediately. Since v1.3.5 the key also carries a global generation counter, so a product, stock, term or table change rebuilds the list on the next view rather than waiting out the TTL.
 
 Return `0` to disable caching — useful on a store whose product categories change constantly.
 
@@ -319,6 +319,35 @@ Return `0` to disable caching — useful on a store whose product categories cha
 |------|--------|
 | **Parameters** | `$ttl` *(int)* — default `12 * HOUR_IN_SECONDS`, `$table_id` *(int)* |
 | **Returns** | `int` — Lifetime in seconds, or `0` to skip caching |
+
+### `productbay_excluded_visibility_terms` <Badge type="tip" text="Since v1.3.5" />
+
+Filters the `product_visibility` term IDs excluded from a table's product query.
+
+By default a table excludes `exclude-from-catalog` — so a product set to **Hidden** under *Product data → Advanced* stays out, matching the shop — and also excludes `outofstock` when the store has *Hide out of stock items* enabled and the table has not set its own stock filter.
+
+Return an empty array to show hidden products, for example in a private wholesale table built deliberately from them.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$exclude` *(int[])* — `product_visibility` term IDs, `$stock_status` *(string)* — the table's own stock filter, `'any'` when unset |
+| **Returns** | `int[]` — Term IDs to exclude; empty array to exclude nothing |
+
+```php
+// Show catalog-hidden products in one specific table.
+add_filter( 'productbay_excluded_visibility_terms', function ( $exclude, $stock_status ) {
+    return array();
+}, 10, 2 );
+```
+
+### `productbay_max_bulk_items` <Badge type="tip" text="Since v1.3.5" />
+
+Filters the maximum number of items a single bulk add-to-cart request may carry. The endpoint is reachable by anonymous visitors and every item costs a product load, a stock check and a cart write, so the list is bounded rather than left to PHP's `max_input_vars`.
+
+| Type | Filter |
+|------|--------|
+| **Parameters** | `$max` *(int)* — default `100` |
+| **Returns** | `int` — Maximum items per request |
 
 ### `productbay_render_filters`
 

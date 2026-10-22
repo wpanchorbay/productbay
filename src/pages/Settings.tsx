@@ -23,6 +23,7 @@ import {
 // Static imports for settings components
 import AdminBarOptions from '@/components/Settings/AdminBarOptions';
 import UninstallOptions from '@/components/Settings/UninstallOptions';
+import ClearCacheOptions from '@/components/Settings/ClearCacheOptions';
 import ClearDataOptions from '@/components/Settings/ClearDataOptions';
 import DefaultSettings from '@/components/Settings/DefaultSettings';
 import ProPromotion from '@/components/Settings/ProPromotion';
@@ -349,6 +350,7 @@ const Settings = () => {
 							setSettings={updateSettings}
 							loading={loading}
 						/>
+						<ClearCacheOptions loading={loading} />
 						<ClearDataOptions loading={loading} />
 					</div>
 				)}

@@ -177,6 +177,17 @@ class Router {
 			)
 		);
 
+		// Clear cached filter options.
+		\register_rest_route(
+			'productbay/v1',
+			'/system/clear-cache',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( new \WpabProductBay\Api\SystemController( $this->repository, $this->request ), 'clear_cache' ),
+				'permission_callback' => array( $this, 'permission_check' ),
+			)
+		);
+
 		// Products & Categories.
 		$products_controller = new \WpabProductBay\Api\ProductsController( $this->request );
 

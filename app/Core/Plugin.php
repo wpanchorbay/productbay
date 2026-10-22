@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use WpabProductBay\Admin\Admin;
 use WpabProductBay\Blocks\BlockManager;
 use WpabProductBay\Data\ActivityLog;
+use WpabProductBay\Data\CacheInvalidator;
 use WpabProductBay\Data\TableLogger;
 use WpabProductBay\Data\SettingsLogger;
 
@@ -60,6 +61,7 @@ class Plugin {
 		$this->load_dependencies();
 		$this->init_components();
 		$this->init_logging();
+		$this->init_cache_invalidation();
 
 		// Register Custom Post Type.
 		\add_action( 'init', array( $this, 'register_post_type' ) );
@@ -74,20 +76,26 @@ class Plugin {
 		register_post_type(
 			'productbay_table',
 			array(
-				'label'              => 'ProductBay Tables',
-				'public'             => true,
-				'publicly_queryable' => true,
-				'show_ui'            => false,
-				'show_in_menu'       => false,
-				'query_var'          => true,
-				'rewrite'            => array(
+				'label'               => __( 'ProductBay Tables', 'productbay' ),
+				'public'              => true,
+				'publicly_queryable'  => true,
+				// public => true would otherwise default exclude_from_search to
+				// false and show_in_nav_menus to true, so table permalinks turned
+				// up in site search results and in the nav-menu picker. They are
+				// meant to be reachable by URL, not browsable.
+				'exclude_from_search' => true,
+				'show_in_nav_menus'   => false,
+				'show_ui'             => false,
+				'show_in_menu'        => false,
+				'query_var'           => true,
+				'rewrite'             => array(
 					'slug'       => 'productbay/product-table',
 					'with_front' => false,
 				),
-				'capability_type'    => 'post',
-				'has_archive'        => false,
-				'hierarchical'       => false,
-				'supports'           => array( 'title' ),
+				'capability_type'     => 'post',
+				'has_archive'         => false,
+				'hierarchical'        => false,
+				'supports'            => array( 'title' ),
 			)
 		);
 	}
@@ -250,5 +258,19 @@ class Plugin {
 				);
 			}
 		);
+	}
+
+	/**
+	 * Initialize the cache-invalidation hooks.
+	 *
+	 * Wires CacheInvalidator to product, stock, taxonomy, and table-save
+	 * events so the global cache generation counter bumps whenever
+	 * anything the plugin caches could go stale.
+	 *
+	 * @return void
+	 * @since 1.3.5
+	 */
+	private function init_cache_invalidation() {
+		CacheInvalidator::init();
 	}
 }

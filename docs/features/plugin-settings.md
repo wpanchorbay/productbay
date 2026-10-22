@@ -28,6 +28,26 @@ Control global texts for Add to Cart buttons, "Select Options" buttons, and the 
 - **"Select Options" Button Text**: Define a global custom text (e.g., "Select Options") that will replace the default text for buttons that open popups or nested rows. This can be individually overridden on a per-table basis.
 - **"Add to bulk list" Text** <Badge type="tip" text="Since v1.3.4" />: Define a global custom text (e.g., "Add to order") for the bulk-select toggle shown on [stacked mobile cards](/features/display-customization#layout-on-phones), together with the label it switches to once the product is in the list (default "Added"). This can be individually overridden on a per-table basis.
 
+## Performance
+
+### Clear Cache <Badge type="tip" text="Since v1.3.5" />
+
+To keep the filter bar fast, ProductBay remembers which **categories** and **product types** each
+table should offer in its dropdowns, rather than resolving them on every page view.
+
+That list is rebuilt automatically whenever a product is saved, its stock or price changes, its
+categories change, or a table is edited — so under normal use you never need this button. It is
+here for the cases automatic invalidation cannot see: products changed directly in the database,
+an import that bypasses the usual WooCommerce hooks, or a staging-to-live database copy.
+
+- **Clear cache**: every table rebuilds its filter choices the next time it is viewed.
+
+::: tip Nothing is at risk
+Only the resolved dropdown choices are cached. Products, prices, and stock are always read live
+from WooCommerce on every page view and are never cached — so this button cannot change what a
+table shows, and nothing is deleted.
+:::
+
 ## Uninstall Options
 
 Determine what happens to your data when the ProductBay plugin is deleted from your WordPress site.

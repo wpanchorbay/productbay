@@ -4,7 +4,7 @@ Tags: product table for woocommerce, woocommerce product table, woocommerce prod
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -285,6 +285,30 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 
 == Changelog ==
 
+= 1.3.5 =
+
+* Security: Fixed an issue where the table delete endpoint did not check that the ID it was given actually belonged to a ProductBay table, so a crafted request from a logged-in administrator-level account could permanently delete another post — a page, a product, an order — without it going to the trash.
+* Security: Fixed an issue where the activity log export accepted any value as its date and used it to build a file path, allowing an administrator-level account to read other `.log` files on the server.
+* Security: Saving a table now checks that the ID it was given belongs to a ProductBay table. Before, a crafted save request from an administrator-level account could turn another post, such as a page or a product, into a table, overwrite its title and status, and make it deletable through the table delete endpoint.
+* Security: A table's saved column identifier is now sanitized before it reaches the generated stylesheet, so it cannot break out of its own CSS rule.
+* Security: The bulk add-to-cart endpoint, which visitors can reach without logging in, now caps how many products one request may carry, and checks that a chosen variation really belongs to the product being added.
+* Fix: Product tables no longer show products your shop hides. A product set to "Hidden" under Product data > Advanced stayed visible in every table, and so did out-of-stock products on stores with "Hide out of stock items" switched on.
+* Fix: ProductBay's stylesheet and script can now be cached by your visitors' browsers. They were being given a new version number on every single page load, so every visitor re-downloaded all of it on every page — and so did you, on every admin screen. Around 133 KB per storefront page view, and 471 KB per admin screen.
+* Fix: The category and product type filters above a table no longer keep offering a choice after the products behind it have moved. That list was cached for 12 hours and expired on time alone, so a category could linger in the dropdown for up to half a day after the last product left it. It is now rebuilt whenever a product, a product's categories, or a table is edited.
+* Fix: Searching or filtering a table down to a single page no longer leaves the old page links behind. The pager kept offering the unfiltered page count, and clicking one of those pages showed "No products found" even though the search had matched products.
+* Fix: Deleting the plugin now also removes the cached filter choices and the cache counter it leaves in your database.
+* Fix: Typing in a table's search box and then changing or clearing the text quickly could leave the table showing results for the old text. A slow answer for the earlier search could arrive after the newer one and replace it. Only the latest search, filter or page request now updates the table.
+* Fix: The Add to Cart button on a variable product no longer stays stuck reading "Adding..." after a successful add. The product really was added to the cart, but the button never returned to its normal state, so the add looked like it had failed.
+* Feature: A "Clear cache" button under Settings > Plugin Settings rebuilds those filter choices immediately, for the cases automatic rebuilding cannot see — products edited directly in the database, an import that bypasses WooCommerce's usual hooks, or a staging-to-live database copy.
+* Dev: PRODUCTBAY_DEV_MODE now does what .env.example always described. It was defined but read nowhere; it now selects the asset version strategy.
+* Improvement: Declared compatibility with WooCommerce High-Performance Order Storage and with the Cart and Checkout blocks, and added the "WC tested up to" header. Without the declaration WooCommerce counts a plugin as HPOS-incompatible, which can stop a store enabling HPOS.
+* Improvement: Tables are noticeably lighter to render. Each render was also running a product count query that only the admin screen uses, and the image and category columns were each costing an extra database query per row. On a 5,000-product catalogue this saves around 8ms and 2 queries per render, and 4 more queries per render on tables with images or a category column.
+* Improvement: ProductBay's script no longer cancels the deferred loading WooCommerce asks for on its own cart script, and now defers itself as well.
+* Fix: Table permalink pages no longer appear in your site's search results or in the Appearance > Menus picker. They are meant to be reachable by their own URL, not browsable.
+* Dev: Added a PHPUnit test suite and a GitHub Actions workflow running PHPCS and PHPUnit on PHP 7.4 and 8.3. The plugin previously had no automated tests.
+* Dev: Added the `productbay_excluded_visibility_terms` and `productbay_max_bulk_items` filters.
+* Dev: The REST endpoints for reading, saving and deleting a table now return proper error responses instead of reporting failures as success.
+
 = 1.3.4 =
 
 * Feature: Product tables are now mobile-responsive. On phones each row reflows into a labeled card (default), or you can keep the classic horizontal-scroll table — chosen per table under Display → Layout on phones.
@@ -353,6 +377,9 @@ Use the support forum on this plugin's WordPress.org page. We aim to respond wit
 * Initial release of ProductBay.
 
 == Upgrade Notice ==
+
+= 1.3.5 =
+Recommended update. Security fixes, plus a fix for tables showing products your shop hides. Also fixes an Add to Cart button stuck on "Adding..." and stale page links after a search, and makes tables lighter to render.
 
 = 1.3.4 =
 Mobile update: product tables now reflow into stacked cards on phones, with full-size tap targets and a floating bulk list bar. Also fixes table filters offering categories the table cannot show, and draft tables labelled "Private".

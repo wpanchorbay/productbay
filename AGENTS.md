@@ -42,7 +42,6 @@ productbay/
 ├── assets/               # Compiled build artifacts (JS, CSS, asset maps)
 ├── docs/                 # Documentation site source (VitePress)
 ├── scripts/              # Build, release, and demo environment utilities
-└── graphify-out/         # Local knowledge graph of the codebase
 ```
 
 ---
@@ -135,32 +134,9 @@ To keep the bundle sizes small, the free plugin shares its React component libra
 
 ---
 
-## AI Agent Integration (Graphify & LLMS)
+## AI Agent Integration (LLMS)
 
-To assist you in reading and updating the architecture:
-
-### 1. Graphify Knowledge Graph
-This project includes a **Graphify** knowledge graph.
-- **Lookup Location**: Visual reports are located in [graphify-out/](file:///var/www/html/wp-content/plugins/productbay/graphify-out/).
-- **Read First**: Prior to addressing architectural questions, read [GRAPH_REPORT.md](file:///var/www/html/wp-content/plugins/productbay/graphify-out/GRAPH_REPORT.md) to inspect god nodes, import cycles, and community clusters.
-- **Query Command**: Use the CLI subcommands to inspect cross-module structures:
-  ```bash
-  # Search the graph structure for a question
-  graphify-out/.venv/bin/graphify query "How do columns render?"
-  
-  # Trace the shortest path between two modules
-  graphify-out/.venv/bin/graphify path "TableRenderer" "AjaxRenderer"
-  
-  # Explain a specific code node
-  graphify-out/.venv/bin/graphify explain "useTableStore"
-  ```
-- **Graph Updates**: After modifying code files, always run:
-  ```bash
-  graphify-out/.venv/bin/graphify update .
-  ```
-  This updates [graph.json](file:///var/www/html/wp-content/plugins/productbay/graphify-out/graph.json) and [GRAPH_REPORT.md](file:///var/www/html/wp-content/plugins/productbay/graphify-out/GRAPH_REPORT.md) (runs AST analysis locally, no API cost).
-
-### 2. Compiled Documentation (LLMS)
+### Compiled Documentation (LLMS)
 A single aggregated developer documentation file exists for fast text ingestion:
 - **Generation**: Created using [generate-llms.js](file:///var/www/html/wp-content/plugins/productbay/docs/generate-llms.js).
 - **Outputs**:

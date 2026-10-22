@@ -18,8 +18,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Request
  *
  * HTTP request wrapper that handles JSON input parsing and provides
- * sanitized access to request parameters. Transparently merges JSON
- * body data into \$_REQUEST for unified access.
+ * sanitized access to request parameters.
+ *
+ * The JSON body is kept on the instance and parsed lazily, on first access.
+ * It used to be merged into \$_REQUEST from the constructor, which runs on
+ * `plugins_loaded` for every request on the site — so any JSON request to
+ * anyone else's endpoint (the Store API, another plugin's REST namespace, a
+ * webhook) had its body silently spliced into a superglobal that other code
+ * reads. Parsing lazily also means unrelated requests never read php://input
+ * at all.
  *
  * @since   1.0.0
  * @package WpabProductBay\Http
@@ -38,20 +45,32 @@ class Request {
 	private $rawData = array();
 
 	/**
-	 * Constructor. Parses JSON input from the request body.
+	 * Whether the JSON body has been parsed yet.
+	 *
+	 * @var bool
+	 * @since 1.3.5
+	 */
+	private $jsonParsed = false;
+
+	/**
+	 * Constructor.
 	 *
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		$this->handleJsonInput();
 	}
 
 	/**
-	 * Handle JSON input for REST API requests.
+	 * Parse the JSON request body, once, on first parameter access.
 	 *
 	 * @since 1.0.0
 	 */
 	private function handleJsonInput() {
+		if ( $this->jsonParsed ) {
+			return;
+		}
+		$this->jsonParsed = true;
+
 		if (
 		isset( $_SERVER['CONTENT_TYPE'] ) &&
 		strpos( sanitize_text_field( wp_unslash( $_SERVER['CONTENT_TYPE'] ) ), 'application/json' ) !== false
@@ -60,10 +79,8 @@ class Request {
 			$data  = json_decode( $input, true );
 
 			if ( is_array( $data ) ) {
-				// Store raw data in object property to prevent loss.
+				// Kept on the instance only — never merged into $_REQUEST.
 				$this->rawData = $data;
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is handled at the endpoint level
-				$_REQUEST = array_merge( $_REQUEST, $data );
 			}
 		}
 	}
@@ -77,9 +94,16 @@ class Request {
 	 * @since 1.0.0
 	 */
 	public function get( $key, $default = null ) {
+		$this->handleJsonInput();
+
 		// Special handling for 'data' key - return raw data without sanitization.
 		if ( $key === 'data' && isset( $this->rawData['data'] ) ) {
 			return $this->rawData['data'];
+		}
+
+		// JSON body params, which used to arrive here via $_REQUEST.
+		if ( isset( $this->rawData[ $key ] ) ) {
+			return $this->sanitize( $this->rawData[ $key ] );
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is handled at the endpoint level

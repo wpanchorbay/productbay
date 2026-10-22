@@ -53,8 +53,10 @@ class ProductsController extends ApiController {
 		$search  = $this->request->get( 'search' );
 		$include = $this->request->get( 'include' ); // For ID search.
 		$sku     = $this->request->get( 'sku' ); // For SKU search.
-		$limit   = $this->request->get( 'limit', 10 );
-		$page    = $this->request->get( 'page', 1 );
+		// Bounded rather than passed through: limit=-1 is WP_Query's "no limit",
+		// which would run an unbounded product query on a large catalogue.
+		$limit = min( 200, max( 1, (int) $this->request->get( 'limit', 10 ) ) );
+		$page  = max( 1, (int) $this->request->get( 'page', 1 ) );
 
 		$is_default_search = empty( $search ) && empty( $include ) && empty( $sku );
 

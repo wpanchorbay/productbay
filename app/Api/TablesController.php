@@ -66,11 +66,24 @@ class TablesController extends ApiController {
 	 * @since 1.0.0
 	 *
 	 * @param \WP_REST_Request $request REST request containing 'id' parameter.
-	 * @return array|null Table data or null if not found.
+	 * @return array|\WP_Error Table data, or a 404 error if there is no such table.
 	 */
 	public function show( $request ) {
-		$id = $request['id'];
-		return $this->repository->get_table( $id );
+		$id    = $request['id'];
+		$table = $this->repository->get_table( $id );
+
+		// rest_ensure_response() wraps a bare null as HTTP 200 with a null body,
+		// so a missing table used to read as success to any client checking the
+		// status code — including this plugin's own admin app.
+		if ( null === $table ) {
+			return $this->error(
+				__( 'Table not found.', 'productbay' ),
+				'productbay_table_not_found',
+				404
+			);
+		}
+
+		return $table;
 	}
 
 	/**
@@ -78,18 +91,40 @@ class TablesController extends ApiController {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Saved table data or error.
+	 * @return array|\WP_Error Saved table data, or an error.
 	 */
 	public function store() {
-		// Get raw data from $_REQUEST to avoid sanitization destroying nested structures.
-		// The Repository will handle field-specific sanitization (title, etc.).
+		// Raw data, not sanitized here: sanitizing would flatten the nested
+		// config structures. The repository sanitizes per field.
 		$data = $this->request->get( 'data' );
 
-		if ( ! $data ) {
-			return array( 'error' => 'No data provided' );
+		if ( ! $data || ! is_array( $data ) ) {
+			return $this->error(
+				__( 'No table data provided.', 'productbay' ),
+				'productbay_missing_data',
+				400
+			);
 		}
 
-		return $this->repository->save_table( $data );
+		$saved = $this->repository->save_table( $data );
+
+		if ( ! $saved && ! empty( $data['id'] ) ) {
+			return $this->error(
+				__( 'Table not found.', 'productbay' ),
+				'productbay_table_not_found',
+				404
+			);
+		}
+
+		if ( ! $saved ) {
+			return $this->error(
+				__( 'The table could not be saved.', 'productbay' ),
+				'productbay_save_failed',
+				500
+			);
+		}
+
+		return $saved;
 	}
 
 	/**
@@ -98,10 +133,25 @@ class TablesController extends ApiController {
 	 * @since 1.0.0
 	 *
 	 * @param \WP_REST_Request $request REST request containing 'id' parameter.
-	 * @return \WP_Post|false|null Deleted post object or false/null on failure.
+	 * @return array|\WP_Error Deletion result, or an error.
 	 */
 	public function destroy( $request ) {
 		$id = $request['id'];
-		return $this->repository->delete_table( $id );
+
+		// delete_table() returns false both for "not one of our tables" and for
+		// a failed delete; either way it is not a success and must not be
+		// reported as HTTP 200.
+		if ( ! $this->repository->delete_table( $id ) ) {
+			return $this->error(
+				__( 'Table not found, or it could not be deleted.', 'productbay' ),
+				'productbay_delete_failed',
+				404
+			);
+		}
+
+		return array(
+			'deleted' => true,
+			'id'      => (int) $id,
+		);
 	}
 }

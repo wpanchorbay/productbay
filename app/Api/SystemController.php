@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use WpabProductBay\Http\Request;
+use WpabProductBay\Data\ActivityLog;
+use WpabProductBay\Data\CacheInvalidator;
 use WpabProductBay\Data\TableRepository;
 
 /**
@@ -108,6 +110,46 @@ class SystemController extends ApiController {
 	 */
 	public function mark_onboarded() {
 		update_option( 'productbay_onboarding_completed', true );
+		return array(
+			'success' => true,
+		);
+	}
+
+	/**
+	 * Clear ProductBay's cached filter-dropdown choices.
+	 *
+	 * Bumps the global cache generation counter (CacheInvalidator::bump()),
+	 * which is what actually guarantees every cached entry becomes
+	 * unreachable, regardless of where transients are stored. The direct
+	 * row deletion below is best-effort cleanup only, not the mechanism
+	 * that makes this safe — on a site running an external persistent
+	 * object cache (Redis/Memcached), transients live there rather than in
+	 * wp_options, and this SQL can't reach them at all.
+	 *
+	 * @return array
+	 * @since 1.3.5
+	 */
+	public function clear_cache() {
+		global $wpdb;
+
+		CacheInvalidator::bump();
+
+		// Best-effort cleanup only — see the docblock above. Scoped with
+		// LIKE to ProductBay's own transient option rows.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One-time admin action, caching not needed.
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM $wpdb->options WHERE option_name LIKE %s OR option_name LIKE %s",
+				$wpdb->esc_like( '_transient_productbay_filter_opts_' ) . '%',
+				$wpdb->esc_like( '_transient_timeout_productbay_filter_opts_' ) . '%'
+			)
+		);
+
+		ActivityLog::success(
+			'Cache cleared',
+			'Cached table filter options were cleared from Plugin Settings.'
+		);
+
 		return array(
 			'success' => true,
 		);
