@@ -5,6 +5,7 @@ import { useRoute } from 'vitepress';
 import mediumZoom from 'medium-zoom';
 import ProBadge from './components/ProBadge.vue';
 import ThemeToggle from './components/ThemeToggle.vue';
+import CopyMarkdown from './components/CopyMarkdown.vue';
 
 export default {
 	extends: DefaultTheme,
@@ -15,6 +16,7 @@ export default {
 					h('span', { class: 'product-bold' }, 'Product'),
 					'Bay',
 				]),
+			'aside-outline-before': () => h(CopyMarkdown),
 			'layout-bottom': () => h(ThemeToggle),
 		});
 	},

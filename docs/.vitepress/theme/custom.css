@@ -143,16 +143,6 @@
   align-items: center;
 }
 
-/* Version badge in navbar */
-.VPNavBar .VPNavBarMenu .VPFlyout:first-child .text {
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background-color: var(--vp-c-brand-soft);
-  color: var(--vp-c-brand-1);
-}
-
 /* Image Zoom */
 .main img {
   cursor: zoom-in;
